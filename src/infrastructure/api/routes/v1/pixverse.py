@@ -1,9 +1,9 @@
 # coding utf-8
 
-from typing import Any
-
 from fastapi import (
     APIRouter,
+    UploadFile,
+    File,
     Depends,
 )
 
@@ -11,14 +11,15 @@ from ...views.v1 import PixVerseView
 
 from .....interface.schemas.api import (
     TextBody,
-    ImageBody,
+    BaseBody,
     StatusBody,
 )
 
 from ....factroies.api.v1 import PixVerseViewFactory
 
-
 from .....domain.tools import auto_docs
+
+from .....interface.schemas.api import Resp
 
 
 pixverse_router = APIRouter()
@@ -51,9 +52,9 @@ pixverse_router = APIRouter()
     },
 )
 async def text_to_video(
-    body: TextBody,
+    body: TextBody = Depends(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> dict[str, Any]:
+) -> Resp:
     return await view.text_to_video(
         body,
     )
@@ -79,18 +80,16 @@ async def text_to_video(
             "type": "string",
             "description": "Качество видео при обработке.",
         },
-        "image_id": {
-            "type": "integer",
-            "description": "Уникальный индефикатор фотографии после загрузки.",
-        },
     },
 )
 async def image_to_video(
-    body: ImageBody,
+    body: BaseBody = Depends(),
+    file: UploadFile = File(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> dict[str, Any]:
+) -> Resp:
     return await view.image_to_video(
         body,
+        file,
     )
 
 
@@ -111,7 +110,7 @@ async def image_to_video(
 async def generation_status(
     body: StatusBody,
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> dict[str, Any]:
+) -> Resp:
     return await view.generation_status(
         body,
     )

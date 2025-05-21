@@ -1,13 +1,15 @@
 # coding utf-8
 
-from typing import Any
+from fastapi import UploadFile
 
 from .core import PixVerseCore
 
 from ....interface.schemas.api import (
+    BaseBody,
     TextBody,
     ImageBody,
     StatusBody,
+    Resp,
 )
 
 from ....domain.entities.typing.enums import PixVerseUri
@@ -34,7 +36,7 @@ class PixVerseClient:
     async def text_to_video(
         self,
         body: TextBody,
-    ) -> dict[str, Any]:
+    ) -> Resp:
         return await self._core.post(
             endpoint=PixVerseUri.TEXT,
             body=body,
@@ -42,17 +44,25 @@ class PixVerseClient:
 
     async def image_to_video(
         self,
-        body: ImageBody,
-    ) -> dict[str, Any]:
+        body: BaseBody,
+        file: UploadFile,
+    ) -> Resp:
+        uploaded_response: Resp = await self._core.post(
+            endpoint=PixVerseUri.UPLOAD,
+            files={"image": (file.filename, await file.read(), file.content_type)},
+        )
         return await self._core.post(
             endpoint=PixVerseUri.IMAGE,
-            body=body,
+            body=ImageBody(
+                **body.dict,
+                img_id=uploaded_response.res.img_id,
+            ),
         )
 
     async def generation_status(
         self,
         body: StatusBody,
-    ) -> dict[str, Any]:
+    ) -> Resp:
         return await self._core.get(
             endpoint=PixVerseUri.STATUS.format(
                 id=body.generation_id,

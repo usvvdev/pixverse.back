@@ -15,12 +15,12 @@ class PixVerseUri(StrEnum):
     Все URI указаны относительно базового URL API.
     """
 
-    TEXT = "text/generate"
+    TEXT = "video/text/generate"
     """
     Генерация контента по текстовому описанию.
     """
 
-    IMAGE = "img/generate"
+    IMAGE = "video/img/generate"
     """
     Генерация контента по заданой фотографии.
     """
@@ -30,7 +30,7 @@ class PixVerseUri(StrEnum):
     Загрузка пользовательских изображений для создания контента по фотографии.
     """
 
-    STATUS = "result/{id}"
+    STATUS = "video/result/{id}"
     """
     Проверка статуса выполненной генерации.
     """

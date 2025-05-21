@@ -24,6 +24,7 @@ class ISchema(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         use_enum_values=True,
+        loc_by_alias=True,
     )
 
     @property

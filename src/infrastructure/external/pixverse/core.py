@@ -6,6 +6,8 @@ from ..web3 import Web3
 
 from ....domain.constants import PIXVERSE_BASE_URL
 
+from ....interface.schemas.api import Resp
+
 from ....domain.entities.typing.enums import RequestMethod
 
 
@@ -38,7 +40,7 @@ class PixVerseCore(Web3):
         self,
         *args,
         **kwargs,
-    ) -> dict[str, Any]:
+    ) -> Resp:
         """Отправка POST-запроса к PixVerse API.
 
         Args:
@@ -61,7 +63,7 @@ class PixVerseCore(Web3):
         self,
         *args,
         **kwargs,
-    ) -> dict[str, Any]:
+    ) -> Resp:
         """Отправка GET-запроса к PixVerse API.
 
         Args:

@@ -12,6 +12,8 @@ from httpx import (
 
 from ...domain.entities import ISchema
 
+from ...interface.schemas.api import Resp
+
 
 class Web3:
     """Клиент для взаимодействия с Web3 API.
@@ -79,7 +81,8 @@ class Web3:
         method: str,
         endpoint: str,
         body: ISchema = None,
-    ) -> dict[str, Any]:
+        files: ISchema | bytes = None,
+    ) -> Resp:
         """Основной метод отправки запроса к API.
 
         Args:
@@ -95,5 +98,6 @@ class Web3:
             method,
             endpoint=endpoint,
             json=body.dict if body else None,
+            files=files,
         ):
-            return response.json()
+            return Resp(**response.json())

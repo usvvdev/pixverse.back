@@ -33,8 +33,8 @@ class TextBody(BaseBody):
 
 
 class ImageBody(BaseBody):
-    image_id: Annotated[
-        str,
+    img_id: Annotated[
+        int,
         Field(...),
     ]
 
@@ -43,4 +43,30 @@ class StatusBody(ISchema):
     generation_id: Annotated[
         int,
         Field(...),
+    ]
+
+
+class Result(ISchema):
+    img_id: Annotated[
+        int,
+        Field(...),
+    ]
+    img_url: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class Resp(ISchema):
+    err_code: Annotated[
+        int,
+        Field(..., alias="ErrCode"),
+    ]
+    err_msg: Annotated[
+        str | None,
+        Field(..., alias="ErrMsg"),
+    ]
+    res: Annotated[
+        Result | None,
+        Field(..., alias="Resp"),
     ]
