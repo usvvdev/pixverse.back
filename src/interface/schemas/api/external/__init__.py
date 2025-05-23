@@ -5,7 +5,8 @@ from .pixverse import (
     TextBody,
     ImageBody,
     StatusBody,
-    Resp,
+    ResponseModel,
+    UserCredentials,
 )
 
 __all__ = [
@@ -13,5 +14,6 @@ __all__ = [
     "TextBody",
     "ImageBody",
     "StatusBody",
-    "Resp",
+    "ResponseModel",
+    "UserCredentials",
 ]

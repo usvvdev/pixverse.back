@@ -2,7 +2,7 @@
 
 from .conf import IConfEnv
 
-from .headers import IHeaders
+from .headers import TokenHeaders, APIHeaders
 
 from .body import IBody
 
@@ -10,7 +10,8 @@ from .base import ISchema
 
 __all__: list[str] = [
     "IConfEnv",
-    "IHeaders",
+    "TokenHeaders",
+    "APIHeaders",
     "IBody",
     "ISchema",
 ]

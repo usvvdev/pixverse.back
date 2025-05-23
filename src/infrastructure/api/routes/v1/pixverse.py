@@ -7,22 +7,43 @@ from fastapi import (
     Depends,
 )
 
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+
 from ...views.v1 import PixVerseView
 
 from .....interface.schemas.api import (
     TextBody,
     BaseBody,
     StatusBody,
+    UserCredentials,
 )
 
 from ....factroies.api.v1 import PixVerseViewFactory
 
 from .....domain.tools import auto_docs
 
-from .....interface.schemas.api import Resp
+from .....interface.schemas.api import ResponseModel
 
 
 pixverse_router = APIRouter()
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth")
+
+
+@pixverse_router.post(
+    "/auth",
+)
+async def auth_user(
+    body: OAuth2PasswordRequestForm = Depends(),
+    view: PixVerseView = Depends(PixVerseViewFactory.create),
+):
+    user: ResponseModel = await view.auth_user(
+        UserCredentials(
+            **body.__dict__,
+        ),
+    )
+    return {"access_token": user.response.result.token}
 
 
 @pixverse_router.post(
@@ -52,10 +73,12 @@ pixverse_router = APIRouter()
     },
 )
 async def text_to_video(
-    body: TextBody = Depends(),
+    body: TextBody,
+    token: str = Depends(oauth2_scheme),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> Resp:
+) -> ResponseModel:
     return await view.text_to_video(
+        token,
         body,
     )
 
@@ -84,11 +107,13 @@ async def text_to_video(
 )
 async def image_to_video(
     body: BaseBody = Depends(),
+    token: str = Depends(oauth2_scheme),
     file: UploadFile = File(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> Resp:
+):
     return await view.image_to_video(
         body,
+        token,
         file,
     )
 
@@ -110,7 +135,7 @@ async def image_to_video(
 async def generation_status(
     body: StatusBody,
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> Resp:
+) -> ResponseModel:
     return await view.generation_status(
         body,
     )

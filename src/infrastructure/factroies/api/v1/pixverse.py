@@ -2,13 +2,6 @@
 
 from fastapi import Depends
 
-from .....domain.conf import app_conf
-
-from .....domain.entities import (
-    IConfEnv,
-    IHeaders,
-)
-
 from ....external.pixverse import (
     PixVerseCore,
     PixVerseClient,
@@ -21,17 +14,9 @@ from ....api.views.v1 import PixVerseView
 
 class PixVerseClientFactory:
     @staticmethod
-    def get(
-        conf: IConfEnv = Depends(
-            app_conf,
-        ),
-    ) -> PixVerseClient:
+    def get() -> PixVerseClient:
         return PixVerseClient(
-            PixVerseCore(
-                headers=IHeaders(
-                    api_key=conf.api_key,
-                ).dict,
-            ),
+            PixVerseCore(),
         )
 
 

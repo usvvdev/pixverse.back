@@ -5,7 +5,8 @@ from .external import (
     TextBody,
     ImageBody,
     StatusBody,
-    Resp,
+    ResponseModel,
+    UserCredentials,
 )
 
 __all__: list[str] = [
@@ -13,5 +14,6 @@ __all__: list[str] = [
     "TextBody",
     "ImageBody",
     "StatusBody",
-    "Resp",
+    "ResponseModel",
+    "UserCredentials",
 ]
