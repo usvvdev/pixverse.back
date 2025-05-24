@@ -135,7 +135,7 @@ class PixVerseDriver:
                     result = self._driver.execute_cdp_cmd(
                         "Network.getResponseBody", {"requestId": request_id}
                     )
-                    return result.get("body")
+                    return result["body"]
 
     def quit(
         self,
