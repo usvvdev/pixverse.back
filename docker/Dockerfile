@@ -11,7 +11,10 @@ ENV PROJECT_DIR="/code" \
     # poetry
     POETRY_VERSION=2.1.1 \
     POETRY_VIRTUALENVS_CREATE=false \
-    PATH="${PATH}:/root/.poetry/bin"
+    PATH="${PATH}:/root/.poetry/bin" \
+    CHROMEDRIVER_PATH="/usr/local/bin/chromedriver" \
+    CHROME_VERSION="136.0.6949.0" \
+    CHROMEDRIVER_VERSION="136.0.6949.0"
 
 # Установка необходимых зависимотей включая wget, gnupg, curl, etc.
 RUN apt-get update && apt-get install -y \
@@ -56,8 +59,8 @@ RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable 
 RUN apt-get update && apt-get install -y google-chrome-stable && \
     rm -rf /var/lib/apt/lists/*
 
-# Set the display port to avoid crash
-ENV DISPLAY=:99
+RUN wget -q --continue -P $CHROMEDRIVER_PATH "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+RUN unzip $CHROMEDRIVER_PATH* -d $CHROMEDRIVER_PATH
 
 # Установка Poetry
 RUN pip install --upgrade pip==24.0 \
