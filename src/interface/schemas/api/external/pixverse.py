@@ -17,18 +17,30 @@ class BaseBody(IBody):
     ]
     model: Annotated[
         str,
-        Field(default="v3.5"),
+        Field(default="v4.5"),
     ]
     quality: Annotated[
         str,
-        Field(default="540p"),
+        Field(default="360p"),
     ]
 
 
 class TextBody(BaseBody):
     aspect_ratio: Annotated[
         str,
-        Field(default="4:3"),
+        Field(default="16:9"),
+    ]
+    credit_change: Annotated[
+        int,
+        Field(default=20),
+    ]
+    lip_sync_tts_speaker_id: Annotated[
+        str,
+        Field(default="Auto"),
+    ]
+    motion_mode: Annotated[
+        str,
+        Field(default="normal"),
     ]
 
 

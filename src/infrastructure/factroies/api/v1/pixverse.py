@@ -5,6 +5,7 @@ from fastapi import Depends
 from ....external.pixverse import (
     PixVerseCore,
     PixVerseClient,
+    PixVerseDriver,
 )
 
 from .....interface.controllers.api.v1 import PixVerseController

@@ -4,7 +4,7 @@ from typing import Any
 
 from ..web3 import Web3
 
-from ....domain.constants import PIXVERSE_BASE_URL
+from ....domain.constants import PIXVERSE_API_URL
 
 from ....interface.schemas.api import ResponseModel
 
@@ -31,7 +31,7 @@ class PixVerseCore(Web3):
                 - 'Token': Ключ авторизации
         """
         super().__init__(
-            PIXVERSE_BASE_URL,  # Базовый URL из конфигурации
+            PIXVERSE_API_URL,  # Базовый URL из конфигурации
         )
 
     async def post(

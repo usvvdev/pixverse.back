@@ -1,13 +1,11 @@
 # coding utf-8
 
-from fastapi import UploadFile
-
 from ....schemas.api import (
-    BaseBody,
-    TextBody,
     StatusBody,
     UserCredentials,
 )
+
+from .....domain.entities import IBody
 
 from .....infrastructure.external.pixverse import PixVerseClient
 
@@ -32,7 +30,7 @@ class PixVerseController:
     async def text_to_video(
         self,
         token: str,
-        body: TextBody,
+        body: IBody,
     ) -> ResponseModel:
         return await self._client.text_to_video(
             token,
@@ -41,9 +39,9 @@ class PixVerseController:
 
     async def image_to_video(
         self,
-        body: BaseBody,
+        body: IBody,
         token: str,
-        file: UploadFile,
+        file: str,
     ):
         return await self._client.image_to_video(
             body,

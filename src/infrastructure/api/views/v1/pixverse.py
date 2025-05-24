@@ -1,7 +1,5 @@
 # coding utf-8
 
-from fastapi import UploadFile
-
 from .....interface.schemas.api import (
     TextBody,
     BaseBody,
@@ -43,7 +41,7 @@ class PixVerseView:
         self,
         body: BaseBody,
         token: str,
-        file: UploadFile,
+        file: str,
     ):
         return await self._controller.image_to_video(
             body,

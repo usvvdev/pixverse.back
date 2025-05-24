@@ -1,31 +1,27 @@
 # coding utf-8
 
-from fastapi import UploadFile
-
 from .core import PixVerseCore
 
-from pathlib import Path
-
-from os import path
+from .webdriver import PixVerseDriver
 
 from ....interface.schemas.api import (
-    BaseBody,
-    TextBody,
-    ImageBody,
     StatusBody,
     ResponseModel,
     UserCredentials,
 )
 
+from ....domain.entities import IBody
+
 from ....domain.entities.typing.enums import PixVerseUri
 
 from ....domain.entities import (
-    TokenHeaders,
     APIHeaders,
     IConfEnv,
 )
 
 from ....domain.conf import app_conf
+
+from asyncio import sleep
 
 
 conf: IConfEnv = app_conf()
@@ -61,40 +57,32 @@ class PixVerseClient:
     async def text_to_video(
         self,
         token: str,
-        body: TextBody,
+        body: IBody,
     ) -> ResponseModel:
-        return await self._core.post(
-            endpoint=PixVerseUri.TEXT,
-            headers=TokenHeaders(
-                token=token,
-            ).dict,
-            body=body,
-        )
+        driver = PixVerseDriver(token=token)
+        driver.open_web()
+        await sleep(2)
+        driver.enter_prompt(body.prompt)
+        driver.create_generation()
+        await sleep(2)
+        return driver.quit()
 
     async def image_to_video(
         self,
-        body: BaseBody,
+        body: IBody,
         token: str,
-        file: UploadFile,
+        file: str,
     ):
-        uploaded = await self._core.post(
-            endpoint=PixVerseUri.UPLOAD,
-            headers=APIHeaders(
-                api_key=conf.api_key,
-            ).dict,
-            files={"image": (file.filename, await file.read(), file.content_type)},
-        )
-        return await self._core.post(
-            endpoint=PixVerseUri.IMAGE,
-            headers=TokenHeaders(
-                token=token,
-            ).dict,
-            body=ImageBody(
-                **body.dict,
-                img_id=uploaded.response.img_id,
-                img_url=uploaded.response.img_url,
-            ),
-        )
+        driver = PixVerseDriver(token=token)
+        driver.open_web()
+        await sleep(2)
+        driver.upload_image(str(file))
+        await sleep(2)
+        driver.enter_prompt(body.prompt)
+        await sleep(2)
+        driver.create_generation()
+        await sleep(2)
+        return driver.quit()
 
     async def generation_status(
         self,

@@ -7,16 +7,22 @@ from fastapi import (
     Depends,
 )
 
+from pathlib import Path
+
+from tempfile import NamedTemporaryFile
+
+from shutil import copyfileobj
+
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from ...views.v1 import PixVerseView
 
 from .....interface.schemas.api import (
-    TextBody,
-    BaseBody,
     StatusBody,
     UserCredentials,
 )
+
+from .....domain.entities import IBody
 
 from ....factroies.api.v1 import PixVerseViewFactory
 
@@ -73,7 +79,7 @@ async def auth_user(
     },
 )
 async def text_to_video(
-    body: TextBody,
+    body: IBody = Depends(),
     token: str = Depends(oauth2_scheme),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
 ) -> ResponseModel:
@@ -106,15 +112,21 @@ async def text_to_video(
     },
 )
 async def image_to_video(
-    body: BaseBody = Depends(),
+    body: IBody = Depends(),
     token: str = Depends(oauth2_scheme),
     file: UploadFile = File(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
 ):
+    suffix = Path(file.filename).suffix
+
+    with NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+        copyfileobj(file.file, tmp)
+        tmp_path = Path(tmp.name).resolve()
+
     return await view.image_to_video(
         body,
         token,
-        file,
+        tmp_path,
     )
 
 
@@ -133,7 +145,7 @@ async def image_to_video(
     },
 )
 async def generation_status(
-    body: StatusBody,
+    body: StatusBody = Depends(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
 ) -> ResponseModel:
     return await view.generation_status(
