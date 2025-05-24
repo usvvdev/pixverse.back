@@ -21,6 +21,7 @@ ENV PROJECT_DIR="/code" \
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
+    software-properties-common \
     curl \
     unzip \
     apt-transport-https \
@@ -54,24 +55,27 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome (updated method)
-RUN mkdir -p /etc/apt/keyrings && \
-    wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /etc/apt/keyrings/google-chrome.gpg && \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && \
-    apt-get install -y google-chrome-stable --no-install-recommends && \
+# Install Google Chrome
+RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get -y update && \
+    apt-get -y install google-chrome-stable --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# Install matching ChromeDriver version
-RUN CHROME_VERSION=$(google-chrome --version | awk '{print $3}' | cut -d '.' -f 1) && \
-    CHROMEDRIVER_VERSION=$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}) && \
-    wget -q https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip && \
-    unzip chromedriver_linux64.zip -d /usr/local/bin/ && \
-    rm chromedriver_linux64.zip && \
-    chmod +x /usr/local/bin/chromedriver
+# Install ChromeDriver (updated method)
+RUN CHROME_MAJOR_VERSION=$(google-chrome --version | sed -E 's/.* ([0-9]+)\.[0-9]+\.[0-9]+.*/\1/') && \
+    echo "Chrome major version: $CHROME_MAJOR_VERSION" && \
+    CHROMEDRIVER_VERSION=$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION) && \
+    echo "Installing ChromeDriver version: $CHROMEDRIVER_VERSION" && \
+    wget -q https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
+    unzip chromedriver_linux64.zip && \
+    mv chromedriver /usr/local/bin/ && \
+    chmod +x /usr/local/bin/chromedriver && \
+    rm chromedriver_linux64.zip
 
 # Verify installations
-RUN google-chrome --version && chromedriver --version
+RUN echo "Chrome version: $(google-chrome --version)" && \
+    echo "ChromeDriver version: $(chromedriver --version)"
 
 # Install Poetry
 RUN pip install --upgrade pip==24.0 \
