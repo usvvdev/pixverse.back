@@ -5,23 +5,18 @@ ENV PROJECT_DIR="/code" \
     PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     # pip
-    PIP_NO_CACHE_DIR=off \
+    PIP_NO_CHACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
     # poetry
     POETRY_VERSION=2.1.1 \
     POETRY_VIRTUALENVS_CREATE=false \
-    PATH="${PATH}:/root/.poetry/bin" \
-    # chrome
-    CHROME_BIN="/usr/bin/google-chrome" \
-    CHROMEDRIVER_PATH="/usr/local/bin/chromedriver" \
-    DISPLAY=":99"
+    PATH="${PATH}:/root/.poetry/bin"
 
-# Install system dependencies
+# Установка необходимых зависимотей включая wget, gnupg, curl, etc.
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
-    software-properties-common \
     curl \
     unzip \
     apt-transport-https \
@@ -42,8 +37,6 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb1 \
     libxcomposite1 \
     libxdamage1 \
-    libxext6 \
-    libxfixes3 \
     libxrandr2 \
     libgbm1 \
     libgtk-3-0 \
@@ -55,45 +48,33 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome
-RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get -y update && \
-    apt-get -y install google-chrome-stable --no-install-recommends && \
+# Add Google Chrome's official GPG key and repository
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+
+# Update package list and install Google Chrome
+RUN apt-get update && apt-get install -y google-chrome-stable && \
     rm -rf /var/lib/apt/lists/*
 
-# Install ChromeDriver (updated method)
-RUN CHROME_MAJOR_VERSION=$(google-chrome --version | sed -E 's/.* ([0-9]+)\.[0-9]+\.[0-9]+.*/\1/') && \
-    echo "Chrome major version: $CHROME_MAJOR_VERSION" && \
-    CHROMEDRIVER_VERSION=$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION) && \
-    echo "Installing ChromeDriver version: $CHROMEDRIVER_VERSION" && \
-    wget -q https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
-    unzip chromedriver_linux64.zip && \
-    mv chromedriver /usr/local/bin/ && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver_linux64.zip
+# Set the display port to avoid crash
+ENV DISPLAY=:99
 
-# Verify installations
-RUN echo "Chrome version: $(google-chrome --version)" && \
-    echo "ChromeDriver version: $(chromedriver --version)"
-
-# Install Poetry
+# Установка Poetry
 RUN pip install --upgrade pip==24.0 \
     && pip install poetry==$POETRY_VERSION \
-    && poetry --version
+    && poetry --version 
 
-# Set working directory
+# Установка рабочей директории
 WORKDIR $PROJECT_DIR
 
-# Copy dependency files first for better caching
+# Копирование пакетов
 COPY ./pyproject.toml ./poetry.lock ${PROJECT_DIR}/
 
-# Install Python dependencies
 RUN poetry config virtualenvs.create false \
     && poetry install --no-interaction --no-ansi --no-root
 
-# Copy the rest of the application
+# Копирование проекта
 COPY . ${PROJECT_DIR}/
 
-# Set up Xvfb and run the application
+# Запуск FastAPI приложения
 ENTRYPOINT ["sh", "./scripts/start.sh"]
