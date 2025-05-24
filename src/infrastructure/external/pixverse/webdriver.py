@@ -125,11 +125,7 @@ class PixVerseDriver:
             if log["method"] == "Network.responseReceived":
                 url = log["params"]["response"]["url"]
                 if api_uri in url:
-                    body = self._driver.execute_cdp_cmd(
-                        "Network.getResponseBody",
-                        {"requestId": log["params"]["requestId"]},
-                    )
-                    return dumps(body)
+                    return dumps(log, indent=2)
 
     def quit(
         self,
