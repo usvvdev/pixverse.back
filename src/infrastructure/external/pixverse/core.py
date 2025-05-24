@@ -1,7 +1,5 @@
 # coding utf-8
 
-from typing import Any
-
 from ..web3 import Web3
 
 from ....domain.constants import PIXVERSE_API_URL
