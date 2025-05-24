@@ -2,8 +2,6 @@
 
 from json import dumps, loads
 
-from base64 import b64decode
-
 import undetected_chromedriver as uc
 
 from selenium.webdriver.common.by import By
@@ -121,33 +119,17 @@ class PixVerseDriver:
         )
         button.click()
 
-    def get_logs(self, api_uri: str) -> str | None:
+    def get_logs(
+        self,
+        api_uri: str,
+    ) -> None:
         logs = self._driver.get_log("performance")
         for entry in logs:
-            message = loads(entry["message"])["message"]
-            if message["method"] == "Network.responseReceived":
-                params = message["params"]
-                resource_type = params.get("type")
-                if resource_type not in ("XHR", "Fetch"):
-                    continue
-
-                request_id = params["requestId"]
-                url = params["response"]["url"]
+            log = loads(entry["message"])["message"]
+            if log["method"] == "Network.responseReceived":
+                url = log["params"]["response"]["url"]
                 if api_uri in url:
-                    return self._get_response_body(request_id)
-        return None
-
-    def _get_response_body(self, request_id: str) -> str | None:
-        try:
-            result = self._driver.execute_cdp_cmd(
-                "Network.getResponseBody", {"requestId": request_id}
-            )
-            body = result.get("body", "")
-            if result.get("base64Encoded"):
-                body = b64decode(body).decode("utf-8")
-            return body
-        except Exception as e:
-            return f"Error getting response body: {e}"
+                    return dumps(log, indent=2)
 
     def quit(
         self,
