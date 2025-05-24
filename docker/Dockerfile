@@ -60,7 +60,8 @@ RUN apt-get update && apt-get install -y google-chrome-stable && \
     rm -rf /var/lib/apt/lists/*
 
 RUN wget -q --continue -P $CHROMEDRIVER_PATH "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-RUN unzip $CHROMEDRIVER_PATH* -d $CHROMEDRIVER_PATH
+RUN unzip $CHROMEDRIVER_PATH/chromedriver_linux64.zip -d $CHROMEDRIVER_PATH && \
+    rm $CHROMEDRIVER_PATH/chromedriver_linux64.zip
 
 # Установка Poetry
 RUN pip install --upgrade pip==24.0 \
