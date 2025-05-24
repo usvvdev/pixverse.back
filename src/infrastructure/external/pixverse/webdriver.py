@@ -41,7 +41,7 @@ class PixVerseDriver:
             {"performance": "ALL"},
         )
 
-        self._driver = uc.Chrome(options=options)
+        self._driver = uc.Chrome(options=options, port=9516)
         self._token = token
         self._wait = WebDriverWait(
             self._driver,
