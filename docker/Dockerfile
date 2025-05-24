@@ -22,6 +22,29 @@ RUN apt-get update && apt-get install -y \
     apt-transport-https \
     ca-certificates \
     xvfb \
+    fonts-liberation \
+    libappindicator3-1 \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libc6 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libgdk-pixbuf2.0-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxrandr2 \
+    libgbm1 \
+    libgtk-3-0 \
+    libxss1 \
+    lsb-release \
+    xdg-utils \
+    libu2f-udev \
+    libvulkan1 \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
