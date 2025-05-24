@@ -126,9 +126,13 @@ class PixVerseDriver:
         for entry in logs:
             message = loads(entry["message"])["message"]
             if message["method"] == "Network.responseReceived":
-                response = message["params"]["response"]
-                request_id = message["params"]["requestId"]
-                url = response["url"]
+                params = message["params"]
+                resource_type = params.get("type")
+                if resource_type not in ("XHR", "Fetch"):
+                    continue
+
+                request_id = params["requestId"]
+                url = params["response"]["url"]
                 if api_uri in url:
                     return self._get_response_body(request_id)
         return None
