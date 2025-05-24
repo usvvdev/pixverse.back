@@ -30,6 +30,7 @@ class PixVerseDriver:
         if headless:
             options.add_argument("--headless=new")
         options.add_argument("--start-maximized")
+        options.binary_location = "/usr/bin/google-chrome"
 
         options.set_capability(
             "goog:loggingPrefs",
