@@ -2,6 +2,8 @@
 
 from json import dumps, loads
 
+from base64 import b64decode
+
 import undetected_chromedriver as uc
 
 from selenium.webdriver.common.by import By
@@ -58,6 +60,10 @@ class PixVerseDriver:
     def open_web(
         self,
     ) -> None:
+        self._driver.execute_cdp_cmd(
+            "Network.enable",
+            {},
+        )
         self._driver.get(
             PIXVERSE_BASE_URL,
         )
@@ -115,17 +121,29 @@ class PixVerseDriver:
         )
         button.click()
 
-    def get_logs(
-        self,
-        api_uri: str,
-    ) -> None:
+    def get_logs(self, api_uri: str) -> str | None:
         logs = self._driver.get_log("performance")
         for entry in logs:
-            log = loads(entry["message"])["message"]
-            if log["method"] == "Network.responseReceived":
-                url = log["params"]["response"]["url"]
+            message = loads(entry["message"])["message"]
+            if message["method"] == "Network.responseReceived":
+                response = message["params"]["response"]
+                request_id = message["params"]["requestId"]
+                url = response["url"]
                 if api_uri in url:
-                    return dumps(log, indent=2)
+                    return self._get_response_body(request_id)
+        return None
+
+    def _get_response_body(self, request_id: str) -> str | None:
+        try:
+            result = self._driver.execute_cdp_cmd(
+                "Network.getResponseBody", {"requestId": request_id}
+            )
+            body = result.get("body", "")
+            if result.get("base64Encoded"):
+                body = b64decode(body).decode("utf-8")
+            return body
+        except Exception as e:
+            return f"Error getting response body: {e}"
 
     def quit(
         self,
