@@ -49,11 +49,6 @@ class PixVerseDriver:
             use_subprocess=True,
             timeout=timeout,
         )
-        self._driver.execute_cdp_cmd(
-            "Network.enable",
-            {},
-        )
-
         self._token = token
         self._wait = WebDriverWait(
             self._driver,
@@ -120,23 +115,21 @@ class PixVerseDriver:
         )
         button.click()
 
-    def get_logs(self, api_uri: str) -> str | None:
+    def get_logs(
+        self,
+        api_uri: str,
+    ) -> None:
         logs = self._driver.get_log("performance")
-
         for entry in logs:
-            message = loads(entry["message"])["message"]
-
-            if message["method"] == "Network.responseReceived":
-                response = message["params"]["response"]
-                request_id = message["params"]["requestId"]
-                url = response["url"]
-
+            log = loads(entry["message"])["message"]
+            if log["method"] == "Network.responseReceived":
+                url = log["params"]["response"]["url"]
                 if api_uri in url:
-                    result = self._driver.execute_cdp_cmd(
-                        "Network.getResponseBody", {"requestId": request_id}
+                    body = self._driver.execute_cdp_cmd(
+                        "Network.getResponseBody",
+                        {"requestId": log["params"]["requestId"]},
                     )
-                    print(result)
-                    return result["body"]
+                    return dumps(body)
 
     def quit(
         self,
