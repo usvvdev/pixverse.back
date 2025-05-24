@@ -49,6 +49,11 @@ class PixVerseDriver:
             use_subprocess=True,
             timeout=timeout,
         )
+        self._driver.execute_cdp_cmd(
+            "Network.enable",
+            {},
+        )
+
         self._token = token
         self._wait = WebDriverWait(
             self._driver,
