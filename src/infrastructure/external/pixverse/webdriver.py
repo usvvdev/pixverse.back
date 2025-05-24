@@ -33,6 +33,8 @@ class PixVerseDriver:
         options.add_argument("--start-maximized")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--remote-debugging-port=0")
 
         options.binary_location = "/usr/bin/google-chrome"
 
@@ -41,7 +43,12 @@ class PixVerseDriver:
             {"performance": "ALL"},
         )
 
-        self._driver = uc.Chrome(options=options, port=9516)
+        self._driver = uc.Chrome(
+            options=options,
+            driver_executable_path="/usr/local/bin/chromedriver",
+            use_subprocess=True,
+            timeout=timeout,
+        )
         self._token = token
         self._wait = WebDriverWait(
             self._driver,
