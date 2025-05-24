@@ -1,5 +1,7 @@
 # coding utf-8
 
+from json import dumps, loads
+
 import undetected_chromedriver as uc
 
 from selenium.webdriver.common.by import By
@@ -28,6 +30,11 @@ class PixVerseDriver:
         if headless:
             options.add_argument("--headless=new")
         options.add_argument("--start-maximized")
+
+        options.set_capability(
+            "goog:loggingPrefs",
+            {"performance": "ALL"},
+        )
 
         self._driver = uc.Chrome(options=options)
         self._token = token
@@ -95,6 +102,18 @@ class PixVerseDriver:
             )
         )
         button.click()
+
+    def get_logs(
+        self,
+        api_uri: str,
+    ) -> None:
+        logs = self._driver.get_log("performance")
+        for entry in logs:
+            log = loads(entry["message"])["message"]
+            if log["method"] == "Network.responseReceived":
+                url = log["params"]["response"]["url"]
+                if api_uri in url:
+                    return dumps(log, indent=2)
 
     def quit(
         self,

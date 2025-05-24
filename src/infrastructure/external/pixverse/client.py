@@ -61,11 +61,17 @@ class PixVerseClient:
     ) -> ResponseModel:
         driver = PixVerseDriver(token=token)
         driver.open_web()
+
         await sleep(2)
         driver.enter_prompt(body.prompt)
+
         driver.create_generation()
         await sleep(2)
-        return driver.quit()
+
+        logs = driver.get_logs(PixVerseUri.TEXT)
+
+        driver.quit()
+        return logs
 
     async def image_to_video(
         self,
@@ -76,13 +82,20 @@ class PixVerseClient:
         driver = PixVerseDriver(token=token)
         driver.open_web()
         await sleep(2)
+
         driver.upload_image(str(file))
+
         await sleep(2)
         driver.enter_prompt(body.prompt)
+
         await sleep(2)
         driver.create_generation()
+
         await sleep(2)
-        return driver.quit()
+        logs = driver.get_logs(PixVerseUri.IMAGE)
+
+        driver.quit()
+        return logs
 
     async def generation_status(
         self,

@@ -82,7 +82,7 @@ async def text_to_video(
     body: IBody = Depends(),
     token: str = Depends(oauth2_scheme),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> ResponseModel:
+):
     return await view.text_to_video(
         token,
         body,
