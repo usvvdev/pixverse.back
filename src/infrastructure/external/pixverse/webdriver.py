@@ -115,17 +115,22 @@ class PixVerseDriver:
         )
         button.click()
 
-    def get_logs(
-        self,
-        api_uri: str,
-    ) -> None:
+    def get_logs(self, api_uri: str) -> str | None:
         logs = self._driver.get_log("performance")
+
         for entry in logs:
-            log = loads(entry["message"])["message"]
-            if log["method"] == "Network.responseReceived":
-                url = log["params"]["response"]["url"]
+            message = loads(entry["message"])["message"]
+
+            if message["method"] == "Network.responseReceived":
+                response = message["params"]["response"]
+                request_id = message["params"]["requestId"]
+                url = response["url"]
+
                 if api_uri in url:
-                    return dumps(log, indent=2)
+                    result = self._driver.execute_cdp_cmd(
+                        "Network.getResponseBody", {"requestId": request_id}
+                    )
+                    return result.get("body")
 
     def quit(
         self,
