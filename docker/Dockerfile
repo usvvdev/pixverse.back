@@ -55,9 +55,9 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 
 # Установка ChromeDriver
 RUN wget -q --continue -P /tmp "https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip" && \
-    unzip /tmp/chromedriver_linux64.zip -d /usr/local/bin && \
+    unzip /tmp/chromedriver-linux64.zip -d /usr/local/bin && \
     chmod +x /usr/local/bin/chromedriver && \
-    rm /tmp/chromedriver_linux64.zip
+    rm /tmp/chromedriver-linux64.zip
 
 # Установка Poetry
 RUN pip install --upgrade pip==24.0 && \
