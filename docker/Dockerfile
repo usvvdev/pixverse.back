@@ -13,8 +13,8 @@ ENV PROJECT_DIR="/code" \
     POETRY_VIRTUALENVS_CREATE=false \
     PATH="${PATH}:/root/.poetry/bin" \
     CHROMEDRIVER_PATH="/usr/local/bin/chromedriver" \
-    CHROME_VERSION="136.0.6949.0" \
-    CHROMEDRIVER_VERSION="136.0.6949.0"
+    CHROME_VERSION="114.0.5735.90" \
+    CHROMEDRIVER_VERSION="114.0.5735.90"
 
 # Установка необходимых зависимотей включая wget, gnupg, curl, etc.
 RUN apt-get update && apt-get install -y \
