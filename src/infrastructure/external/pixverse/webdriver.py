@@ -35,7 +35,7 @@ class PixVerseDriver:
         self,
         token: str | None = None,
         timeout: int = 2,
-        headless: bool = True,
+        headless: bool = False,
     ) -> None:
         options = Options()
         if headless:
