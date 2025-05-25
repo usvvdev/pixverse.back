@@ -153,7 +153,7 @@ class PixVerseDriver:
                 except OSError:
                     text = body_bytes.decode("utf-8")
 
-                return dumps(loads(text), indent=2, ensure_ascii=False)
+                return loads(text)
 
     def quit(
         self,
