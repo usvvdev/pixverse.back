@@ -1,12 +1,19 @@
 # coding utf-8
 
-from json import dumps, loads
-
-import undetected_chromedriver as uc
+from json import (
+    dumps,
+    loads,
+)
 
 from io import BytesIO
 
 from gzip import GzipFile
+
+from seleniumwire import webdriver
+
+from selenium.webdriver.chrome.options import Options
+
+from selenium.webdriver.chrome.service import Service
 
 from selenium.webdriver.common.by import By
 
@@ -28,9 +35,9 @@ class PixVerseDriver:
         self,
         token: str | None = None,
         timeout: int = 2,
-        headless: bool = True,
+        headless: bool = False,
     ) -> None:
-        options = uc.ChromeOptions()
+        options = Options()
         if headless:
             options.add_argument("--headless=new")
 
@@ -47,11 +54,18 @@ class PixVerseDriver:
             {"performance": "ALL"},
         )
 
-        self._driver = uc.Chrome(
+        seleniumwire_options = {
+            "disable_encoding": True,
+        }
+
+        service = Service(executable_path="/usr/local/bin/chromedriver")
+
+        self._driver = webdriver.Chrome(
+            service=service,
             options=options,
-            driver_executable_path="/usr/local/bin/chromedriver",
-            use_subprocess=True,
-            timeout=timeout,
+            seleniumwire_options=seleniumwire_options,
+            # use_subprocess=True,
+            # timeout=timeout,
         )
         self._token = token
         self._wait = WebDriverWait(
@@ -128,16 +142,18 @@ class PixVerseDriver:
         api_uri: str,
     ) -> None:
         for request in self._driver.requests:
-            if api_uri in request.url:
-                if request.response:
-                    body_bytes = request.response.body
+            if api_uri in request.url and request.response:
+                body_bytes = request.response.body
+                if not body_bytes:
+                    continue
+
+                try:
                     with GzipFile(fileobj=BytesIO(body_bytes)) as f:
-                        decompressed = f.read().decode("utf-8")
-                        return dumps(
-                            loads(decompressed),
-                            indent=2,
-                            ensure_ascii=False,
-                        )
+                        text = f.read().decode("utf-8")
+                except OSError:
+                    text = body_bytes.decode("utf-8")
+
+                return dumps(loads(text), indent=2, ensure_ascii=False)
 
     def quit(
         self,

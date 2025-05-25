@@ -16,7 +16,9 @@ dependencies = [
     "python-multipart (>=0.0.20,<0.0.21)",
     "selenium (>=4.33.0,<5.0.0)",
     "undetected-chromedriver (>=3.5.5,<4.0.0)",
-    "pytest-shutil (>=1.8.1,<2.0.0)"
+    "pytest-shutil (>=1.8.1,<2.0.0)",
+    "selenium-wire (>=5.1.0,<6.0.0)",
+    "python-io (>=0.3,<0.4)"
 ]
 
 
