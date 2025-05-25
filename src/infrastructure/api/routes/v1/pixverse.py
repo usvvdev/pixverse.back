@@ -82,7 +82,7 @@ async def text_to_video(
     body: IBody = Depends(),
     token: str = Depends(oauth2_scheme),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-):
+) -> ResponseModel:
     return await view.text_to_video(
         token,
         body,
@@ -116,7 +116,7 @@ async def image_to_video(
     token: str = Depends(oauth2_scheme),
     file: UploadFile = File(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-):
+) -> ResponseModel:
     suffix = Path(file.filename).suffix
 
     with NamedTemporaryFile(delete=False, suffix=suffix) as tmp:

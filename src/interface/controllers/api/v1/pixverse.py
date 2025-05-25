@@ -42,7 +42,7 @@ class PixVerseController:
         body: IBody,
         token: str,
         file: str,
-    ):
+    ) -> ResponseModel:
         return await self._client.image_to_video(
             body,
             token,

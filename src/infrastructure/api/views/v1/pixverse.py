@@ -42,7 +42,7 @@ class PixVerseView:
         body: BaseBody,
         token: str,
         file: str,
-    ):
+    ) -> ResponseModel:
         return await self._controller.image_to_video(
             body,
             token,

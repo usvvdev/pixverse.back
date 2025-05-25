@@ -78,7 +78,7 @@ class PixVerseClient:
         body: IBody,
         token: str,
         file: str,
-    ):
+    ) -> ResponseModel:
         driver = PixVerseDriver(token=token)
         driver.open_web()
         await sleep(2)
