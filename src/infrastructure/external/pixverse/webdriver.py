@@ -4,6 +4,10 @@ from json import dumps, loads
 
 import undetected_chromedriver as uc
 
+from io import BytesIO
+
+from gzip import GzipFile
+
 from selenium.webdriver.common.by import By
 
 from selenium.webdriver.support.ui import WebDriverWait
@@ -123,13 +127,17 @@ class PixVerseDriver:
         self,
         api_uri: str,
     ) -> None:
-        logs = self._driver.get_log("performance")
-        for entry in logs:
-            log = loads(entry["message"])["message"]
-            if log["method"] == "Network.responseReceived":
-                url = log["params"]["response"]["url"]
-                if api_uri in url:
-                    return dumps(log, indent=2)
+        for request in self._driver.requests:
+            if api_uri in request.url:
+                if request.response:
+                    body_bytes = request.response.body
+                    with GzipFile(fileobj=BytesIO(body_bytes)) as f:
+                        decompressed = f.read().decode("utf-8")
+                        return dumps(
+                            loads(decompressed),
+                            indent=2,
+                            ensure_ascii=False,
+                        )
 
     def quit(
         self,
