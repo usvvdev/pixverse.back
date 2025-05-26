@@ -6,14 +6,11 @@ from .request import RequestMethod
 
 from .uri import PixVerseUri
 
-from .model import ModelVersion
-
-from .quality import VideoQuality
+from .errors import ErrorCode
 
 __all__: list[str] = [
     "ConfEnv",
     "RequestMethod",
     "PixVerseUri",
-    "ModelVersion",
-    "VideoQuality",
+    "ErrorCode",
 ]

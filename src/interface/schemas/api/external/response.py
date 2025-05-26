@@ -4,81 +4,7 @@ from typing import Annotated, Any
 
 from pydantic import Field
 
-from .....domain.entities import (
-    IBody,
-    ISchema,
-)
-
-
-class BaseBody(IBody):
-    duration: Annotated[
-        int,
-        Field(default=5),
-    ]
-    model: Annotated[
-        str,
-        Field(default="v4.5"),
-    ]
-    quality: Annotated[
-        str,
-        Field(default="360p"),
-    ]
-
-
-class TextBody(BaseBody):
-    aspect_ratio: Annotated[
-        str,
-        Field(default="16:9"),
-    ]
-    credit_change: Annotated[
-        int,
-        Field(default=20),
-    ]
-    lip_sync_tts_speaker_id: Annotated[
-        str,
-        Field(default="Auto"),
-    ]
-    motion_mode: Annotated[
-        str,
-        Field(default="normal"),
-    ]
-
-
-class ImageBody(BaseBody):
-    img_id: Annotated[
-        int,
-        Field(...),
-    ]
-    img_url: Annotated[
-        str,
-        Field(..., alias="customer_img_url"),
-    ]
-    img_path: Annotated[
-        str,
-        Field(
-            default="upload/d0a7be74-b235-4d9c-978a-0abaaf2315ca.jpg",
-            alias="customer_img_path",
-        ),
-    ]
-    motion_mode: Annotated[
-        str,
-        Field(default="normal"),
-    ]
-    credit_change: Annotated[
-        int,
-        Field(default=20),
-    ]
-    lip_sync_tts_speaker_id: Annotated[
-        str,
-        Field(default="Auto"),
-    ]
-
-
-class StatusBody(ISchema):
-    generation_id: Annotated[
-        int,
-        Field(...),
-    ]
+from .....domain.entities import ISchema
 
 
 class ResultImage(ISchema):
@@ -172,15 +98,4 @@ class ResponseModel(ISchema):
     response: Annotated[
         Response | ResultStatus | ResultImage | Any,
         Field(default=None, alias="Resp"),
-    ]
-
-
-class UserCredentials(ISchema):
-    username: Annotated[
-        str,
-        Field(..., alias="Username"),
-    ]
-    password: Annotated[
-        str,
-        Field(..., alias="Password"),
     ]

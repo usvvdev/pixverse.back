@@ -1,7 +1,7 @@
 # coding utf-8
 
 """
-Базовая ссылка на ресурс
+Базовые ссылки на ресурс (Платформа и API)
 """
 
 PIXVERSE_BASE_URL = "https://app.pixverse.ai/onboard"

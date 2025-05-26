@@ -1,9 +1,10 @@
 # coding utf-8
 
-from ....schemas.api import (
-    StatusBody,
-    UserCredentials,
-)
+from fastapi import UploadFile
+
+from fastapi.security import OAuth2PasswordRequestForm
+
+from ....schemas.api import StatusBody
 
 from .....domain.entities import IBody
 
@@ -21,7 +22,7 @@ class PixVerseController:
 
     async def auth_user(
         self,
-        body: UserCredentials,
+        body: OAuth2PasswordRequestForm,
     ) -> ResponseModel:
         return await self._client.auth_user(
             body,
@@ -39,13 +40,13 @@ class PixVerseController:
 
     async def image_to_video(
         self,
-        body: IBody,
         token: str,
-        file: str,
+        body: IBody,
+        file: UploadFile,
     ) -> ResponseModel:
         return await self._client.image_to_video(
-            body,
             token,
+            body,
             file,
         )
 

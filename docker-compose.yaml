@@ -7,6 +7,8 @@ x-service-template: &service-template
     dockerfile: ./docker/Dockerfile
   networks:
       - default
+  volumes:
+    - .:/code
   environment:
     - APP_PORT=${APP_PORT}
 

@@ -1,9 +1,6 @@
 # coding utf-8
 
-from json import (
-    dumps,
-    loads,
-)
+from json import loads
 
 from io import BytesIO
 
@@ -37,6 +34,12 @@ class PixVerseDriver:
         timeout: int = 2,
         headless: bool = True,
     ) -> None:
+        """
+        Инициализация драйвера.
+            :param token: токен для авторизации (кука)
+            :param timeout: таймаут ожидания элементов
+            :param headless: запуск без GUI (True по умолчанию)
+        """
         options = Options()
         if headless:
             options.add_argument("--headless=new")
@@ -47,12 +50,11 @@ class PixVerseDriver:
         options.add_argument("--disable-gpu")
         options.add_argument("--remote-debugging-port=0")
 
-        options.binary_location = "/usr/bin/google-chrome"
-
         options.set_capability(
             "goog:loggingPrefs",
             {"performance": "ALL"},
         )
+        options.binary_location = "/usr/bin/google-chrome"
 
         seleniumwire_options = {
             "disable_encoding": True,
@@ -64,8 +66,6 @@ class PixVerseDriver:
             service=service,
             options=options,
             seleniumwire_options=seleniumwire_options,
-            # use_subprocess=True,
-            # timeout=timeout,
         )
         self._token = token
         self._wait = WebDriverWait(
@@ -76,6 +76,10 @@ class PixVerseDriver:
     def open_web(
         self,
     ) -> None:
+        """
+        Открыть сайт и авторизоваться через куку.
+        """
+
         self._driver.execute_cdp_cmd(
             "Network.enable",
             {},
@@ -94,6 +98,10 @@ class PixVerseDriver:
         self,
         text: str,
     ) -> None:
+        """
+        Ввести текст в поле ввода.
+        """
+
         textarea: WebElement = self._wait.until(
             presence_of_element_located(
                 (
@@ -112,6 +120,10 @@ class PixVerseDriver:
         self,
         path: str,
     ) -> None:
+        """
+        Загрузить изображение.
+        """
+
         file_input: WebElement = self._wait.until(
             presence_of_element_located(
                 (
@@ -127,6 +139,10 @@ class PixVerseDriver:
     def create_generation(
         self,
     ) -> None:
+        """
+        Нажать кнопку создания генерации.
+        """
+
         button: WebElement = self._wait.until(
             element_to_be_clickable(
                 (
@@ -141,6 +157,10 @@ class PixVerseDriver:
         self,
         api_uri: str,
     ) -> None:
+        """
+        Получить логи с ответами от API с указанным URI.
+        """
+
         for request in self._driver.requests:
             if api_uri in request.url and request.response:
                 body_bytes = request.response.body
@@ -158,4 +178,8 @@ class PixVerseDriver:
     def quit(
         self,
     ) -> None:
+        """
+        Закрыть драйвер.
+        """
+
         self._driver.quit()

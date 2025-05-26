@@ -1,15 +1,17 @@
 # coding utf-8
 
-from .....interface.schemas.api import (
-    TextBody,
-    BaseBody,
-    StatusBody,
-    UserCredentials,
-)
+from fastapi import UploadFile
+
+from fastapi.security import OAuth2PasswordRequestForm
+
+from .....domain.entities import IBody
 
 from .....interface.controllers.api.v1 import PixVerseController
 
-from .....interface.schemas.api import ResponseModel
+from .....interface.schemas.api import (
+    StatusBody,
+    ResponseModel,
+)
 
 
 class PixVerseView:
@@ -21,7 +23,7 @@ class PixVerseView:
 
     async def auth_user(
         self,
-        body: UserCredentials,
+        body: OAuth2PasswordRequestForm,
     ) -> ResponseModel:
         return await self._controller.auth_user(
             body,
@@ -30,7 +32,7 @@ class PixVerseView:
     async def text_to_video(
         self,
         token: str,
-        body: TextBody,
+        body: IBody,
     ) -> ResponseModel:
         return await self._controller.text_to_video(
             token,
@@ -39,13 +41,13 @@ class PixVerseView:
 
     async def image_to_video(
         self,
-        body: BaseBody,
         token: str,
-        file: str,
+        body: IBody,
+        file: UploadFile,
     ) -> ResponseModel:
         return await self._controller.image_to_video(
-            body,
             token,
+            body,
             file,
         )
 

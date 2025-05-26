@@ -2,13 +2,18 @@
 
 from .conf import IConfEnv
 
-from .headers import TokenHeaders, APIHeaders
+from .headers import (
+    TokenHeaders,
+    APIHeaders,
+)
 
 from .body import IBody
 
 from .base import ISchema
 
 from .cookie import ICookie
+
+from .error import IError
 
 __all__: list[str] = [
     "IConfEnv",
@@ -17,4 +22,5 @@ __all__: list[str] = [
     "IBody",
     "ISchema",
     "ICookie",
+    "IError",
 ]
