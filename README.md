@@ -10,9 +10,13 @@
 
 Я обнаружил, что для интеграции подойдут следующие HTTP эндпоинты:
 
-* `/creative_platform/login`
-* `/creative_platform/video/t2v`
-* `/creative_platform/video/i2v`
+| Метод | URI                                      | Назначение                          |
+|-------|------------------------------------------|-------------------------------------|
+| POST  | `/creative_platform/login`               | Авторизация                         |
+| POST  | `/creative_platform/video/t2v`           | Генерация видео по тексту           |
+| POST  | `/creative_platform/video/i2v`           | Генерация видео по изображению      |
+
+---
 
 Они позволили реализовать бизнес-логику:
 
@@ -26,8 +30,12 @@
 
 API предоставляет возможность загружать изображения и получать статус генерации видео. Это было реализовано с помощью `httpx` и запросов к:
 
-* `/openapi/v2/image/upload`
-* `/openapi/v2/video/result/{id}`
+| Метод | URI                                      | Назначение                          |
+|-------|------------------------------------------|-------------------------------------|
+| POST  | `/openapi/v2/image/upload`               | Загузка фотографии по API           |
+| GET   | `/openapi/v2/video/result/{id}`          | Получение статуса генерации         |
+
+---
 
 #### 3. Генерация через Selenium
 
@@ -37,6 +45,51 @@ API предоставляет возможность загружать изо�
 
 Все модули были объединены и связаны с помощью `FastAPI`, создавая REST API интерфейс.
 
+### ⏱ Время реализации
+
+На реализацию я потратил около суток-двух, так как столкнулся с проблемой развертывания контейнера из-за Selenium:
+
+```Dockerfile
+# Установка Google Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get update && apt-get install -y google-chrome-stable && \
+    rm -rf /var/lib/apt/lists/*
+
+# Установка ChromeDriver
+RUN wget -q --continue -P /tmp "https://storage.googleapis.com/chrome-for-testing-public/${CHROMEDRIVER_VERSION}/linux64/chromedriver-linux64.zip" && \
+    unzip /tmp/chromedriver-linux64.zip -d /tmp && \
+    mv /tmp/chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
+    chmod +x /usr/local/bin/chromedriver && \
+    rm -rf /tmp/chromedriver-linux64 /tmp/chromedriver-linux64.zip
+```
+
+К основным трудностям, с которыми я столкнулся, было получение логов:
+
+```python
+def get_logs(
+    self,
+    api_uri: str,
+) -> None:
+    """
+    Получить логи с ответами от API с указанным URI.
+    """
+
+    for request in self._driver.requests:
+        if api_uri in request.url and request.response:
+            body_bytes = request.response.body
+            if not body_bytes:
+                continue
+
+            try:
+                with GzipFile(fileobj=BytesIO(body_bytes)) as f:
+                    text = f.read().decode("utf-8")
+            except OSError:
+                text = body_bytes.decode("utf-8")
+
+            return loads(text)
+```
+
 ---
 
 ### 📦 Примеры кода API:
@@ -45,19 +98,8 @@ API предоставляет возможность загружать изо�
 
 ```python
 @pixverse_router.post("/auth")
-@auto_docs(
-    "api/v1/t2v",
-    "POST",
-    description="Роутер для аутентификации на платформе.",
-    params={
-        "username": {"type": "string", "description": "Имя аккаунта"},
-        "password": {"type": "string", "description": "Пароль аккаунта"},
-    },
-)
-async def auth_user(
-    body: OAuth2PasswordRequestForm = Depends(),
-    view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> AccessToken:
+@auto_docs(...)
+async def auth_user(...):
     user = await view.auth_user(body)
     try:
         return AccessToken(access_token=user.response.result.token)
@@ -70,11 +112,7 @@ async def auth_user(
 ```python
 @pixverse_router.post("/t2v")
 @auto_docs(...)
-async def text_to_video(
-    body: IBody = Depends(),
-    token: str = Depends(oauth2_scheme),
-    view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> ResponseModel:
+async def text_to_video(...):
     return await view.text_to_video(token, body)
 ```
 
@@ -83,12 +121,7 @@ async def text_to_video(
 ```python
 @pixverse_router.post("/i2v")
 @auto_docs(...)
-async def image_to_video(
-    token: str = Depends(oauth2_scheme),
-    body: IBody = Depends(),
-    file: UploadFile = File(),
-    view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> ResponseModel:
+async def image_to_video(...):
     return await view.image_to_video(token, body, file)
 ```
 
@@ -97,10 +130,7 @@ async def image_to_video(
 ```python
 @pixverse_router.post("/status")
 @auto_docs(...)
-async def generation_status(
-    body: StatusBody = Depends(),
-    view: PixVerseView = Depends(PixVerseViewFactory.create),
-) -> ResponseModel:
+async def generation_status(...):
     return await view.generation_status(body)
 ```
 
@@ -163,10 +193,5 @@ class PixVerseClient:
         ...
 ```
 
----
-
-### ✅ Заключение:
-
-Проект охватывает все ключевые этапы интеграции с Pixverse API: от авторизации до получения финального результата генерации. Архитектура построена модульно, легко расширяется и сопровождается, что делает её подходящей для реальных production-решений.
 
 
