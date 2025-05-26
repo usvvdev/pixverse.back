@@ -6,11 +6,6 @@ from pydantic import Field
 
 from .base import ISchema
 
-from .typing import (
-    TModel,
-    TQuality,
-)
-
 
 class IBody(ISchema):
     """Базовое тело запроса для конфигурации AI-модели.
@@ -24,28 +19,6 @@ class IBody(ISchema):
     Наследует все особенности сериализации от ISchema.
     """
 
-    model: Annotated[
-        TModel,
-        Field(...),
-    ]
-    """Выбор конкретной AI-модели для обработки запроса.
-    
-    Тип:
-        TModel: Перечисление доступных моделей
-    Обязательное поле.
-    """
-
-    duration: Annotated[
-        int,
-        Field(...),
-    ]
-    """Длительность обработки запроса в миллисекундах.
-    
-    Тип:
-        int: Положительное целое число
-    Обязательное поле.
-    """
-
     prompt: Annotated[
         str,
         Field(...),
@@ -54,16 +27,5 @@ class IBody(ISchema):
     
     Тип:
         str: Непустая строка
-    Обязательное поле.
-    """
-
-    quality: Annotated[
-        TQuality,
-        Field(...),
-    ]
-    """Уровень качества ожидаемого результата.
-    
-    Тип:
-        TQuality: Перечисление возможных уровней качества
     Обязательное поле.
     """

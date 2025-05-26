@@ -42,7 +42,10 @@ class IConfEnv(BaseSettings):
     Значение по умолчанию:
         Берется из переменной окружения APP_ENV
     """
-
+    api_key: Annotated[
+        str,
+        Field(...),
+    ]
     api_prefix: Annotated[
         str,
         Field(default="/api/v1"),
@@ -65,17 +68,6 @@ class IConfEnv(BaseSettings):
         list[str]
     Значение по умолчанию:
         ["*"] (разрешены все хосты)
-    """
-
-    api_key: Annotated[
-        str,
-        Field(...),
-    ]
-    """Секретный API-ключ для доступа к сервису.
-    
-    Тип:
-        str
-    Обязательное поле.
     """
 
     logging_level: Annotated[

@@ -12,7 +12,7 @@ from httpx import (
 
 from ...domain.entities import ISchema
 
-from ...interface.schemas.api import Resp
+from ...interface.schemas.api import ResponseModel
 
 
 class Web3:
@@ -29,7 +29,6 @@ class Web3:
     def __init__(
         self,
         url: str,
-        headers: dict[str, Any],
     ) -> None:
         """Инициализация Web3 клиента.
 
@@ -38,10 +37,10 @@ class Web3:
             headers (dict): Стандартные заголовки для запросов
         """
         self._url = url
-        self._headers = headers
 
     async def get_client(
         self,
+        headers: dict[str, Any],
     ) -> AsyncGenerator[AsyncClient, Any]:
         """Асинхронный генератор HTTP клиента с управлением контекстом.
 
@@ -49,13 +48,14 @@ class Web3:
             AsyncClient: Экземпляр асинхронного HTTP клиента
 
         """
-        async with AsyncClient(headers=self._headers) as client:
+        async with AsyncClient(headers=headers) as client:
             yield client
 
     async def __make_request(
         self,
         method: str,
         endpoint: str,
+        headers: dict[str, Any],
         **kwargs: Any,
     ) -> AsyncGenerator[Response, Any]:
         """Внутренний метод выполнения запроса.
@@ -69,7 +69,7 @@ class Web3:
             Response: Объект ответа от сервера
 
         """
-        async for client in self.get_client():
+        async for client in self.get_client(headers):
             yield await client.request(
                 method,
                 url="".join((self._url, endpoint)),
@@ -80,9 +80,10 @@ class Web3:
         self,
         method: str,
         endpoint: str,
+        headers: dict[str, Any] = None,
         body: ISchema = None,
         files: ISchema | bytes = None,
-    ) -> Resp:
+    ) -> ResponseModel:
         """Основной метод отправки запроса к API.
 
         Args:
@@ -96,8 +97,9 @@ class Web3:
         """
         async for response in self.__make_request(
             method,
-            endpoint=endpoint,
+            endpoint,
+            headers,
             json=body.dict if body else None,
             files=files,
         ):
-            return Resp(**response.json())
+            return ResponseModel(**response.json())

@@ -15,22 +15,27 @@ class PixVerseUri(StrEnum):
     Все URI указаны относительно базового URL API.
     """
 
-    TEXT = "video/text/generate"
+    AUTH = "/creative_platform/login"
+    """
+    Проверка статуса выполненной генерации.
+    """
+
+    TEXT = "/creative_platform/video/t2v"
     """
     Генерация контента по текстовому описанию.
     """
 
-    IMAGE = "video/img/generate"
+    IMAGE = "/creative_platform/video/i2v"
     """
     Генерация контента по заданой фотографии.
     """
 
-    UPLOAD = "image/upload"
+    UPLOAD = "/openapi/v2/image/upload"
     """
     Загрузка пользовательских изображений для создания контента по фотографии.
     """
 
-    STATUS = "video/result/{id}"
+    STATUS = "/openapi/v2/video/result/{id}"
     """
     Проверка статуса выполненной генерации.
     """

@@ -21,20 +21,6 @@ class IHeaders(ISchema):
     - Использование стандартных алиасов для заголовков
     """
 
-    api_key: Annotated[
-        str,
-        Field(..., alias="API-KEY"),
-    ]
-    """Секретный ключ для аутентификации в API.
-    
-    Тип:
-        str
-    Обязательное поле:
-        Да
-    Алиас в заголовке:
-        API-KEY
-    """
-
     trace_id: Annotated[
         str,
         Field(default_factory=lambda: str(uuid4()), alias="Ai-trace-id"),
@@ -49,4 +35,36 @@ class IHeaders(ISchema):
         Ai-trace-id
     Назначение:
         Для сквозной трассировки запросов в распределенных системах
+    """
+
+
+class TokenHeaders(IHeaders):
+    token: Annotated[
+        str,
+        Field(..., alias="Token"),
+    ]
+    """ Ключ аутентификации (JWT) для API.
+    
+    Тип:
+        str
+    Обязательное поле:
+        Да
+    Алиас в заголовке:
+        Token
+    """
+
+
+class APIHeaders(IHeaders):
+    api_key: Annotated[
+        str,
+        Field(..., alias="API-KEY"),
+    ]
+    """ Секретный ключ для API.
+    
+    Тип:
+        str
+    Обязательное поле:
+        Да
+    Алиас в заголовке:
+        API-KEY
     """

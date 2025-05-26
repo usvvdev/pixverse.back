@@ -1,12 +1,10 @@
 # coding utf-8
 
-from typing import Any
-
 from ..web3 import Web3
 
-from ....domain.constants import PIXVERSE_BASE_URL
+from ....domain.constants import PIXVERSE_API_URL
 
-from ....interface.schemas.api import Resp
+from ....interface.schemas.api import ResponseModel
 
 from ....domain.entities.typing.enums import RequestMethod
 
@@ -18,29 +16,27 @@ class PixVerseCore(Web3):
     для взаимодействия с PixVerse API. Автоматически использует базовый URL сервиса.
 
     Args:
-        headers (dict[str, Any]): Заголовки HTTP-запросов (должен содержать API-ключ)
+        headers (dict[str, Any]): Заголовки HTTP-запросов (должен содержать JWT)
     """
 
     def __init__(
         self,
-        headers: dict[str, Any],
     ) -> None:
         """Инициализация клиента PixVerse.
 
         Args:
             headers (dict): Заголовки запросов, обязательно включающие:
-                - 'API-KEY': Ключ авторизации
+                - 'Token': Ключ авторизации
         """
         super().__init__(
-            PIXVERSE_BASE_URL,  # Базовый URL из конфигурации
-            headers,
+            PIXVERSE_API_URL,  # Базовый URL из конфигурации
         )
 
     async def post(
         self,
         *args,
         **kwargs,
-    ) -> Resp:
+    ) -> ResponseModel:
         """Отправка POST-запроса к PixVerse API.
 
         Args:
@@ -63,7 +59,7 @@ class PixVerseCore(Web3):
         self,
         *args,
         **kwargs,
-    ) -> Resp:
+    ) -> ResponseModel:
         """Отправка GET-запроса к PixVerse API.
 
         Args:

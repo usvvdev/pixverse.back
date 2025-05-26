@@ -1,17 +1,17 @@
 # coding utf-8
 
-from .pixverse import (
-    BaseBody,
-    TextBody,
-    ImageBody,
-    StatusBody,
-    Resp,
+from .auth import (
+    UserCredentials,
+    AccessToken,
 )
 
+from .body import StatusBody
+
+from .response import ResponseModel
+
 __all__ = [
-    "BaseBody",
-    "TextBody",
-    "ImageBody",
     "StatusBody",
-    "Resp",
+    "ResponseModel",
+    "UserCredentials",
+    "AccessToken",
 ]

@@ -106,3 +106,8 @@ class IOpenAPI(ISchema):
         - Отображается в Swagger UI и ReDoc
         - Используется в OpenAPI схеме
     """
+
+    title: Annotated[
+        str,
+        Field(default="PIXVERSE API SERVICE"),
+    ]
