@@ -36,7 +36,7 @@ class IOpenAPI(ISchema):
 
     docs_url: Annotated[
         str,
-        Field(default=f"/{getenv('APP_SERVICE')}/docs"),
+        Field(default="/docs"),
     ]
     """URL-адрес для доступа к Swagger UI интерфейсу.
     
@@ -65,7 +65,7 @@ class IOpenAPI(ISchema):
 
     openapi_url: Annotated[
         str,
-        Field(default=f"/{getenv('APP_SERVICE')}/openapi.json"),
+        Field(default="/openapi.json"),
     ]
     """URL-адрес для получения OpenAPI схемы в JSON формате.
     
@@ -80,7 +80,7 @@ class IOpenAPI(ISchema):
 
     redoc_url: Annotated[
         str,
-        Field(default=f"/{getenv('APP_SERVICE')}/redoc"),
+        Field(default="/redoc"),
     ]
     """URL-адрес для доступа к ReDoc интерфейсу.
     
