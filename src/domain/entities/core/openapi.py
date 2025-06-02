@@ -2,6 +2,8 @@
 
 from typing import Annotated
 
+from os import getenv
+
 from pydantic import Field
 
 from .base import ISchema
@@ -34,7 +36,7 @@ class IOpenAPI(ISchema):
 
     docs_url: Annotated[
         str,
-        Field(default="/docs"),
+        Field(default=f"/{getenv('APP_SERVICE')}/docs"),
     ]
     """URL-адрес для доступа к Swagger UI интерфейсу.
     
