@@ -24,7 +24,7 @@ services:
     ports:
       - 8002:${APP_PORT}
     environment:
-      - APP_SERVICE=pixvesre
+      - APP_SERVICE=pixverse
   
   dashboard:
     <<: *service-template
