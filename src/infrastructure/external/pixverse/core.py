@@ -1,15 +1,23 @@
 # coding utf-8
 
-from ..web3 import Web3
+from typing import Any
+
+from httpx import HTTPError
+
+from fastapi import HTTPException
+
+from ..core import HttpClient
 
 from ....domain.constants import PIXVERSE_API_URL
 
-from ....interface.schemas.api import ResponseModel
+from ....domain.entities.pixverse import ITokenHeaders
 
-from ....domain.entities.typing.enums import RequestMethod
+from ....domain.typing.enums import RequestMethod
+
+from ....interface.schemas.external import Response
 
 
-class PixVerseCore(Web3):
+class PixverseCore(HttpClient):
     """Базовый клиент для работы с PixVerse API.
 
     Наследует функциональность Web3 клиента и добавляет специализированные методы
@@ -34,9 +42,10 @@ class PixVerseCore(Web3):
 
     async def post(
         self,
+        token: str = None,
         *args,
         **kwargs,
-    ) -> ResponseModel:
+    ) -> Response:
         """Отправка POST-запроса к PixVerse API.
 
         Args:
@@ -49,17 +58,27 @@ class PixVerseCore(Web3):
             dict[str, Any]: Ответ API в формате JSON
 
         """
-        return await super().send_request(
-            RequestMethod.POST,
-            *args,
-            **kwargs,
-        )
+        try:
+            response: dict[str, Any] = await super().send_request(
+                RequestMethod.POST,
+                headers=ITokenHeaders(
+                    token=token,
+                )
+                if token
+                else None,
+                *args,
+                **kwargs,
+            )
+            return Response(**response)
+        except HTTPError as err:
+            raise HTTPException(status_code=502, detail=f"{str(err)}")
 
     async def get(
         self,
+        token: str,
         *args,
         **kwargs,
-    ) -> ResponseModel:
+    ) -> Response:
         """Отправка GET-запроса к PixVerse API.
 
         Args:
@@ -71,8 +90,17 @@ class PixVerseCore(Web3):
             dict[str, Any]: Ответ API в формате JSON
 
         """
-        return await super().send_request(
-            RequestMethod.GET,
-            *args,
-            **kwargs,
-        )
+        try:
+            response: dict[str, Any] = await super().send_request(
+                RequestMethod.GET,
+                headers=ITokenHeaders(
+                    token=token,
+                )
+                if token
+                else None,
+                *args,
+                **kwargs,
+            )
+            return Response(**response)
+        except HTTPError as err:
+            raise HTTPException(status_code=502, detail=f"{str(err)}")

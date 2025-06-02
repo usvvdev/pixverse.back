@@ -8,7 +8,7 @@ from typing import (
 
 from fastapi import FastAPI, APIRouter
 
-from ...domain.entities import IConfEnv
+from ...domain.entities.core import IConfEnv
 
 
 class AppRouting:

@@ -1,7 +1,10 @@
 # coding utf-8
 
-from .auth import InvalidCredentials
+from .pixverse import PixverseError
+
+from .engine import EngineError
 
 __all__: list[str] = [
-    "InvalidCredentials",
+    "PixverseError",
+    "EngineError",
 ]

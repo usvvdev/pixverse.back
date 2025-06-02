@@ -4,14 +4,21 @@ from fastapi import UploadFile
 
 from fastapi.security import OAuth2PasswordRequestForm
 
-from .....domain.entities import IBody
+from .....domain.entities.pixverse import IBody
+
+from .....interface.schemas.external import (
+    T2VBody,
+    Resp,
+    AuthRes,
+    GenBody,
+    TemplateBody,
+    TokensResponse,
+    GenerationStatus,
+    Template,
+    EffectResponse,
+)
 
 from .....interface.controllers.api.v1 import PixVerseController
-
-from .....interface.schemas.api import (
-    StatusBody,
-    ResponseModel,
-)
 
 
 class PixVerseView:
@@ -24,37 +31,60 @@ class PixVerseView:
     async def auth_user(
         self,
         body: OAuth2PasswordRequestForm,
-    ) -> ResponseModel:
+    ) -> AuthRes:
         return await self._controller.auth_user(
             body,
         )
 
     async def text_to_video(
         self,
+        body: T2VBody,
         token: str,
-        body: IBody,
-    ) -> ResponseModel:
+    ) -> Resp:
         return await self._controller.text_to_video(
-            token,
             body,
+            token,
         )
 
     async def image_to_video(
         self,
-        token: str,
         body: IBody,
-        file: UploadFile,
-    ) -> ResponseModel:
+        image: UploadFile,
+        token: str,
+    ) -> Resp:
         return await self._controller.image_to_video(
-            token,
             body,
-            file,
+            image,
+            token,
         )
 
     async def generation_status(
         self,
-        body: StatusBody,
-    ) -> ResponseModel:
+        body: GenBody,
+        token: str,
+    ) -> GenerationStatus:
         return await self._controller.generation_status(
             body,
+            token,
         )
+
+    async def credits_amount(
+        self,
+        token: str,
+    ) -> TokensResponse:
+        return await self._controller.credits_amount(
+            token,
+        )
+
+    async def restyle_templates(
+        self,
+        body: TemplateBody,
+    ) -> list[Template]:
+        return await self._controller.restyle_templates(
+            body,
+        )
+
+    async def effect_templates(
+        self,
+    ) -> EffectResponse:
+        return await self._controller.effect_templates()

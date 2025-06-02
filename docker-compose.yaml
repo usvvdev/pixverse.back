@@ -13,9 +13,22 @@ x-service-template: &service-template
     - APP_PORT=${APP_PORT}
 
 services:
-  api:
+  auth:
     <<: *service-template
     ports:
       - 8001:${APP_PORT}
     environment:
-      - APP_PROJECT=api
+      - APP_SERVICE=auth
+  pixvesre-api:
+    <<: *service-template
+    ports:
+      - 8002:${APP_PORT}
+    environment:
+      - APP_SERVICE=pixvesre
+  
+  dashboard:
+    <<: *service-template
+    ports:
+      - 8003:${APP_PORT}
+    environment:
+      - APP_SERVICE=dashboard

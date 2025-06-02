@@ -14,9 +14,9 @@ from ..conf.envs import (
     TestConfEnv,
 )
 
-from ..entities.conf import IConfEnv
+from ..entities.core import IConfEnv
 
-from ..entities.typing import TConf
+from ..typing import TConf
 
 
 env: TConf = IConfEnv().app_env

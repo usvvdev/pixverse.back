@@ -2,7 +2,7 @@
 
 import logging
 
-from ...entities import IConfEnv
+from ...entities.core import IConfEnv
 
 
 class DevConfEnv(IConfEnv):

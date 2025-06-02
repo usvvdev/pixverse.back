@@ -3,7 +3,7 @@
 from fastapi import Depends
 
 from ....external.pixverse import (
-    PixVerseCore,
+    PixverseCore,
     PixVerseClient,
 )
 
@@ -22,7 +22,7 @@ class PixVerseClientFactory:
             PixVerseClient: Клиент для взаимодействия с PixVerseCore.
         """
         return PixVerseClient(
-            PixVerseCore(),
+            PixverseCore(),
         )
 
 

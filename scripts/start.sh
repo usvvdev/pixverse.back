@@ -21,4 +21,5 @@ start_fastapi_app() {
 
 load_config
 
-start_fastapi_app services.${APP_PROJECT}.main:main --reload --factory --host ${APP_HOST} --port ${APP_PORT}
+# start_fastapi_app services.${APP_SERVICE}.main:main --reload --factory --host ${APP_HOST} --port ${APP_PORT}
+start_fastapi_app services.dashboard.main:main --reload --factory --host ${APP_HOST} --port ${APP_PORT}

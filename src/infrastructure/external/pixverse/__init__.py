@@ -2,12 +2,9 @@
 
 from .client import PixVerseClient
 
-from .core import PixVerseCore
-
-from .webdriver import PixVerseDriver
+from .core import PixverseCore
 
 __all__: list[str] = [
-    "PixVerseCore",
+    "PixverseCore",
     "PixVerseClient",
-    "PixVerseDriver",
 ]

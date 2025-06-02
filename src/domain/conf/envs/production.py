@@ -1,6 +1,6 @@
 # coding utf-8
 
-from ...entities import IConfEnv
+from ...entities.core import IConfEnv
 
 
 class ProdConfEnv(IConfEnv):
