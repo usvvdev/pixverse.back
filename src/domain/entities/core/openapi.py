@@ -65,7 +65,7 @@ class IOpenAPI(ISchema):
 
     openapi_url: Annotated[
         str,
-        Field(default="/openapi.json"),
+        Field(default=f"/{getenv('APP_SERVICE')}/openapi.json"),
     ]
     """URL-адрес для получения OpenAPI схемы в JSON формате.
     
@@ -80,7 +80,7 @@ class IOpenAPI(ISchema):
 
     redoc_url: Annotated[
         str,
-        Field(default="/redoc"),
+        Field(default=f"/{getenv('APP_SERVICE')}/redoc"),
     ]
     """URL-адрес для доступа к ReDoc интерфейсу.
     
