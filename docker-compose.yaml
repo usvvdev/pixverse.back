@@ -19,7 +19,7 @@ services:
       - 8001:${APP_PORT}
     environment:
       - APP_SERVICE=auth
-  pixvesre-api:
+  pixverse:
     <<: *service-template
     ports:
       - 8002:${APP_PORT}
