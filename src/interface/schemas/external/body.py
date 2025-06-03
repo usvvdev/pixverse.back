@@ -26,81 +26,36 @@ class UploadIMG(ISchema):
     ]
 
 
-class T2VBody(IBody):
-    aspect_ratio: Annotated[
+class IPixverseBody(ISchema):
+    user_id: Annotated[
         str,
-        Field(default="16:9"),
+        Field(..., alias="userId"),
+    ]
+    app_id: Annotated[
+        str,
+        Field(..., alias="appId"),
     ]
 
 
-class V2VBody(ISchema):
-    restyle_id: Annotated[
-        int,
-        Field(...),
-    ]
-    model: Annotated[
+class T2VBody(IPixverseBody):
+    prompt: Annotated[
         str,
-        Field(default="v4"),
-    ]
-    video_url: Annotated[
-        str,
-        Field(..., alias="customer_video_url"),
-    ]
-    video_path: Annotated[
-        str,
-        Field(..., alias="customer_video_path"),
-    ]
-    video_duration: Annotated[
-        str,
-        Field(..., alias="customer_video_duration"),
-    ]
-    last_frame_url: Annotated[
-        str,
-        Field(..., alias="customer_video_last_frame_url"),
+        Field(..., alias="promptText"),
     ]
 
-    @field_validator("video_path", mode="after")
-    @classmethod
-    def validate_image_path(
-        cls,
-        value: str,
-    ) -> str:
-        return "".join(("upload/", value))
 
-    @field_validator("video_url", mode="after")
-    @classmethod
-    def validate_image_url(
-        cls,
-        value: str,
-    ) -> str:
-        return "".join((PIXVERSE_MEDIA_URL, value))
-
-
-class I2VBody(IBody):
-    img_path: Annotated[
+class I2VBody(IPixverseBody):
+    prompt: Annotated[
         str,
-        Field(..., alias="customer_img_path"),
-    ]
-    img_url: Annotated[
-        str,
-        Field(..., alias="customer_img_url"),
+        Field(..., alias="promptText"),
     ]
 
-    @field_validator("img_path", mode="after")
-    @classmethod
-    def validate_image_path(
-        cls,
-        value: str,
-    ) -> str:
-        return "".join(("upload/", value))
 
-    @field_validator("img_url", mode="after")
-    @classmethod
-    def validate_image_url(
-        cls,
-        value: str,
-    ) -> str:
-        return "".join((PIXVERSE_MEDIA_URL, value))
+class RVBody(IPixverseBody):
+    template_id: Annotated[
+        str,
+        Field(..., alias="templateId"),
+    ]
 
 
 class IMGBody(ISchema):

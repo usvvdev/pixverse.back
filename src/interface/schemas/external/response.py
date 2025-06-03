@@ -80,9 +80,9 @@ class TokensResponse(ISchema):
 
 
 class AuthRes(ISchema):
-    Token: Annotated[
+    access_token: Annotated[
         str,
-        Field(..., alias="access_token"),
+        Field(..., alias="Token"),
     ]
 
 

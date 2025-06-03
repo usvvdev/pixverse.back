@@ -4,7 +4,13 @@ from .account import PixverseAccountRepository
 
 from .auth_user import AuthUserRepository
 
+from .template import PixverseTemplateRepository
+
+from .style import PixverseStyleRepository
+
 __all__: list[str] = [
     "PixverseAccountRepository",
+    "PixverseTemplateRepository",
+    "PixverseStyleRepository",
     "AuthUserRepository",
 ]

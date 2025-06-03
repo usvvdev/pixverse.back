@@ -74,6 +74,16 @@ class IConfEnv(BaseSettings):
         Field(...),
     ]
 
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+
+    password: Annotated[
+        str,
+        Field(...),
+    ]
+
     allowed_hosts: Annotated[
         list[str],
         Field(default=["*"]),

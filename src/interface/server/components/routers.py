@@ -10,6 +10,8 @@ from ....infrastructure.api.routes.v1 import (
     pixverse_router,
     account_router,
     auth_user_router,
+    style_router,
+    template_router,
 )
 
 
@@ -63,5 +65,7 @@ class DashboardRouter(AppRouting):
             config,
             routers=[
                 account_router,
+                style_router,
+                template_router,
             ],
         )

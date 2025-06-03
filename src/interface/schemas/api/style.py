@@ -7,24 +7,24 @@ from pydantic import Field
 from ....domain.entities.core import ISchema
 
 
-class Account(ISchema):
+class Style(ISchema):
     id: Annotated[
         int,
         Field(...),
     ]
-    username: Annotated[
+    template_id: Annotated[
+        int | None,
+        Field(default=None),
+    ]
+    prompt: Annotated[
         str,
         Field(...),
     ]
-    password: Annotated[
+    name: Annotated[
         str,
         Field(...),
     ]
-    is_active: Annotated[
-        bool,
-        Field(...),
-    ]
-    balance: Annotated[
-        int,
-        Field(...),
+    preview: Annotated[
+        str | None,
+        Field(default=None),
     ]

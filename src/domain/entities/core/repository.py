@@ -9,10 +9,13 @@ from sqlalchemy import (
     ColumnElement,
     select,
     insert,
+    delete,
     update,
 )
 
 from .base import ISchema
+
+from .table import ITable
 
 from .engine import IEngine
 
@@ -21,7 +24,7 @@ class IRepository:
     def __init__(
         self,
         engine: IEngine,
-        model: Any,
+        model: ITable,
     ) -> None:
         self._engine = engine
         self._model = model
@@ -87,8 +90,8 @@ class IRepository:
 
     async def add_record(
         self,
-        data: Any,
-    ) -> Any:
+        data: ISchema,
+    ) -> ISchema:
         await self.__commit_changes(
             insert(self._model).values(
                 **data.dict,
@@ -96,12 +99,25 @@ class IRepository:
         )
         return data
 
-    async def change_record(
+    async def update_record(
         self,
-        data: Any,
-    ) -> Any:
+        id: int,
+        data: ISchema,
+    ) -> ISchema:
         await self.__commit_changes(
-            update(self._model).values(
+            update(self._model)
+            .filter_by(id=id)
+            .values(
                 **data.dict,
-            )
+            ),
+        )
+
+    async def delete_record(
+        self,
+        id: int,
+    ):
+        await self.__commit_changes(
+            delete(self._model).filter_by(
+                id=id,
+            ),
         )

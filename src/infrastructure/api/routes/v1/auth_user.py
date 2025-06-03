@@ -16,7 +16,7 @@ from .....interface.schemas.api import (
     UserRefreshToken,
 )
 
-auth_user_router = APIRouter(tags=["Authorization"])
+auth_user_router = APIRouter(prefix="/auth", tags=["Authorization"])
 
 
 @auth_user_router.post(

@@ -2,8 +2,6 @@
 
 from typing import Annotated
 
-from os import getenv
-
 from pydantic import Field
 
 from .base import ISchema
@@ -51,7 +49,7 @@ class IOpenAPI(ISchema):
 
     openapi_prefix: Annotated[
         str,
-        Field(default=f"/{getenv('APP_SERVICE')}"),
+        Field(default=""),
     ]
     """Префикс для всех OpenAPI-эндпоинтов.
     

@@ -2,7 +2,10 @@
 
 from typing import Annotated
 
-from pydantic import Field
+from pydantic import (
+    Field,
+    field_validator,
+)
 
 from ..core import ISchema
 
@@ -10,6 +13,8 @@ from ...typing import (
     TModel,
     TQuality,
 )
+
+from ...constants import PIXVERSE_MEDIA_URL
 
 
 class IBody(ISchema):
@@ -28,12 +33,6 @@ class IBody(ISchema):
         str,
         Field(...),
     ]
-    """Текст запроса (промпт) для обработки AI-моделью.
-    
-    Тип:
-        str: Непустая строка
-    Обязательное поле.
-    """
 
     duration: Annotated[
         int,
@@ -59,3 +58,80 @@ class IBody(ISchema):
         str,
         Field(default="Auto"),
     ]
+
+
+class IT2VBody(IBody):
+    aspect_ratio: Annotated[
+        str,
+        Field(default="16:9"),
+    ]
+
+
+class II2VBody(IBody):
+    img_path: Annotated[
+        str,
+        Field(..., alias="customer_img_path"),
+    ]
+    img_url: Annotated[
+        str,
+        Field(..., alias="customer_img_url"),
+    ]
+
+    @field_validator("img_path", mode="after")
+    @classmethod
+    def validate_image_path(
+        cls,
+        value: str,
+    ) -> str:
+        return "".join(("upload/", value))
+
+    @field_validator("img_url", mode="after")
+    @classmethod
+    def validate_image_url(
+        cls,
+        value: str,
+    ) -> str:
+        return "".join((PIXVERSE_MEDIA_URL, value))
+
+
+class IRVBody(ISchema):
+    restyle_prompt: Annotated[
+        int,
+        Field(...),
+    ]
+    model: Annotated[
+        str,
+        Field(default="v4"),
+    ]
+    video_url: Annotated[
+        str,
+        Field(..., alias="customer_video_url"),
+    ]
+    video_path: Annotated[
+        str,
+        Field(..., alias="customer_video_path"),
+    ]
+    video_duration: Annotated[
+        str,
+        Field(..., alias="customer_video_duration"),
+    ]
+    last_frame_url: Annotated[
+        str,
+        Field(..., alias="customer_video_last_frame_url"),
+    ]
+
+    @field_validator("video_path", mode="after")
+    @classmethod
+    def validate_image_path(
+        cls,
+        value: str,
+    ) -> str:
+        return "".join(("upload/", value))
+
+    @field_validator("video_url", mode="after")
+    @classmethod
+    def validate_image_url(
+        cls,
+        value: str,
+    ) -> str:
+        return "".join((PIXVERSE_MEDIA_URL, value))

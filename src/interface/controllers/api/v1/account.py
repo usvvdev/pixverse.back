@@ -1,7 +1,5 @@
 # coding utf-8
 
-from .....infrastructure.orm.database.models import PixverseAccounts
-
 from .....infrastructure.orm.database.repositories import PixverseAccountRepository
 
 from ....schemas.api import Account
@@ -16,8 +14,17 @@ class PixverseAccountController:
 
     async def fetch_accounts(
         self,
-    ) -> list[PixverseAccounts]:
+    ) -> list[Account]:
         return await self._repository.fetch_all()
+
+    async def fetch_account(
+        self,
+        id: int,
+    ) -> Account | None:
+        return await self._repository.fetch_account(
+            "id",
+            id,
+        )
 
     async def add_account(
         self,
@@ -27,11 +34,20 @@ class PixverseAccountController:
             data,
         )
 
-    async def fetch_account(
+    async def update_account(
         self,
         id: int,
-    ) -> PixverseAccounts | None:
-        return await self._repository.fetch_account(
-            "id",
+        data: Account,
+    ) -> Account:
+        return await self._repository.update_record(
+            id,
+            data,
+        )
+
+    async def delete_account(
+        self,
+        id: int,
+    ):
+        return await self._repository.delete_record(
             id,
         )

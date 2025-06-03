@@ -4,19 +4,25 @@ from typing import Annotated
 
 from pydantic import Field
 
+from ....domain.conf import app_conf
+
 from ....domain.entities.core import (
     ISchema,
+    IConfEnv,
 )
+
+
+conf: IConfEnv = app_conf()
 
 
 class UserCredentials(ISchema):
     username: Annotated[
         str,
-        Field(..., alias="Username"),
+        Field(default=conf.username, alias="Username"),
     ]
     password: Annotated[
         str,
-        Field(..., alias="Password"),
+        Field(default=conf.password, alias="Password"),
     ]
 
 

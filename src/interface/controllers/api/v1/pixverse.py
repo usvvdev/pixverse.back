@@ -26,44 +26,30 @@ class PixVerseController:
     ) -> None:
         self._client = client
 
-    async def auth_user(
-        self,
-        body: OAuth2PasswordRequestForm,
-    ) -> AuthRes:
-        return await self._client.auth_user(
-            body,
-        )
-
     async def text_to_video(
         self,
         body: T2VBody,
-        token: str,
     ) -> Resp:
         return await self._client.text_to_video(
             body,
-            token,
         )
 
     async def image_to_video(
         self,
         body: T2VBody,
         image: UploadFile,
-        token: str,
     ) -> Resp:
         return await self._client.image_to_video(
             body,
             image,
-            token,
         )
 
     async def generation_status(
         self,
         body: GenBody,
-        token: str,
     ) -> GenerationStatus:
         return await self._client.generation_status(
             body,
-            token,
         )
 
     async def credits_amount(

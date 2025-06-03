@@ -9,11 +9,11 @@ from .body import (
     StatusBody,
     T2VBody,
     I2VBody,
+    RVBody,
     IMGBody,
     GenBody,
     UploadIMG,
     TemplateBody,
-    V2VBody,
 )
 
 from .response import (
@@ -32,8 +32,10 @@ __all__ = [
     "StatusBody",
     "TemplateBody",
     "T2VBody",
+    "I2VBody",
     "IMGBody",
     "I2VBody",
+    "RVBody",
     "GenBody",
     "V2VBody",
     "UploadIMG",
