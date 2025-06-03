@@ -51,7 +51,7 @@ class IOpenAPI(ISchema):
 
     openapi_prefix: Annotated[
         str,
-        Field(default=f"{getenv('APP_SERVICE')}"),
+        Field(default=f"/{getenv('APP_SERVICE')}"),
     ]
     """Префикс для всех OpenAPI-эндпоинтов.
     
