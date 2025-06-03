@@ -57,11 +57,11 @@ class PixVerseController:
     async def restyle_video(
         self,
         body: R2VBody,
-        image: UploadFile,
+        video: UploadFile,
     ) -> Resp:
         return await self._client.restyle_video(
             body,
-            image,
+            video,
         )
 
     async def template_video(
