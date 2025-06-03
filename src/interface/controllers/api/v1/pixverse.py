@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ....schemas.external import (
     Resp,
     T2VBody,
+    RVBody,
     GenBody,
     AuthRes,
     GenerationStatus,
@@ -46,29 +47,39 @@ class PixVerseController:
 
     async def generation_status(
         self,
-        body: GenBody,
+        id: int,
     ) -> GenerationStatus:
         return await self._client.generation_status(
+            id,
+        )
+
+    async def restyle_video(
+        self,
+        body: RVBody,
+        image: UploadFile,
+    ) -> Resp:
+        return await self._client.restyle_video(
             body,
+            image,
         )
 
-    async def credits_amount(
-        self,
-        token: str,
-    ) -> TokensResponse:
-        return await self._client.credits_amount(
-            token,
-        )
+    # async def credits_amount(
+    #     self,
+    #     token: str,
+    # ) -> TokensResponse:
+    #     return await self._client.credits_amount(
+    #         token,
+    #     )
 
-    async def restyle_templates(
-        self,
-        body: TemplateBody,
-    ) -> list[Template]:
-        return await self._client.restyle_templates(
-            body,
-        )
+    # async def restyle_templates(
+    #     self,
+    #     body: TemplateBody,
+    # ) -> list[Template]:
+    #     return await self._client.restyle_templates(
+    #         body,
+    #     )
 
-    async def effect_templates(
-        self,
-    ) -> EffectResponse:
-        return await self._client.effect_templates()
+    # async def effect_templates(
+    #     self,
+    # ) -> EffectResponse:
+    #     return await self._client.effect_templates()

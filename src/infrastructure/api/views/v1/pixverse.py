@@ -9,6 +9,7 @@ from .....domain.entities.pixverse import IBody
 from .....interface.schemas.external import (
     T2VBody,
     Resp,
+    RVBody,
     AuthRes,
     GenBody,
     TemplateBody,
@@ -40,20 +41,28 @@ class PixVerseView:
         self,
         body: IBody,
         image: UploadFile,
-        token: str,
     ) -> Resp:
         return await self._controller.image_to_video(
             body,
             image,
-            token,
+        )
+
+    async def restyle_video(
+        self,
+        body: RVBody,
+        image: UploadFile,
+    ) -> Resp:
+        return await self._controller.restyle_video(
+            body,
+            image,
         )
 
     async def generation_status(
         self,
-        body: GenBody,
+        id: int,
     ) -> GenerationStatus:
         return await self._controller.generation_status(
-            body,
+            id,
         )
 
     async def credits_amount(

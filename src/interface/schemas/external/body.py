@@ -62,6 +62,29 @@ class IMGBody(ISchema):
     images: list[UploadIMG]
 
 
+class VideoBody(ISchema):
+    name: Annotated[
+        str,
+        Field(...),
+    ]
+    path: Annotated[
+        str,
+        Field(...),
+    ]
+    type: Annotated[
+        int,
+        Field(default=1),
+    ]
+
+    @field_validator("path", mode="after")
+    @classmethod
+    def validate_image_path(
+        cls,
+        value: str,
+    ) -> str:
+        return "".join(("upload/", value))
+
+
 class Filter(ISchema):
     off_peak: Annotated[
         int,

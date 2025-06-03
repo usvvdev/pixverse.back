@@ -16,6 +16,7 @@ from .....domain.tools import auto_docs
 from .....interface.schemas.external import (
     T2VBody,
     I2VBody,
+    RVBody,
     Resp,
     GenBody,
     GenerationStatus,
@@ -91,21 +92,48 @@ async def image_to_video(
 
 
 @pixverse_router.post(
+    "/v2v",
+    response_model=Resp,
+    response_model_exclude_none=True,
+)
+@auto_docs(
+    "api/v1/v2v",
+    "POST",
+    description="Роутер для создания видео по загруженой фотографии и параметрам.",
+    params={
+        "promt": {
+            "type": "string",
+            "description": "Текст для создания видео фрагмента",
+        },
+    },
+)
+async def restyle_video(
+    body: RVBody = Depends(),
+    image: UploadFile = File(...),
+    view: PixVerseView = Depends(PixVerseViewFactory.create),
+) -> Resp:
+    return await view.restyle_video(
+        body,
+        image,
+    )
+
+
+@pixverse_router.get(
     "/status",
 )
 @auto_docs(
-    "api/v1/status",
+    "api/v1/status/{id}",
     "POST",
     description="Роутер для получения статуса генерации.",
     params={
-        "video_id": {
+        "id": {
             "type": "integer",
             "description": "Уникальный индефикатор генерации.",
         },
     },
 )
 async def generation_status(
-    body: GenBody,
+    id: int,
     view: PixVerseView = Depends(PixVerseViewFactory.create),
 ) -> GenerationStatus:
     """
@@ -124,7 +152,7 @@ async def generation_status(
         GenerationStatus: Объект с информацией о статусе генерации
     """
     return await view.generation_status(
-        body,
+        id,
     )
 
 

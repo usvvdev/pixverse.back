@@ -14,6 +14,7 @@ from .body import (
     GenBody,
     UploadIMG,
     TemplateBody,
+    VideoBody,
 )
 
 from .response import (
