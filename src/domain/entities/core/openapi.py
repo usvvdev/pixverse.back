@@ -99,11 +99,6 @@ class IOpenAPI(ISchema):
         Field(default="0.1.0"),
     ]
 
-    root_path: Annotated[
-        str,
-        Field(default=)
-    ]
-
     """Версия API, отображаемая в документации.
     
     Тип:
