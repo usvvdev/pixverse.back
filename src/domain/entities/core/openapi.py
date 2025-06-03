@@ -99,7 +99,7 @@ class IOpenAPI(ISchema):
 
     openapi_version: Annotated[
         str,
-        Field(default="3.1.0"),
+        Field(default="3.0.0"),
     ]
     """Версия API, отображаемая в документации.
     
