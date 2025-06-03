@@ -16,10 +16,11 @@ from .....domain.tools import auto_docs
 from .....interface.schemas.external import (
     T2VBody,
     I2VBody,
-    RVBody,
+    R2VBody,
     Resp,
     GenBody,
     GenerationStatus,
+    TE2VBody,
 )
 
 from ....factroies.api.v1 import PixVerseViewFactory
@@ -29,12 +30,12 @@ pixverse_router = APIRouter(tags=["Pixverse"])
 
 
 @pixverse_router.post(
-    "/t2v",
+    "/text2video",
     response_model=Resp,
     response_model_exclude_none=True,
 )
 @auto_docs(
-    "api/v1/i2v",
+    "api/v1/text2video",
     "POST",
     description="Роутер для создания видео по загруженой фотографии и параметрам.",
     params={
@@ -65,12 +66,12 @@ async def text_to_video(
 
 
 @pixverse_router.post(
-    "/i2v",
+    "/image2video",
     response_model=Resp,
     response_model_exclude_none=True,
 )
 @auto_docs(
-    "api/v1/i2v",
+    "api/v1/image2video",
     "POST",
     description="Роутер для создания видео по загруженой фотографии и параметрам.",
     params={
@@ -92,12 +93,12 @@ async def image_to_video(
 
 
 @pixverse_router.post(
-    "/v2v",
+    "/video2video",
     response_model=Resp,
     response_model_exclude_none=True,
 )
 @auto_docs(
-    "api/v1/v2v",
+    "api/v1/video2video",
     "POST",
     description="Роутер для создания видео по загруженой фотографии и параметрам.",
     params={
@@ -108,11 +109,38 @@ async def image_to_video(
     },
 )
 async def restyle_video(
-    body: RVBody = Depends(),
+    body: R2VBody = Depends(),
     image: UploadFile = File(...),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
 ) -> Resp:
     return await view.restyle_video(
+        body,
+        image,
+    )
+
+
+@pixverse_router.post(
+    "/template2video",
+    response_model=Resp,
+    response_model_exclude_none=True,
+)
+@auto_docs(
+    "api/v1/template2video",
+    "POST",
+    description="Роутер для создания видео по загруженой фотографии и параметрам.",
+    params={
+        "promt": {
+            "type": "string",
+            "description": "Текст для создания видео фрагмента",
+        },
+    },
+)
+async def template_video(
+    body: TE2VBody = Depends(),
+    image: UploadFile = File(...),
+    view: PixVerseView = Depends(PixVerseViewFactory.create),
+) -> Resp:
+    return await view.template_video(
         body,
         image,
     )

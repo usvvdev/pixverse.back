@@ -133,6 +133,13 @@ class Effect(ISchema):
     ]
 
 
+class FrameResp(ISchema):
+    last_frame: Annotated[
+        str,
+        Field(...),
+    ]
+
+
 class ChannelItem(ISchema):
     channel_id: Annotated[
         int,
@@ -156,17 +163,17 @@ class EffectResponse(ISchema):
 
 
 class UTResp(ISchema):
-    access_key_id: Annotated[
+    Ak: Annotated[
         str,
-        Field(..., alias="Ak"),
+        Field(..., alias="access_key_id"),
     ]
-    access_key_secret: Annotated[
+    Sk: Annotated[
         str,
-        Field(..., alias="Sk"),
+        Field(..., alias="access_key_secret"),
     ]
-    security_token: Annotated[
+    Token: Annotated[
         str,
-        Field(..., alias="Token"),
+        Field(..., alias="security_token"),
     ]
 
 
@@ -184,6 +191,7 @@ class Response(ISchema):
         | ItemsResponse
         | EffectResponse
         | UTResp
+        | FrameResp
         | ResResp
         | StatusResp
         | TokensResponse

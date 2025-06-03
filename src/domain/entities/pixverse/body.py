@@ -67,6 +67,17 @@ class IT2VBody(IBody):
     ]
 
 
+class LFBody(ISchema):
+    video_path: Annotated[
+        str,
+        Field(...),
+    ]
+    duration: Annotated[
+        int,
+        Field(default=5),
+    ]
+
+
 class II2VBody(IBody):
     img_path: Annotated[
         str,
@@ -94,9 +105,24 @@ class II2VBody(IBody):
         return "".join((PIXVERSE_MEDIA_URL, value))
 
 
+class IIT2VBody(II2VBody):
+    effect_type: Annotated[
+        int,
+        Field(default=1),
+    ]
+    sound_effect_switch: Annotated[
+        int,
+        Field(default=1),
+    ]
+    template_id: Annotated[
+        int,
+        Field(...),
+    ]
+
+
 class IRVBody(ISchema):
     restyle_prompt: Annotated[
-        int,
+        str,
         Field(...),
     ]
     model: Annotated[
@@ -112,7 +138,7 @@ class IRVBody(ISchema):
         Field(..., alias="customer_video_path"),
     ]
     video_duration: Annotated[
-        str,
+        int,
         Field(..., alias="customer_video_duration"),
     ]
     last_frame_url: Annotated[

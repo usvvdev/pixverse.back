@@ -5,6 +5,8 @@ from .body import (
     II2VBody,
     IT2VBody,
     IRVBody,
+    LFBody,
+    IIT2VBody,
 )
 
 from .headers import (
@@ -19,4 +21,6 @@ __all__: list[str] = [
     "IRVBody",
     "IHeaders",
     "ITokenHeaders",
+    "LFBody",
+    "IIT2VBody",
 ]

@@ -9,7 +9,7 @@ from .....domain.entities.pixverse import IBody
 from .....interface.schemas.external import (
     T2VBody,
     Resp,
-    RVBody,
+    R2VBody,
     AuthRes,
     GenBody,
     TemplateBody,
@@ -17,6 +17,7 @@ from .....interface.schemas.external import (
     GenerationStatus,
     Template,
     EffectResponse,
+    TE2VBody,
 )
 
 from .....interface.controllers.api.v1 import PixVerseController
@@ -49,10 +50,20 @@ class PixVerseView:
 
     async def restyle_video(
         self,
-        body: RVBody,
+        body: R2VBody,
         image: UploadFile,
     ) -> Resp:
         return await self._controller.restyle_video(
+            body,
+            image,
+        )
+
+    async def template_video(
+        self,
+        body: TE2VBody,
+        image: UploadFile,
+    ) -> Resp:
+        return await self._controller.template_video(
             body,
             image,
         )
@@ -65,23 +76,23 @@ class PixVerseView:
             id,
         )
 
-    async def credits_amount(
-        self,
-        token: str,
-    ) -> TokensResponse:
-        return await self._controller.credits_amount(
-            token,
-        )
+    # async def credits_amount(
+    #     self,
+    #     token: str,
+    # ) -> TokensResponse:
+    #     return await self._controller.credits_amount(
+    #         token,
+    #     )
 
-    async def restyle_templates(
-        self,
-        body: TemplateBody,
-    ) -> list[Template]:
-        return await self._controller.restyle_templates(
-            body,
-        )
+    # async def restyle_templates(
+    #     self,
+    #     body: TemplateBody,
+    # ) -> list[Template]:
+    #     return await self._controller.restyle_templates(
+    #         body,
+    #     )
 
-    async def effect_templates(
-        self,
-    ) -> EffectResponse:
-        return await self._controller.effect_templates()
+    # async def effect_templates(
+    #     self,
+    # ) -> EffectResponse:
+    #     return await self._controller.effect_templates()

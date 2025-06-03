@@ -12,14 +12,19 @@ from ....domain.errors import PixverseError
 
 from ....domain.entities.core import IConfEnv
 
-from ...orm.database.repositories import PixverseStyleRepository
+from ...orm.database.repositories import (
+    PixverseStyleRepository,
+    PixverseTemplateRepository,
+)
 
 from ....domain.repositories import IDatabase
 
 from ....domain.entities.pixverse import (
     IT2VBody,
     II2VBody,
+    IIT2VBody,
     IRVBody,
+    LFBody,
 )
 
 from ....domain.tools import upload_file
@@ -29,7 +34,8 @@ from ....interface.schemas.external import (
     UserCredentials,
     Response,
     T2VBody,
-    RVBody,
+    R2VBody,
+    TE2VBody,
     I2VBody,
     IMGBody,
     VideoBody,
@@ -45,7 +51,7 @@ from ....interface.schemas.external import (
     Template,
 )
 
-from ....interface.schemas.api import Style
+from ....interface.schemas.api import Style, Template
 
 from ....domain.typing.enums import PixverseEndpoint
 
@@ -53,6 +59,10 @@ from ....domain.typing.enums import PixverseEndpoint
 conf: IConfEnv = app_conf()
 
 style_database = PixverseStyleRepository(
+    engine=IDatabase(conf),
+)
+
+templates_database = PixverseTemplateRepository(
     engine=IDatabase(conf),
 )
 
@@ -91,8 +101,10 @@ class PixVerseClient:
 
     async def upload_token(
         self,
+        token: str,
     ) -> UTResp:
         data: Response = await self._core.post(
+            token=token,
             endpoint=PixverseEndpoint.UPLOAD_TOKEN,
         )
         if data.err_code != 0:
@@ -103,10 +115,12 @@ class PixVerseClient:
 
     async def upload_image(
         self,
+        token: str,
         filename: str,
         size: int,
     ) -> bool:
         data: Response = await self._core.post(
+            token=token,
             endpoint=PixverseEndpoint.UPLOAD_IMAGE,
             body=IMGBody(
                 images=[
@@ -122,10 +136,12 @@ class PixVerseClient:
 
     async def upload_video(
         self,
+        token: str,
         filename: str,
         path: int,
     ) -> bool:
         data: Response = await self._core.post(
+            token=token,
             endpoint=PixverseEndpoint.UPLOAD_VIDEO,
             body=VideoBody(
                 name=filename,
@@ -161,45 +177,45 @@ class PixVerseClient:
                     status="generating" if video.video_status == 10 else "error"
                 )
 
-    async def credits_amount(
-        self,
-        token: str,
-    ) -> TokensResponse:
-        data: Response = await self._core.get(
-            token=token,
-            endpoint=PixverseEndpoint.TOKEN,
-        )
-        if data.err_code != 0:
-            raise PixverseError(
-                status_code=data.err_code,
-            )
-        return data.resp
+    # async def credits_amount(
+    #     self,
+    #     token: str,
+    # ) -> TokensResponse:
+    #     data: Response = await self._core.get(
+    #         token=token,
+    #         endpoint=PixverseEndpoint.TOKEN,
+    #     )
+    #     if data.err_code != 0:
+    #         raise PixverseError(
+    #             status_code=data.err_code,
+    #         )
+    #     return data.resp
 
-    async def fetch_styles(
-        self,
-        body: TemplateBody,
-    ) -> list[Template]:
-        data: Response = await self._core.post(
-            endpoint=PixverseEndpoint.RESTYLE_TEMPLATE,
-            body=body,
-        )
-        if data.err_code != 0:
-            raise PixverseError(
-                status_code=data.err_code,
-            )
-        return data.resp.items
+    # async def fetch_styles(
+    #     self,
+    #     body: TemplateBody,
+    # ) -> list[Template]:
+    #     data: Response = await self._core.post(
+    #         endpoint=PixverseEndpoint.RESTYLE_TEMPLATE,
+    #         body=body,
+    #     )
+    #     if data.err_code != 0:
+    #         raise PixverseError(
+    #             status_code=data.err_code,
+    #         )
+    #     return data.resp.items
 
-    async def fetch_templates(
-        self,
-    ) -> EffectResponse:
-        data: Response = await self._core.post(
-            endpoint=PixverseEndpoint.EFFECT,
-        )
-        if data.err_code != 0:
-            raise PixverseError(
-                status_code=data.err_code,
-            )
-        return data.resp
+    # async def fetch_templates(
+    #     self,
+    # ) -> EffectResponse:
+    #     data: Response = await self._core.post(
+    #         endpoint=PixverseEndpoint.EFFECT,
+    #     )
+    #     if data.err_code != 0:
+    #         raise PixverseError(
+    #             status_code=data.err_code,
+    #         )
+    #     return data.resp
 
     async def text_to_video(
         self,
@@ -227,7 +243,9 @@ class PixVerseClient:
     ) -> Resp:
         user: AuthRes = await self.auth_user()
 
-        token_data: UTResp = await self.upload_token()
+        token_data: UTResp = await self.upload_token(
+            user.access_token,
+        )
 
         image_bytes: bytes = await image.read()
 
@@ -243,7 +261,7 @@ class PixVerseClient:
             size=len(image_bytes),
         )
 
-        data: Response = await self._core.post(
+        data = await self._core.post(
             token=user.access_token,
             endpoint=PixverseEndpoint.IMAGE,
             body=II2VBody(
@@ -260,12 +278,14 @@ class PixVerseClient:
 
     async def restyle_video(
         self,
-        body: RVBody,
+        body: R2VBody,
         video: UploadFile,
     ):
-        # user: AuthRes = await self.auth_user()
+        user: AuthRes = await self.auth_user()
 
-        token_data: UTResp = await self.upload_token()
+        token_data: UTResp = await self.upload_token(
+            user.access_token,
+        )
 
         video_bytes: bytes = await video.read()
 
@@ -274,8 +294,6 @@ class PixVerseClient:
             body.template_id,
         )
 
-        print(token_data.dict)
-
         await upload_file(
             video_bytes,
             video.filename,
@@ -283,17 +301,73 @@ class PixVerseClient:
         )
 
         await self.upload_video(
+            user.access_token,
             video.filename,
             video.filename,
         )
 
+        frame_data = await self._core.post(
+            token=user.access_token,
+            endpoint=PixverseEndpoint.LAST_FRAME,
+            body=LFBody(
+                video_path=video.filename,
+            ),
+        )
+
         data: Response = await self._core.post(
-            # token=user.access_token,
+            token=user.access_token,
             endpoint=PixverseEndpoint.RESTYLE,
             body=IRVBody(
                 video_path=video.filename,
                 video_url=video.filename,
+                video_duration=5,
                 restyle_prompt=style.prompt,
+                last_frame_url=frame_data.resp.last_frame,
+            ),
+        )
+        if data.err_code != 0:
+            raise PixverseError(
+                status_code=data.err_code,
+            )
+        return data.resp
+
+    async def template_video(
+        self,
+        body: TE2VBody,
+        image: UploadFile,
+    ):
+        user: AuthRes = await self.auth_user()
+
+        token_data: UTResp = await self.upload_token(
+            user.access_token,
+        )
+        image_bytes: bytes = await image.read()
+
+        template: Template | None = await templates_database.fetch_template(
+            "template_id",
+            body.template_id,
+        )
+
+        await upload_file(
+            image_bytes,
+            image.filename,
+            **token_data.dict,
+        )
+
+        await self.upload_image(
+            user.access_token,
+            image.filename,
+            size=len(image_bytes),
+        )
+
+        data: Response = await self._core.post(
+            token=user.access_token,
+            endpoint=PixverseEndpoint.IMAGE,
+            body=IIT2VBody(
+                img_path=image.filename,
+                img_url=image.filename,
+                prompt=template.prompt,
+                template_id=body.template_id,
             ),
         )
         if data.err_code != 0:

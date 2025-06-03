@@ -9,7 +9,8 @@ from .body import (
     StatusBody,
     T2VBody,
     I2VBody,
-    RVBody,
+    R2VBody,
+    TE2VBody,
     IMGBody,
     GenBody,
     UploadIMG,
@@ -51,4 +52,5 @@ __all__ = [
     "TokensResponse",
     "Template",
     "EffectResponse",
+    "VideoBody",
 ]

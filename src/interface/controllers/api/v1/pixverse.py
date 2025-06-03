@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ....schemas.external import (
     Resp,
     T2VBody,
-    RVBody,
+    R2VBody,
     GenBody,
     AuthRes,
     GenerationStatus,
@@ -15,6 +15,7 @@ from ....schemas.external import (
     EffectResponse,
     Template,
     TokensResponse,
+    TE2VBody,
 )
 
 from .....infrastructure.external.pixverse import PixVerseClient
@@ -55,10 +56,20 @@ class PixVerseController:
 
     async def restyle_video(
         self,
-        body: RVBody,
+        body: R2VBody,
         image: UploadFile,
     ) -> Resp:
         return await self._client.restyle_video(
+            body,
+            image,
+        )
+
+    async def template_video(
+        self,
+        body: TE2VBody,
+        image: UploadFile,
+    ) -> Resp:
+        return await self._client.template_video(
             body,
             image,
         )
