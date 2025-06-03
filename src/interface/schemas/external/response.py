@@ -29,7 +29,7 @@ class StatusRes(ISchema):
     ]
 
 
-class Template(ISchema):
+class TemplateResp(ISchema):
     restyle_id: Annotated[
         int,
         Field(...),
@@ -46,7 +46,7 @@ class Template(ISchema):
 
 class ItemsResponse(ISchema):
     items: Annotated[
-        list[Template],
+        list[TemplateResp],
         Field(...),
     ]
 

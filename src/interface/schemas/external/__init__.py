@@ -26,7 +26,7 @@ from .response import (
     StatusResp,
     GenerationStatus,
     TokensResponse,
-    Template,
+    TemplateResp,
     EffectResponse,
 )
 
@@ -50,7 +50,7 @@ __all__ = [
     "StatusResp",
     "GenerationStatus",
     "TokensResponse",
-    "Template",
+    "TemplateResp",
     "EffectResponse",
     "VideoBody",
 ]

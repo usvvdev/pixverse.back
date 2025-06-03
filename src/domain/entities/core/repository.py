@@ -104,25 +104,22 @@ class IRepository:
         id: int,
         data: ISchema,
     ) -> ISchema:
-        try:
-            await self.__commit_changes(
-                update(self._model)
-                .filter_by(id=id)
-                .values(
-                    **data.dict,
-                ),
-            )
-        except Exception as err:
-            raise err
-        finally:
-            True
+        await self.__commit_changes(
+            update(self._model)
+            .filter_by(id=id)
+            .values(
+                **data.dict,
+            ),
+        )
+        return data
 
     async def delete_record(
         self,
         id: int,
-    ):
+    ) -> bool:
         await self.__commit_changes(
             delete(self._model).filter_by(
                 id=id,
             ),
         )
+        return True

@@ -31,7 +31,11 @@ class PixverseStyles(ITable):
         nullable=False,
         primary_key=True,
     )
-    preview: str = Column(
+    preview_small: str = Column(
+        String,
+        nullable=False,
+    )
+    preview_large: str = Column(
         String,
         nullable=False,
     )

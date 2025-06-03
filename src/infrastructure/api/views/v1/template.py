@@ -2,7 +2,11 @@
 
 from .....interface.controllers.api.v1 import PixverseTemplateController
 
-from .....interface.schemas.api import Template
+from .....interface.schemas.api import (
+    Template,
+    ITemplate,
+    ChangeTemplate,
+)
 
 
 class PixverseTemplateView:
@@ -35,26 +39,34 @@ class PixverseTemplateView:
 
     async def add_template(
         self,
-        data: Template,
-    ) -> Template:
+        data: ITemplate,
+        preview_small: str,
+        preview_large: str,
+    ) -> ChangeTemplate:
         return await self._controller.add_template(
             data,
+            preview_small,
+            preview_large,
         )
 
     async def update_template(
         self,
         id: int,
-        data: Template,
-    ) -> Template:
+        data: ITemplate,
+        preview_small: str,
+        preview_large: str,
+    ) -> ChangeTemplate:
         return await self._controller.update_template(
             id,
             data,
+            preview_small,
+            preview_large,
         )
 
     async def delete_template(
         self,
         id: int,
-    ) -> Template:
+    ) -> bool:
         return await self._controller.delete_template(
             id,
         )

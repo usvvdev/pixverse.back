@@ -4,6 +4,8 @@ from fastapi import FastAPI
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.staticfiles import StaticFiles
+
 from src.domain.conf import app_conf
 
 from src.domain.entities.core import IConfEnv
@@ -15,7 +17,14 @@ def main() -> FastAPI:
     conf: IConfEnv = app_conf()
 
     app = FastAPI(**conf.app_config)
+
     app_router = DashboardRouter(app, conf)
+
+    app.mount(
+        "/static",
+        StaticFiles(directory="uploads"),
+        name="static",
+    )
 
     app.add_middleware(
         CORSMiddleware,

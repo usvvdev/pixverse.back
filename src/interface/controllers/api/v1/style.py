@@ -2,7 +2,11 @@
 
 from .....infrastructure.orm.database.repositories import PixverseStyleRepository
 
-from ....schemas.api import Style
+from ....schemas.api import (
+    Style,
+    ChangeStyle,
+    IStyle,
+)
 
 
 class PixverseStyleController:
@@ -37,26 +41,38 @@ class PixverseStyleController:
 
     async def add_style(
         self,
-        data: Style,
-    ) -> Style:
+        data: IStyle,
+        preview_small: str,
+        preview_large: str,
+    ) -> ChangeStyle:
         return await self._repository.add_record(
-            data,
+            ChangeStyle(
+                **data.dict,
+                preview_small=preview_small,
+                preview_large=preview_large,
+            ),
         )
 
     async def update_style(
         self,
         id: int,
         data: Style,
-    ) -> Style:
+        preview_small: str,
+        preview_large: str,
+    ) -> ChangeStyle:
         return await self._repository.update_record(
             id,
-            data,
+            ChangeStyle(
+                **data.dict,
+                preview_small=preview_small,
+                preview_large=preview_large,
+            ),
         )
 
     async def delete_style(
         self,
         id: int,
-    ) -> Style:
+    ) -> bool:
         return await self._repository.delete_record(
             id,
         )

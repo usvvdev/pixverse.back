@@ -2,19 +2,26 @@
 
 from fastapi import (
     APIRouter,
+    UploadFile,
     Depends,
     File,
-    Form,
-    UploadFile,
 )
 
 from ...views.v1 import PixverseStyleView
 
-from .....domain.tools import auto_docs, validate_token
+from .....domain.tools import (
+    auto_docs,
+    validate_token,
+    save_upload_file,
+)
 
 from ....factroies.api.v1 import PixverseStyleViewFactory
 
-from .....interface.schemas.api import Style
+from .....interface.schemas.api import (
+    Style,
+    IStyle,
+    ChangeStyle,
+)
 
 
 style_router = APIRouter(tags=["Styles"])
@@ -23,19 +30,33 @@ style_router = APIRouter(tags=["Styles"])
 @style_router.get(
     "/styles",
 )
+@auto_docs(
+    "api/v1/styles",
+    "GET",
+    description="Роутер для получения объектов.",
+)
 async def fetch_styles(
-    _: str = Depends(validate_token),
     view: PixverseStyleView = Depends(PixverseStyleViewFactory.create),
 ) -> list[Style]:
     return await view.fetch_styles()
 
 
 @style_router.get(
-    "/style/{template_id}",
+    "/styles/{template_id}",
+)
+@auto_docs(
+    "api/v1/styles/{template_id}",
+    "GET",
+    params={
+        "template_id": {
+            "type": "integer",
+            "description": "Уникальный идентификатор объекта",
+        }
+    },
+    description="Роутер для получения объекта по уникальному идентификатору",
 )
 async def fetch_style_by_template_id(
     template_id: int,
-    _: str = Depends(validate_token),
     view: PixverseStyleView = Depends(PixverseStyleViewFactory.create),
 ) -> Style:
     return await view.fetch_style_by_template_id(
@@ -44,11 +65,21 @@ async def fetch_style_by_template_id(
 
 
 @style_router.get(
-    "/style/{id}",
+    "/styles/{id}",
+)
+@auto_docs(
+    "api/v1/styles/{id}",
+    "GET",
+    params={
+        "id": {
+            "type": "integer",
+            "description": "Уникальный идентификатор объекта из базы данных",
+        }
+    },
+    description="Роутер для получения объекта по уникальному идентификатору из базы данных",
 )
 async def fetch_style_by_id(
     id: int,
-    _: str = Depends(validate_token),
     view: PixverseStyleView = Depends(PixverseStyleViewFactory.create),
 ) -> Style:
     return await view.fetch_style_by_id(
@@ -57,41 +88,106 @@ async def fetch_style_by_id(
 
 
 @style_router.post(
-    "/style",
+    "/styles",
+)
+@auto_docs(
+    "api/v1/styles",
+    "POST",
+    params={
+        "prompt": {
+            "type": "string",
+            "description": "Сообещние для создания генерации",
+        },
+        "name": {
+            "type": "string",
+            "description": "Указанное имя для созданого объекта",
+        },
+        "preview_small": {
+            "type": "string",
+            "description": "Маленькая фотография для объекта",
+        },
+        "preview_large": {
+            "type": "string",
+            "description": "Большая фотография для объекта",
+        },
+    },
+    description="Роутер для нового создания объекта",
 )
 async def add_style(
-    data: Style,
+    data: IStyle = Depends(),
+    preview_small: UploadFile | None = None,
+    preview_large: UploadFile | None = None,
     _: str = Depends(validate_token),
     view: PixverseStyleView = Depends(PixverseStyleViewFactory.create),
-) -> Style:
+) -> ChangeStyle:
     return await view.add_style(
         data,
+        save_upload_file(preview_small, subdir="small"),
+        save_upload_file(preview_large, subdir="large"),
     )
 
 
 @style_router.put(
-    "/style/{id}",
+    "/styles/{id}",
+)
+@auto_docs(
+    "api/v1/styles/{id}",
+    "PUT",
+    params={
+        "prompt": {
+            "type": "string",
+            "description": "Сообещние для создания генерации",
+        },
+        "name": {
+            "type": "string",
+            "description": "Указанное имя для созданого объекта",
+        },
+        "preview_small": {
+            "type": "string",
+            "description": "Маленькая фотография для объекта",
+        },
+        "preview_large": {
+            "type": "string",
+            "description": "Большая фотография для объекта",
+        },
+    },
+    description="Роутер для измененния созданного стиля",
 )
 async def update_style(
     id: int,
-    data: Style,
+    data: IStyle = Depends(),
+    preview_small: UploadFile | None = None,
+    preview_large: UploadFile | None = None,
     _: str = Depends(validate_token),
     view: PixverseStyleView = Depends(PixverseStyleViewFactory.create),
-) -> Style:
+) -> ChangeStyle:
     return await view.update_style(
         id,
         data,
+        save_upload_file(preview_small, subdir="small"),
+        save_upload_file(preview_large, subdir="large"),
     )
 
 
 @style_router.delete(
-    "/style/{id}",
+    "/styles/{id}",
+)
+@auto_docs(
+    "api/v1/styles/{id}",
+    "DELETE",
+    params={
+        "id": {
+            "type": "string",
+            "description": "Уникальный идентификатор объекта",
+        },
+    },
+    description="Роутер для удаления созданного стиля по идентификатору",
 )
 async def delete_style(
     id: int,
     _: str = Depends(validate_token),
     view: PixverseStyleView = Depends(PixverseStyleViewFactory.create),
-) -> Style:
+) -> bool:
     return await view.delete_style(
         id,
     )

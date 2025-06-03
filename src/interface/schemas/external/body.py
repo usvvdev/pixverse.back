@@ -53,15 +53,15 @@ class I2VBody(IPixverseBody):
 
 class R2VBody(IPixverseBody):
     template_id: Annotated[
-        str,
-        Field(..., alias="templateId"),
+        str | None,
+        Field(default=None, alias="templateId"),
     ]
 
 
 class TE2VBody(IPixverseBody):
     template_id: Annotated[
-        str,
-        Field(..., alias="templateId"),
+        str | None,
+        Field(default=None, alias="templateId"),
     ]
 
 

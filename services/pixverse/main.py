@@ -2,6 +2,8 @@
 
 from fastapi import FastAPI
 
+from fastapi.staticfiles import StaticFiles
+
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.domain.conf import app_conf
@@ -15,7 +17,14 @@ def main() -> FastAPI:
     conf: IConfEnv = app_conf()
 
     app = FastAPI(**conf.app_config)
+
     app_router = PixVerseRouter(app, conf)
+
+    app.mount(
+        "/static",
+        StaticFiles(directory="uploads"),
+        name="static",
+    )
 
     app.add_middleware(
         CORSMiddleware,

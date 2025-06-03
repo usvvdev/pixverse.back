@@ -55,4 +55,4 @@ class PixverseEndpoint(StrEnum):
 
     RESTYLE_TEMPLATE = "/creative_platform/restyle/list"
 
-    EFFECT = "/creative_platform/effect/channel/list"
+    TEMPLATES = "/creative_platform/effect/channel/list"

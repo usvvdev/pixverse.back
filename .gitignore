@@ -85,6 +85,7 @@ cover/
 # Media files
 media/
 static/
+uploads/
 
 # Sphinx documentation
 docs/_build/

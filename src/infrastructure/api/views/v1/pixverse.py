@@ -2,21 +2,13 @@
 
 from fastapi import UploadFile
 
-from fastapi.security import OAuth2PasswordRequestForm
-
 from .....domain.entities.pixverse import IBody
 
 from .....interface.schemas.external import (
     T2VBody,
     Resp,
     R2VBody,
-    AuthRes,
-    GenBody,
-    TemplateBody,
-    TokensResponse,
     GenerationStatus,
-    Template,
-    EffectResponse,
     TE2VBody,
 )
 
@@ -75,24 +67,3 @@ class PixVerseView:
         return await self._controller.generation_status(
             id,
         )
-
-    # async def credits_amount(
-    #     self,
-    #     token: str,
-    # ) -> TokensResponse:
-    #     return await self._controller.credits_amount(
-    #         token,
-    #     )
-
-    # async def restyle_templates(
-    #     self,
-    #     body: TemplateBody,
-    # ) -> list[Template]:
-    #     return await self._controller.restyle_templates(
-    #         body,
-    #     )
-
-    # async def effect_templates(
-    #     self,
-    # ) -> EffectResponse:
-    #     return await self._controller.effect_templates()

@@ -44,11 +44,10 @@ from ....interface.schemas.external import (
     Resp,
     UTResp,
     GenerationStatus,
-    GenBody,
     TemplateBody,
     TokensResponse,
     EffectResponse,
-    Template,
+    TemplateResp,
 )
 
 from ....interface.schemas.api import Style, Template
@@ -177,45 +176,45 @@ class PixVerseClient:
                     status="generating" if video.video_status == 10 else "error"
                 )
 
-    # async def credits_amount(
-    #     self,
-    #     token: str,
-    # ) -> TokensResponse:
-    #     data: Response = await self._core.get(
-    #         token=token,
-    #         endpoint=PixverseEndpoint.TOKEN,
-    #     )
-    #     if data.err_code != 0:
-    #         raise PixverseError(
-    #             status_code=data.err_code,
-    #         )
-    #     return data.resp
+    async def credits_amount(
+        self,
+        token: str,
+    ) -> TokensResponse:
+        data: Response = await self._core.get(
+            token=token,
+            endpoint=PixverseEndpoint.TOKEN,
+        )
+        if data.err_code != 0:
+            raise PixverseError(
+                status_code=data.err_code,
+            )
+        return data.resp
 
-    # async def fetch_styles(
-    #     self,
-    #     body: TemplateBody,
-    # ) -> list[Template]:
-    #     data: Response = await self._core.post(
-    #         endpoint=PixverseEndpoint.RESTYLE_TEMPLATE,
-    #         body=body,
-    #     )
-    #     if data.err_code != 0:
-    #         raise PixverseError(
-    #             status_code=data.err_code,
-    #         )
-    #     return data.resp.items
+    async def fetch_styles(
+        self,
+        body: TemplateBody,
+    ) -> list[TemplateResp]:
+        data: Response = await self._core.post(
+            endpoint=PixverseEndpoint.RESTYLE_TEMPLATE,
+            body=body,
+        )
+        if data.err_code != 0:
+            raise PixverseError(
+                status_code=data.err_code,
+            )
+        return data.resp.items
 
-    # async def fetch_templates(
-    #     self,
-    # ) -> EffectResponse:
-    #     data: Response = await self._core.post(
-    #         endpoint=PixverseEndpoint.EFFECT,
-    #     )
-    #     if data.err_code != 0:
-    #         raise PixverseError(
-    #             status_code=data.err_code,
-    #         )
-    #     return data.resp
+    async def fetch_templates(
+        self,
+    ) -> EffectResponse:
+        data: Response = await self._core.post(
+            endpoint=PixverseEndpoint.TEMPLATES,
+        )
+        if data.err_code != 0:
+            raise PixverseError(
+                status_code=data.err_code,
+            )
+        return data.resp
 
     async def text_to_video(
         self,

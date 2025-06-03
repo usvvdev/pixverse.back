@@ -2,7 +2,11 @@
 
 from .....interface.controllers.api.v1 import PixverseStyleController
 
-from .....interface.schemas.api import Style
+from .....interface.schemas.api import (
+    IStyle,
+    Style,
+    ChangeStyle,
+)
 
 
 class PixverseStyleView:
@@ -35,26 +39,34 @@ class PixverseStyleView:
 
     async def add_style(
         self,
-        data: Style,
-    ) -> Style:
+        data: IStyle,
+        preview_small: str,
+        preview_large: str,
+    ) -> ChangeStyle:
         return await self._controller.add_style(
             data,
+            preview_small,
+            preview_large,
         )
 
     async def update_style(
         self,
         id: int,
         data: Style,
-    ) -> Style:
+        preview_small: str,
+        preview_large: str,
+    ) -> ChangeStyle:
         return await self._controller.update_style(
             id,
             data,
+            preview_small,
+            preview_large,
         )
 
     async def delete_style(
         self,
         id: int,
-    ) -> Style:
+    ) -> bool:
         return await self._controller.delete_style(
             id,
         )

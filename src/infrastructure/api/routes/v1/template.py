@@ -2,16 +2,24 @@
 
 from fastapi import (
     APIRouter,
+    UploadFile,
     Depends,
 )
 
 from ...views.v1 import PixverseTemplateView
 
-from .....domain.tools import auto_docs, validate_token
-
+from .....domain.tools import (
+    auto_docs,
+    validate_token,
+    save_upload_file,
+)
 from ....factroies.api.v1 import PixverseTemplateViewFactory
 
-from .....interface.schemas.api import Template
+from .....interface.schemas.api import (
+    Template,
+    ITemplate,
+    ChangeTemplate,
+)
 
 
 template_router = APIRouter(tags=["Templates"])
@@ -20,19 +28,33 @@ template_router = APIRouter(tags=["Templates"])
 @template_router.get(
     "/templates",
 )
+@auto_docs(
+    "api/v1/templates",
+    "GET",
+    description="Роутер для получения объектов.",
+)
 async def fetch_templates(
-    _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
 ) -> list[Template]:
     return await view.fetch_templates()
 
 
 @template_router.get(
-    "/template/{template_id}",
+    "/templates/{template_id}",
+)
+@auto_docs(
+    "api/v1/templates/{template_id}",
+    "GET",
+    params={
+        "template_id": {
+            "type": "integer",
+            "description": "Уникальный идентификатор объекта",
+        }
+    },
+    description="Роутер для получения объекта по уникальному идентификатору",
 )
 async def fetch_template_by_template_id(
     template_id: int,
-    _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
 ) -> Template:
     return await view.fetch_template_by_template_id(
@@ -41,11 +63,21 @@ async def fetch_template_by_template_id(
 
 
 @template_router.get(
-    "/template/{id}",
+    "/templates/{id}",
+)
+@auto_docs(
+    "api/v1/templates/{id}",
+    "GET",
+    params={
+        "id": {
+            "type": "integer",
+            "description": "Уникальный идентификатор объекта из базы данных",
+        }
+    },
+    description="Роутер для получения объекта по уникальному идентификатору из базы данных",
 )
 async def fetch_template_by_id(
     id: int,
-    _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
 ) -> Template:
     return await view.fetch_template_by_id(
@@ -54,41 +86,110 @@ async def fetch_template_by_id(
 
 
 @template_router.post(
-    "/template",
+    "/templates",
+)
+@auto_docs(
+    "api/v1/templates",
+    "POST",
+    params={
+        "template_id": {
+            "type": "integer",
+            "description": "Уникальный идентификатор для объекта",
+        },
+        "prompt": {
+            "type": "string",
+            "description": "Сообещние для создания генерации",
+        },
+        "name": {
+            "type": "string",
+            "description": "Указанное имя для созданого объекта",
+        },
+        "preview_small": {
+            "type": "string",
+            "description": "Маленькая фотография для объекта",
+        },
+        "preview_large": {
+            "type": "string",
+            "description": "Большая фотография для объекта",
+        },
+    },
+    description="Роутер для нового создания объекта",
 )
 async def add_template(
-    data: Template,
+    data: ITemplate = Depends(),
+    preview_small: UploadFile | None = None,
+    preview_large: UploadFile | None = None,
     _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
-) -> Template:
+) -> ChangeTemplate:
     return await view.add_template(
         data,
+        save_upload_file(preview_small, subdir="small"),
+        save_upload_file(preview_large, subdir="large"),
     )
 
 
 @template_router.put(
-    "/template/{id}",
+    "/templates/{id}",
+)
+@auto_docs(
+    "api/v1/styles/{id}",
+    "PUT",
+    params={
+        "prompt": {
+            "type": "string",
+            "description": "Сообещние для создания генерации",
+        },
+        "name": {
+            "type": "string",
+            "description": "Указанное имя для созданого объекта",
+        },
+        "preview_small": {
+            "type": "string",
+            "description": "Маленькая фотография для объекта",
+        },
+        "preview_large": {
+            "type": "string",
+            "description": "Большая фотография для объекта",
+        },
+    },
+    description="Роутер для измененния созданного стиля",
 )
 async def update_template(
     id: int,
-    data: Template,
+    data: ITemplate = Depends(),
+    preview_small: UploadFile | None = None,
+    preview_large: UploadFile | None = None,
     _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
-) -> Template:
+) -> ChangeTemplate:
     return await view.update_template(
         id,
         data,
+        save_upload_file(preview_small, subdir="small"),
+        save_upload_file(preview_large, subdir="large"),
     )
 
 
 @template_router.delete(
-    "/template/{id}",
+    "/templates/{id}",
+)
+@auto_docs(
+    "api/v1/templates/{id}",
+    "DELETE",
+    params={
+        "id": {
+            "type": "string",
+            "description": "Уникальный идентификатор объекта",
+        },
+    },
+    description="Роутер для удаления созданного стиля по идентификатору",
 )
 async def delete_template(
     id: int,
     _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
-) -> Template:
+) -> bool:
     return await view.delete_template(
         id,
     )

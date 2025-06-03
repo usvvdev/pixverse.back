@@ -2,7 +2,11 @@
 
 from .....infrastructure.orm.database.repositories import PixverseTemplateRepository
 
-from ....schemas.api import Template
+from ....schemas.api import (
+    Template,
+    ITemplate,
+    ChangeTemplate,
+)
 
 
 class PixverseTemplateController:
@@ -37,26 +41,38 @@ class PixverseTemplateController:
 
     async def add_template(
         self,
-        data: Template,
-    ) -> Template:
+        data: ITemplate,
+        preview_small: str,
+        preview_large: str,
+    ) -> ChangeTemplate:
         return await self._repository.add_record(
-            data,
+            ChangeTemplate(
+                **data.dict,
+                preview_small=preview_small,
+                preview_large=preview_large,
+            ),
         )
 
     async def update_template(
         self,
         id: int,
         data: Template,
+        preview_small: str,
+        preview_large: str,
     ) -> Template:
         return await self._repository.update_record(
             id,
-            data,
+            ChangeTemplate(
+                **data.dict,
+                preview_small=preview_small,
+                preview_large=preview_large,
+            ),
         )
 
     async def delete_template(
         self,
         id: int,
-    ) -> Template:
+    ) -> bool:
         return await self._repository.delete_record(
             id,
         )
