@@ -96,6 +96,11 @@ class IOpenAPI(ISchema):
         str,
         Field(default="0.1.0"),
     ]
+
+    openapi_version: Annotated[
+        str,
+        Field(default="3.1.0"),
+    ]
     """Версия API, отображаемая в документации.
     
     Тип:
