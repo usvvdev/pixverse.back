@@ -35,8 +35,8 @@ class PixVerseRouter(AppRouting):
             config,
             routers=[
                 pixverse_router,
-                style_router,
-                template_router,
+                # style_router,
+                # template_router,
             ],
         )
 
