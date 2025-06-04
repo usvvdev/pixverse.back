@@ -164,7 +164,7 @@ async def update_template(
     data: ITemplate = Depends(),
     preview_small: UploadFile | None = None,
     preview_large: UploadFile | None = None,
-    _: str = Depends(validate_token),
+    # _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
 ) -> ChangeTemplate:
     return await view.update_template(
