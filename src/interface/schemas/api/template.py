@@ -31,6 +31,10 @@ class ChangeTemplate(ITemplate):
         str | None,
         Field(default=None),
     ]
+    is_active: Annotated[
+        bool,
+        Field(default=True),
+    ]
 
 
 class Template(ChangeTemplate):
