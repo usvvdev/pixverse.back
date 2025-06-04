@@ -84,10 +84,16 @@ class IConfEnv(BaseSettings):
         Field(...),
     ]
 
+    domain_url: Annotated[
+        str,
+        Field(...),
+    ]
+
     allowed_hosts: Annotated[
         list[str],
         Field(default=["*"]),
     ]
+
     """Список разрешенных хостов (CORS).
     
     Тип:
