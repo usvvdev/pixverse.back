@@ -3,9 +3,6 @@
 from fastapi import (
     APIRouter,
     Depends,
-    File,
-    Form,
-    UploadFile,
 )
 
 from ...views.v1 import PixverseAccountView
@@ -14,7 +11,11 @@ from .....domain.tools import auto_docs, validate_token
 
 from ....factroies.api.v1 import PixverseAccountViewFactory
 
-from .....interface.schemas.api.account import Account
+from .....interface.schemas.api.account import (
+    Account,
+    IAccount,
+    ChangeAccount,
+)
 
 
 account_router = APIRouter(tags=["Accounts"])
@@ -31,7 +32,7 @@ async def fetch_accounts(
 
 
 @account_router.get(
-    "/account/{id}",
+    "/accounts/{id}",
 )
 async def fetch_account(
     id: int,
@@ -44,27 +45,27 @@ async def fetch_account(
 
 
 @account_router.post(
-    "/account",
+    "/accounts",
 )
 async def add_account(
-    data: Account,
+    data: IAccount,
     _: str = Depends(validate_token),
     view: PixverseAccountView = Depends(PixverseAccountViewFactory.create),
-):
+) -> ChangeAccount:
     return await view.add_account(
         data,
     )
 
 
 @account_router.put(
-    "/account/{id}",
+    "/accounts/{id}",
 )
 async def update_account(
     id: int,
-    data: Account,
+    data: ChangeAccount,
     _: str = Depends(validate_token),
     view: PixverseAccountView = Depends(PixverseAccountViewFactory.create),
-) -> Account:
+) -> ChangeAccount:
     return await view.update_account(
         id,
         data,
@@ -72,13 +73,13 @@ async def update_account(
 
 
 @account_router.delete(
-    "/account/{id}",
+    "/accounts/{id}",
 )
 async def delete_account(
     id: int,
     _: str = Depends(validate_token),
     view: PixverseAccountView = Depends(PixverseAccountViewFactory.create),
-):
+) -> bool:
     return await view.delete_account(
         id,
     )

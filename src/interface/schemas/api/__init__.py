@@ -1,6 +1,10 @@
 # coding utf-8
 
-from .account import Account
+from .account import (
+    Account,
+    IAccount,
+    ChangeAccount,
+)
 
 from .auth_user import AuthUserCredentials, UserRefreshToken
 

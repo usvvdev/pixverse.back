@@ -7,11 +7,7 @@ from pydantic import Field
 from ....domain.entities.core import ISchema
 
 
-class Account(ISchema):
-    id: Annotated[
-        int,
-        Field(...),
-    ]
+class IAccount(ISchema):
     username: Annotated[
         str,
         Field(...),
@@ -20,11 +16,21 @@ class Account(ISchema):
         str,
         Field(...),
     ]
+
+
+class ChangeAccount(IAccount):
     is_active: Annotated[
         bool,
-        Field(...),
+        Field(default=1),
     ]
     balance: Annotated[
+        int,
+        Field(default=0),
+    ]
+
+
+class Account(ChangeAccount):
+    id: Annotated[
         int,
         Field(...),
     ]

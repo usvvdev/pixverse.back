@@ -2,7 +2,11 @@
 
 from .....infrastructure.orm.database.repositories import PixverseAccountRepository
 
-from ....schemas.api import Account
+from ....schemas.api import (
+    Account,
+    IAccount,
+    ChangeAccount,
+)
 
 
 class PixverseAccountController:
@@ -28,8 +32,8 @@ class PixverseAccountController:
 
     async def add_account(
         self,
-        data: Account,
-    ) -> Account:
+        data: IAccount,
+    ) -> ChangeAccount:
         return await self._repository.add_record(
             data,
         )
@@ -37,8 +41,8 @@ class PixverseAccountController:
     async def update_account(
         self,
         id: int,
-        data: Account,
-    ) -> Account:
+        data: ChangeAccount,
+    ) -> ChangeAccount:
         return await self._repository.update_record(
             id,
             data,
@@ -47,7 +51,7 @@ class PixverseAccountController:
     async def delete_account(
         self,
         id: int,
-    ):
+    ) -> bool:
         return await self._repository.delete_record(
             id,
         )

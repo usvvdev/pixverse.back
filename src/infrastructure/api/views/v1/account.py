@@ -2,7 +2,11 @@
 
 from .....interface.controllers.api.v1 import PixverseAccountController
 
-from .....interface.schemas.api import Account
+from .....interface.schemas.api import (
+    Account,
+    IAccount,
+    ChangeAccount,
+)
 
 
 class PixverseAccountView:
@@ -27,8 +31,8 @@ class PixverseAccountView:
 
     async def add_account(
         self,
-        data: Account,
-    ) -> Account:
+        data: IAccount,
+    ) -> ChangeAccount:
         return await self._controller.add_account(
             data,
         )
@@ -36,8 +40,8 @@ class PixverseAccountView:
     async def update_account(
         self,
         id: int,
-        data: Account,
-    ) -> Account:
+        data: ChangeAccount,
+    ) -> ChangeAccount:
         return await self._controller.update_account(
             id,
             data,
@@ -46,7 +50,7 @@ class PixverseAccountView:
     async def delete_account(
         self,
         id: int,
-    ) -> Account:
+    ) -> bool:
         return await self._controller.delete_account(
             id,
         )

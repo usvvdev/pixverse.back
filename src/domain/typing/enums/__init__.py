@@ -2,7 +2,7 @@
 
 from .env import ConfEnv
 
-from .request import RequestMethod
+from .request import RequestMethod, RequestError
 
 from .endpoint import PixverseEndpoint
 
@@ -21,6 +21,7 @@ from .token import (
 __all__: list[str] = [
     "ConfEnv",
     "RequestMethod",
+    "RequestError",
     "PixverseEndpoint",
     "ErrorCode",
     "ModelVersion",

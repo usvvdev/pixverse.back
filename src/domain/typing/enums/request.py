@@ -1,6 +1,8 @@
 # coding utf-8
 
-from enum import StrEnum
+from enum import StrEnum, IntEnum
+
+from fastapi import status
 
 
 class RequestMethod(StrEnum):
@@ -13,3 +15,7 @@ class RequestMethod(StrEnum):
     """
     Метод POST - создание ресурса.
     """
+
+
+class RequestError(IntEnum):
+    FORBIDDEN = status.HTTP_401_UNAUTHORIZED
