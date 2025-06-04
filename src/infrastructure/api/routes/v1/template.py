@@ -89,7 +89,7 @@ async def fetch_template_by_id(
 
 @template_router.post(
     "/templates",
-    include_in_schema=False,
+    # include_in_schema=False,
 )
 @auto_docs(
     "api/v1/templates",
