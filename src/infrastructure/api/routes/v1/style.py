@@ -43,6 +43,7 @@ async def fetch_styles(
 
 @style_router.get(
     "/styles/{template_id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/styles/{template_id}",
@@ -66,6 +67,7 @@ async def fetch_style_by_template_id(
 
 @style_router.get(
     "/styles/{id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/styles/{id}",
@@ -89,6 +91,7 @@ async def fetch_style_by_id(
 
 @style_router.post(
     "/styles",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/styles",
@@ -129,6 +132,7 @@ async def add_style(
 
 @style_router.put(
     "/styles/{id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/styles/{id}",
@@ -171,6 +175,7 @@ async def update_style(
 
 @style_router.delete(
     "/styles/{id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/styles/{id}",

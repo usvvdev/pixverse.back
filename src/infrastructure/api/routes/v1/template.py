@@ -41,6 +41,7 @@ async def fetch_templates(
 
 @template_router.get(
     "/templates/{template_id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/templates/{template_id}",
@@ -64,6 +65,7 @@ async def fetch_template_by_template_id(
 
 @template_router.get(
     "/templates/{id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/templates/{id}",
@@ -87,6 +89,7 @@ async def fetch_template_by_id(
 
 @template_router.post(
     "/templates",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/templates",
@@ -131,6 +134,7 @@ async def add_template(
 
 @template_router.put(
     "/templates/{id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/styles/{id}",
@@ -173,6 +177,7 @@ async def update_template(
 
 @template_router.delete(
     "/templates/{id}",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/templates/{id}",
