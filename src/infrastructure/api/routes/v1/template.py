@@ -89,7 +89,7 @@ async def fetch_template_by_id(
 
 @template_router.post(
     "/templates",
-    # include_in_schema=False,
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/templates",
@@ -122,7 +122,7 @@ async def add_template(
     data: ITemplate = Depends(),
     preview_small: UploadFile | None = None,
     preview_large: UploadFile | None = None,
-    # _: str = Depends(validate_token),
+    _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
 ) -> ChangeTemplate:
     return await view.add_template(
