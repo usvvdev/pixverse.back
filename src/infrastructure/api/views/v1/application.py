@@ -21,12 +21,12 @@ class ApplicationView:
     ) -> list[Application]:
         return await self._controller.fetch_applications()
 
-    async def fetch_application_by_id(
+    async def fetch_application_by_app_id(
         self,
-        id: int,
+        app_id: str,
     ) -> Application:
-        return await self._controller.fetch_application_by_id(
-            id,
+        return await self._controller.fetch_application_by_app_id(
+            app_id,
         )
 
     async def add_application(

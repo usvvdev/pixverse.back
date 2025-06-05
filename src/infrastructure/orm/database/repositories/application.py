@@ -23,9 +23,11 @@ class ApplicationRepository(DatabaseRepository):
         field_name: str,
         value: str,
     ) -> Applications | None:
-        return await self.fetch_field(
-            field_name,
-            value,
+        return await self.fetch_template_fields(
+            "templates",
+            PixverseTemplates,
+            loader_filter=lambda v: v.is_active == True,
+            model_filter=getattr(self._model, field_name) == value,
             many=False,
         )
 

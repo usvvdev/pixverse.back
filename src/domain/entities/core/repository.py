@@ -79,20 +79,24 @@ class IRepository:
         self,
         attribute: str,
         loader_model: Type = None,
-        filter: Callable = None,
+        loader_filter: Callable = None,
+        model_filter: ColumnElement = None,
+        many: bool = True,
     ):
-        return await self.__fetch_records(
-            select(self._model).options(
-                selectinload(
-                    getattr(self._model, attribute),
-                ),
-                with_loader_criteria(
-                    loader_model,
-                    filter,
-                    include_aliases=True,
-                ),
+        stmt = select(self._model)
+
+        if attribute:
+            stmt = stmt.options(selectinload(getattr(self._model, attribute)))
+
+        if loader_model and loader_filter:
+            stmt = stmt.options(
+                with_loader_criteria(loader_model, loader_filter, include_aliases=True)
             )
-        )
+
+        if model_filter is not None:
+            stmt = stmt.where(model_filter)
+
+        return await self.__fetch_records(stmt, many=many)
 
     async def fetch_one(
         self,

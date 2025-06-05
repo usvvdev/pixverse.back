@@ -39,13 +39,13 @@ class ApplicationController:
     ) -> list[Application]:
         return await self._repository.fetch_all()
 
-    async def fetch_application_by_id(
+    async def fetch_application_by_app_id(
         self,
-        id: int,
+        app_id: str,
     ) -> Application | None:
         return await self._repository.fetch_application(
-            "id",
-            id,
+            "app_id",
+            app_id,
         )
 
     async def add_application(

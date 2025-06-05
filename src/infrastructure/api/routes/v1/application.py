@@ -25,6 +25,7 @@ application_router = APIRouter(tags=["Applications"])
 
 @application_router.get(
     "/applications",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/applications",
@@ -38,26 +39,26 @@ async def fetch_applications(
 
 
 @application_router.get(
-    "/applications/{id}",
-    include_in_schema=False,
+    "/applications/{app_id}",
+    # include_in_schema=False,
 )
 @auto_docs(
-    "api/v1/applications/{id}",
+    "api/v1/applications/{app_id}",
     "GET",
     params={
-        "id": {
-            "type": "integer",
-            "description": "Уникальный идентификатор объекта из базы данных",
+        "app_id": {
+            "type": "string",
+            "description": "Уникальное название приложения из базы данных",
         }
     },
     description="Роутер для получения объекта по уникальному идентификатору из базы данных",
 )
-async def fetch_application_by_id(
-    id: int,
+async def fetch_application_by_app_id(
+    app_id: str,
     view: ApplicationView = Depends(ApplicationViewFactory.create),
 ) -> Application:
-    return await view.fetch_application_by_id(
-        id,
+    return await view.fetch_application_by_app_id(
+        app_id,
     )
 
 
