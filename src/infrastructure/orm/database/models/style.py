@@ -4,6 +4,7 @@ from sqlalchemy import (
     Column,
     String,
     Integer,
+    Boolean,
 )
 
 from .....domain.entities.core import ITable
@@ -38,4 +39,9 @@ class PixverseStyles(ITable):
     preview_large: str = Column(
         String,
         nullable=False,
+    )
+    is_active: bool = Column(
+        Boolean,
+        nullable=False,
+        default=1,
     )

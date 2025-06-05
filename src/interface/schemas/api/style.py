@@ -38,6 +38,10 @@ class ChangeStyle(IStyle):
         str | None,
         Field(default=None),
     ]
+    is_active: Annotated[
+        bool,
+        Field(default=True),
+    ]
 
 
 class Style(ChangeStyle):

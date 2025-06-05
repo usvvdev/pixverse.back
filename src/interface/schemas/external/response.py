@@ -131,6 +131,10 @@ class Effect(ISchema):
         int,
         Field(...),
     ]
+    prompt: Annotated[
+        str,
+        Field(..., alias="display_prompt"),
+    ]
 
 
 class FrameResp(ISchema):
