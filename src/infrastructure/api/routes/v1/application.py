@@ -51,7 +51,7 @@ async def fetch_applications(
             "description": "Уникальное название приложения из базы данных",
         }
     },
-    description="Роутер для получения объекта по уникальному идентификатору из базы данных",
+    description="Роутер для получения шаблонов по уникальному названию приложения из базы данных",
 )
 async def fetch_application_by_app_id(
     app_id: str,
