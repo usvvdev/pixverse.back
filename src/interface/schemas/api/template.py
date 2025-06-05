@@ -14,6 +14,8 @@ from ....domain.entities.core import (
     IConfEnv,
 )
 
+from ....infrastructure.orm.database.models import PixverseTemplates
+
 
 conf: IConfEnv = app_conf()
 
@@ -28,8 +30,8 @@ class ITemplate(ISchema):
         Field(...),
     ]
     category: Annotated[
-        str,
-        Field(...),
+        str | None,
+        Field(default=None),
     ]
 
 
@@ -80,4 +82,16 @@ class Template(ChangeTemplate):
             "".join((conf.domain_url, value.replace("uploads/", "/static/")))
             if value is not None
             else value
+        )
+
+    @classmethod
+    def create(
+        cls,
+        templates: list[PixverseTemplates],
+    ) -> list["Template"]:
+        return list(
+            map(
+                lambda template: cls.model_validate(template),
+                templates,
+            ),
         )

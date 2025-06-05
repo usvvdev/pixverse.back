@@ -12,6 +12,7 @@ from ....infrastructure.api.routes.v1 import (
     auth_user_router,
     style_router,
     template_router,
+    application_router,
 )
 
 
@@ -37,6 +38,7 @@ class PixVerseRouter(AppRouting):
                 pixverse_router,
                 style_router,
                 template_router,
+                application_router,
             ],
         )
 
@@ -69,5 +71,6 @@ class DashboardRouter(AppRouting):
                 account_router,
                 style_router,
                 template_router,
+                application_router,
             ],
         )

@@ -1,6 +1,10 @@
 # coding utf-8
 
-from typing import Any
+from typing import (
+    Any,
+    Callable,
+    Type,
+)
 
 from sqlalchemy import (
     Result,
@@ -11,6 +15,11 @@ from sqlalchemy import (
     insert,
     delete,
     update,
+)
+
+from sqlalchemy.orm import (
+    selectinload,
+    with_loader_criteria,
 )
 
 from .base import ISchema
@@ -64,6 +73,25 @@ class IRepository:
     ) -> list[Any] | None:
         return await self.__fetch_records(
             select(self._model),
+        )
+
+    async def fetch_template_fields(
+        self,
+        attribute: str,
+        loader_model: Type = None,
+        filter: Callable = None,
+    ):
+        return await self.__fetch_records(
+            select(self._model).options(
+                selectinload(
+                    getattr(self._model, attribute),
+                ),
+                with_loader_criteria(
+                    loader_model,
+                    filter,
+                    include_aliases=True,
+                ),
+            )
         )
 
     async def fetch_one(

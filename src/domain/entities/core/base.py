@@ -25,6 +25,7 @@ class ISchema(BaseModel):
         populate_by_name=True,
         use_enum_values=True,
         loc_by_alias=True,
+        from_attributes=True,
     )
 
     @property
