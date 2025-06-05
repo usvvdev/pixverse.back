@@ -37,5 +37,5 @@ class ApplicationRepository(DatabaseRepository):
         return await self.fetch_template_fields(
             "templates",
             PixverseTemplates,
-            filter=lambda v: v.is_active == True,
+            loader_filter=lambda v: v.is_active == True,
         )
