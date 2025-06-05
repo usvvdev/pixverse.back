@@ -27,6 +27,10 @@ class IStyle(ISchema):
         str,
         Field(...),
     ]
+    is_active: Annotated[
+        bool,
+        Field(default=True),
+    ]
 
 
 class ChangeStyle(IStyle):
@@ -37,10 +41,6 @@ class ChangeStyle(IStyle):
     preview_large: Annotated[
         str | None,
         Field(default=None),
-    ]
-    is_active: Annotated[
-        bool,
-        Field(default=True),
     ]
 
 

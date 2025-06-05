@@ -33,6 +33,10 @@ class ITemplate(ISchema):
         str | None,
         Field(default=None),
     ]
+    is_active: Annotated[
+        bool,
+        Field(default=True),
+    ]
 
 
 class ChangeTemplate(ITemplate):
@@ -43,10 +47,6 @@ class ChangeTemplate(ITemplate):
     preview_large: Annotated[
         str | None,
         Field(default=None),
-    ]
-    is_active: Annotated[
-        bool,
-        Field(default=True),
     ]
 
 
