@@ -11,6 +11,11 @@ from .....infrastructure.orm.database.repositories import (
     PixverseTemplateRepository,
 )
 
+from .....infrastructure.orm.database.models import (
+    ApplicationTemplates,
+    ApplicationStyles,
+)
+
 from ....schemas.api import (
     Template,
     Style,
@@ -65,7 +70,21 @@ class ApplicationController:
         id: int,
         data: ChangeApplication,
     ) -> IApplication:
-        pass
+        await self._repository.update_application(
+            application_id=id,
+            relation_table=ApplicationTemplates,
+            relation_ids=data.template_ids,
+            relation_column_name="template_id",
+        )
+
+        await self._repository.update_application(
+            application_id=id,
+            relation_table=ApplicationStyles,
+            relation_ids=data.style_ids,
+            relation_column_name="style_id",
+        )
+
+        return data
 
     async def delete_application(
         self,
