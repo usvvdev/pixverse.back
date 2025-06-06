@@ -1,10 +1,6 @@
 # coding utf-8
 
-from typing import (
-    Any,
-    Callable,
-    Type,
-)
+from typing import Callable, Any
 
 from sqlalchemy import (
     Result,
@@ -75,27 +71,30 @@ class IRepository:
             select(self._model),
         )
 
-    async def fetch_template_fields(
+    def __filter_one_to_many(
         self,
-        attribute: str,
-        loader_model: Type = None,
-        loader_filter: Callable = None,
-        model_filter: ColumnElement = None,
-        many: bool = True,
+        related: list[str],
+        models: list[object] | None = None,
+        model_filter: Callable | None = None,
     ):
-        stmt = select(self._model)
-
-        if attribute:
-            stmt = stmt.options(selectinload(getattr(self._model, attribute)))
-
-        if loader_model and loader_filter:
-            stmt = stmt.options(
-                with_loader_criteria(loader_model, loader_filter, include_aliases=True)
+        options = [selectinload(getattr(self._model, rel)) for rel in related]
+        if model_filter and models is not None:
+            options.extend(
+                with_loader_criteria(model, model_filter) for model in models
             )
+        return select(self._model).options(*options)
 
-        if model_filter is not None:
-            stmt = stmt.where(model_filter)
-
+    async def fetch_one_to_many(
+        self,
+        field: str | None = None,
+        value: str | None = None,
+        many: bool = True,
+        *args,
+        **kwargs,
+    ):
+        stmt = self.__filter_one_to_many(*args, **kwargs)
+        if field and value is not None:
+            stmt = stmt.where(getattr(self._model, field) == value)
         return await self.__fetch_records(stmt, many=many)
 
     async def fetch_one(

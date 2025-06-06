@@ -7,6 +7,10 @@ from sqlalchemy import (
     Boolean,
 )
 
+from sqlalchemy.orm import relationship
+
+from .one_to_many import ApplicationStyles
+
 from .....domain.entities.core import ITable
 
 
@@ -44,4 +48,10 @@ class PixverseStyles(ITable):
         Boolean,
         nullable=False,
         default=1,
+    )
+
+    applications = relationship(
+        "Applications",
+        secondary=ApplicationStyles,
+        back_populates="styles",
     )

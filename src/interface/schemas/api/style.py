@@ -14,6 +14,8 @@ from ....domain.entities.core import (
     IConfEnv,
 )
 
+from ....infrastructure.orm.database.models import PixverseStyles
+
 
 conf: IConfEnv = app_conf()
 
@@ -76,4 +78,16 @@ class Style(ChangeStyle):
             "".join((conf.domain_url, value.replace("uploads/", "/static/")))
             if value is not None
             else value
+        )
+
+    @classmethod
+    def create(
+        cls,
+        styles: list[PixverseStyles],
+    ) -> list["Style"]:
+        return list(
+            map(
+                lambda style: cls.model_validate(style),
+                styles,
+            ),
         )

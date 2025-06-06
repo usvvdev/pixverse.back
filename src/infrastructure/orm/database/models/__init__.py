@@ -10,7 +10,10 @@ from .template import PixverseTemplates
 
 from .application import Applications
 
-from .application_templates import ApplicationTemplates
+from .one_to_many import (
+    ApplicationTemplates,
+    ApplicationStyles,
+)
 
 __all__: list[str] = [
     "PixverseAccounts",
@@ -19,4 +22,5 @@ __all__: list[str] = [
     "PixverseTemplates",
     "Applications",
     "ApplicationTemplates",
+    "ApplicationStyles",
 ]

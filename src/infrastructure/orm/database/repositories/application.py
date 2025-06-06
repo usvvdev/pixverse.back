@@ -1,6 +1,10 @@
 # coding utf-8
 
-from ..models import Applications, PixverseTemplates
+from ..models import (
+    Applications,
+    PixverseTemplates,
+    PixverseStyles,
+)
 
 from .....domain.repositories import (
     IDatabase,
@@ -18,24 +22,25 @@ class ApplicationRepository(DatabaseRepository):
             Applications,
         )
 
+    async def fetch_all(
+        self,
+        related: list[str],
+    ) -> Applications:
+        return await self.fetch_one_to_many(
+            related=related,
+        )
+
     async def fetch_application(
         self,
         field_name: str,
         value: str,
+        related: list[str],
     ) -> Applications | None:
-        return await self.fetch_template_fields(
-            "templates",
-            PixverseTemplates,
-            loader_filter=lambda v: v.is_active == True,
-            model_filter=getattr(self._model, field_name) == value,
+        return await self.fetch_one_to_many(
+            field_name,
+            value,
             many=False,
-        )
-
-    async def fetch_all(
-        self,
-    ) -> Applications:
-        return await self.fetch_template_fields(
-            "templates",
-            PixverseTemplates,
-            loader_filter=lambda v: v.is_active == True,
+            related=related,
+            models=(PixverseTemplates, PixverseStyles),
+            model_filter=lambda v: v.is_active,
         )

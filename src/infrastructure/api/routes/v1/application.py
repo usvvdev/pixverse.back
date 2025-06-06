@@ -95,7 +95,7 @@ async def fetch_application_by_app_id(
 )
 async def add_application(
     data: IApplication,
-    # _: str = Depends(validate_token),
+    _: str = Depends(validate_token),
     view: ApplicationView = Depends(ApplicationViewFactory.create),
 ) -> IApplication:
     return await view.add_application(

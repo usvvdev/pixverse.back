@@ -9,7 +9,7 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship
 
-from .application_templates import ApplicationTemplates
+from .one_to_many import ApplicationTemplates
 
 from .....domain.entities.core import ITable
 

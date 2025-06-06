@@ -8,7 +8,10 @@ from sqlalchemy import (
 
 from sqlalchemy.orm import relationship
 
-from .application_templates import ApplicationTemplates
+from .one_to_many import (
+    ApplicationTemplates,
+    ApplicationStyles,
+)
 
 from .....domain.entities.core import ITable
 
@@ -29,5 +32,11 @@ class Applications(ITable):
     templates = relationship(
         "PixverseTemplates",
         secondary=ApplicationTemplates,
+        back_populates="applications",
+    )
+
+    styles = relationship(
+        "PixverseStyles",
+        secondary=ApplicationStyles,
         back_populates="applications",
     )

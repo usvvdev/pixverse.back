@@ -6,6 +6,8 @@ from pydantic import Field
 
 from .template import Template
 
+from .style import Style
+
 from ....domain.entities.core import ISchema
 
 
@@ -18,6 +20,10 @@ class IApplication(ISchema):
         list[Template] | None,
         Field(default=None),
     ]
+    styles: Annotated[
+        list[Style] | None,
+        Field(default=None),
+    ]
 
 
 class ChangeApplication(ISchema):
@@ -25,7 +31,11 @@ class ChangeApplication(ISchema):
         str,
         Field(...),
     ]
-    ids: Annotated[
+    template_ids: Annotated[
+        list[int],
+        Field(...),
+    ]
+    style_ids: Annotated[
         list[int],
         Field(...),
     ]

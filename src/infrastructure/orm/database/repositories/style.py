@@ -1,5 +1,7 @@
 # coding utf-8
 
+from asyncio import gather
+
 from ..models import PixverseStyles
 
 from .....domain.repositories import (
@@ -27,4 +29,18 @@ class PixverseStyleRepository(DatabaseRepository):
             field_name,
             value,
             many=False,
+        )
+
+    async def fetch_styles_by_id(
+        self,
+        data: list[int],
+    ) -> list[PixverseStyles]:
+        return await gather(
+            *[
+                self.fetch_style(
+                    "id",
+                    id,
+                )
+                for id in data
+            ]
         )

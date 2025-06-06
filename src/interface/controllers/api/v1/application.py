@@ -13,6 +13,7 @@ from .....infrastructure.orm.database.repositories import (
 
 from ....schemas.api import (
     Template,
+    Style,
     Application,
     IApplication,
     ChangeApplication,
@@ -37,7 +38,9 @@ class ApplicationController:
     async def fetch_applications(
         self,
     ) -> list[Application]:
-        return await self._repository.fetch_all()
+        return await self._repository.fetch_all(
+            ["templates", "styles"],
+        )
 
     async def fetch_application_by_app_id(
         self,
@@ -46,6 +49,7 @@ class ApplicationController:
         return await self._repository.fetch_application(
             "app_id",
             app_id,
+            ["templates", "styles"],
         )
 
     async def add_application(
@@ -61,17 +65,7 @@ class ApplicationController:
         id: int,
         data: ChangeApplication,
     ) -> IApplication:
-        return await self._repository.update_record(
-            id,
-            IApplication(
-                **data.dict,
-                templates=Template.create(
-                    await template_database.fetch_templates_by_id(
-                        data.ids,
-                    ),
-                ),
-            ),
-        )
+        pass
 
     async def delete_application(
         self,
