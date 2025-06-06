@@ -133,7 +133,7 @@ async def add_application(
 async def update_application(
     id: int,
     data: ChangeApplication,
-    # _: str = Depends(validate_token),
+    _: str = Depends(validate_token),
     view: ApplicationView = Depends(ApplicationViewFactory.create),
 ) -> IApplication:
     return await view.update_application(
