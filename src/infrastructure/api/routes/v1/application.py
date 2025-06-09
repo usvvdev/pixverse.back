@@ -40,6 +40,7 @@ async def fetch_applications(
 
 @application_router.get(
     "/get_templates/{app_id}",
+    response_model_exclude_none=True,
     # include_in_schema=False,
 )
 @auto_docs(

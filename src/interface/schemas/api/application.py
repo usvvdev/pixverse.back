@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from .template import Template
 
@@ -24,6 +24,19 @@ class IApplication(ISchema):
         list[Style] | None,
         Field(default=None),
     ]
+
+    @field_validator(
+        "styles",
+        mode="before",
+    )
+    @classmethod
+    def validate_styles(
+        cls,
+        value: list,
+    ) -> list[Style] | None:
+        if len(value) > 0:
+            return value
+        return None
 
 
 class ChangeApplication(ISchema):
