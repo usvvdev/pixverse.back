@@ -29,6 +29,7 @@ style_router = APIRouter(tags=["Styles"])
 
 @style_router.get(
     "/styles",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/styles",

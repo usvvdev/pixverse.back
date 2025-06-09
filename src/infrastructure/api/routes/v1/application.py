@@ -39,11 +39,11 @@ async def fetch_applications(
 
 
 @application_router.get(
-    "/applications/{app_id}",
+    "/get_templates/{app_id}",
     # include_in_schema=False,
 )
 @auto_docs(
-    "api/v1/applications/{app_id}",
+    "api/v1/get_templates/{app_id}",
     "GET",
     params={
         "app_id": {
@@ -53,7 +53,7 @@ async def fetch_applications(
     },
     description="Роутер для получения шаблонов по уникальному названию приложения из базы данных",
 )
-async def fetch_application_by_app_id(
+async def get_templates_by_app_id(
     app_id: str,
     view: ApplicationView = Depends(ApplicationViewFactory.create),
 ) -> Application:

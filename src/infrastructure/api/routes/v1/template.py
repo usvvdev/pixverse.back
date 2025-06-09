@@ -27,6 +27,7 @@ template_router = APIRouter(tags=["Templates"])
 
 @template_router.get(
     "/templates",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/templates",
