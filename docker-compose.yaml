@@ -29,7 +29,7 @@ services:
   chatgpt:
     <<: *service-template
     ports:
-      - 8002:${APP_PORT}
+      - 8003:${APP_PORT}
     environment:
       - APP_SERVICE=chatgpt
   
