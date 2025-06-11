@@ -12,6 +12,8 @@ from .template import template_router
 
 from .application import application_router
 
+from .chatgpt import chatgpt_router
+
 __all__: list[str] = [
     "pixverse_router",
     "account_router",
@@ -19,4 +21,5 @@ __all__: list[str] = [
     "style_router",
     "template_router",
     "application_router",
+    "chatgpt_router",
 ]

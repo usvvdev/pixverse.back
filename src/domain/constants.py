@@ -10,6 +10,8 @@ from passlib.context import CryptContext
 
 PIXVERSE_API_URL = "https://app-api.pixverse.ai"
 
+CHATGPT_API_URL = "https://api.openai.com"
+
 PIXVERSE_MEDIA_URL = "https://media.pixverse.ai/upload/"
 
 BUCKET_URL = "https://oss-accelerate.aliyuncs.com"
@@ -56,3 +58,14 @@ TABLE_PATTERN = r"(?<!^)([A-Z][a-z])"
 TABLE_REPLACEMENT = r"_\1"
 
 PWD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+ALLOWED_MIME_TYPES = {
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "video/mp4",
+    "video/mov",
+    "video/quicktime",
+}
+
+UPLOAD_DIR = "uploads"

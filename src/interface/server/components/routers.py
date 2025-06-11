@@ -13,6 +13,7 @@ from ....infrastructure.api.routes.v1 import (
     style_router,
     template_router,
     application_router,
+    chatgpt_router,
 )
 
 
@@ -39,6 +40,30 @@ class PixVerseRouter(AppRouting):
                 style_router,
                 template_router,
                 application_router,
+            ],
+        )
+
+
+class ChatGPTRouter(AppRouting):
+    def __init__(
+        self,
+        app: FastAPI,
+        config: IConfEnv,
+    ) -> None:
+        """Специализированный роутер для API PixVerse.
+
+        Наследует базовый функционал регистрации роутеров и добавляет
+        предварительно настроенный роутер PixVerse API.
+
+        Args:
+            app (FastAPI): Экземпляр FastAPI приложения
+            config (IConfEnv): Конфигурация приложения
+        """
+        super().__init__(
+            app,
+            config,
+            routers=[
+                chatgpt_router,
             ],
         )
 

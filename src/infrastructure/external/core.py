@@ -82,6 +82,7 @@ class HttpClient:
         headers: ISchema,
         endpoint: str,
         body: ISchema = None,
+        files=None,
     ) -> dict[str, Any]:
         """Основной метод отправки запроса к API.
 
@@ -99,5 +100,6 @@ class HttpClient:
             endpoint,
             headers.dict if headers else None,
             json=body.dict if body else None,
+            files=files if files else None,
         ):
             return response.json()

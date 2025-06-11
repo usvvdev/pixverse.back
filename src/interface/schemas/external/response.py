@@ -4,10 +4,19 @@ from typing import Annotated, Any
 
 from pydantic import (
     Field,
+    field_validator,
     computed_field,
 )
 
-from ....domain.entities.core import ISchema
+from ....domain.conf import app_conf
+
+from ....domain.entities.core import (
+    ISchema,
+    IConfEnv,
+)
+
+
+conf: IConfEnv = app_conf()
 
 
 class StatusRes(ISchema):
@@ -202,3 +211,60 @@ class Response(ISchema):
         | Any,
         Field(default=None, alias="Resp"),
     ]
+
+
+class ChatGPTData(ISchema):
+    b64_json: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class ChatGPTResponse(ISchema):
+    created: Annotated[
+        int,
+        Field(...),
+    ]
+    background: Annotated[
+        str,
+        Field(...),
+    ]
+    data: Annotated[
+        list[ChatGPTData],
+        Field(...),
+    ]
+    output_format: Annotated[
+        str,
+        Field(...),
+    ]
+    quality: Annotated[
+        str,
+        Field(...),
+    ]
+    size: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class ChatGPTResp(ISchema):
+    url: Annotated[
+        str,
+        Field(...),
+    ]
+    detail: Annotated[
+        str,
+        Field(default="Success"),
+    ]
+
+    @field_validator("url", mode="after")
+    @classmethod
+    def create_preview_large_url(
+        cls,
+        value: str,
+    ) -> str:
+        return (
+            "".join((conf.domain_url, value.replace("uploads/", "/static/")))
+            if value is not None
+            else value
+        )

@@ -28,6 +28,8 @@ from .response import (
     TokensResponse,
     TemplateResp,
     EffectResponse,
+    ChatGPTResponse,
+    ChatGPTResp,
 )
 
 __all__ = [
@@ -53,4 +55,6 @@ __all__ = [
     "TemplateResp",
     "EffectResponse",
     "VideoBody",
+    "ChatGPTResponse",
+    "ChatGPTResp",
 ]

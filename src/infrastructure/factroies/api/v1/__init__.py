@@ -12,6 +12,8 @@ from .templates import PixverseTemplateViewFactory
 
 from .application import ApplicationViewFactory
 
+from .chatgpt import ChatGPTViewFactory
+
 __all__: list[str] = [
     "PixVerseViewFactory",
     "PixverseAccountViewFactory",
@@ -19,4 +21,5 @@ __all__: list[str] = [
     "PixverseStyleViewFactory",
     "PixverseTemplateViewFactory",
     "ApplicationViewFactory",
+    "ChatGPTViewFactory",
 ]

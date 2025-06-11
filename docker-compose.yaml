@@ -25,6 +25,13 @@ services:
       - 8002:${APP_PORT}
     environment:
       - APP_SERVICE=pixverse
+
+  chatgpt:
+    <<: *service-template
+    ports:
+      - 8002:${APP_PORT}
+    environment:
+      - APP_SERVICE=chatgpt
   
   dashboard:
     <<: *service-template

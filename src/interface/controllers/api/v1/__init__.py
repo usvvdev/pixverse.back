@@ -12,6 +12,8 @@ from .template import PixverseTemplateController
 
 from .application import ApplicationController
 
+from .chatgpt import ChatGPTController
+
 __all__: list[str] = [
     "PixVerseController",
     "PixverseAccountController",
@@ -19,4 +21,5 @@ __all__: list[str] = [
     "PixverseStyleController",
     "PixverseTemplateController",
     "ApplicationController",
+    "ChatGPTController",
 ]

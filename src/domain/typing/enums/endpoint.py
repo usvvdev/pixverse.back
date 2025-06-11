@@ -56,3 +56,15 @@ class PixverseEndpoint(StrEnum):
     RESTYLE_TEMPLATE = "/creative_platform/restyle/list"
 
     TEMPLATES = "/creative_platform/effect/channel/list"
+
+
+class ChatGPTEndpoint(StrEnum):
+    TEXT = "/v1/images/generations"
+    """
+    Генерация контента по заданой фотографии.
+    """
+
+    PHOTO = "/v1/images/edits"
+    """
+    Генерация контента по заданой фотографии.
+    """

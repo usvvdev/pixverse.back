@@ -1,16 +1,28 @@
 # coding utf-8
 
-from oss2 import StsAuth, Bucket
-
 import os
 
 import uuid
 
+from typing import Any
+
+from base64 import b64decode
+
+from io import BytesIO
+
+from PIL import Image
+
+from oss2 import StsAuth, Bucket
+
 from fastapi import UploadFile, HTTPException
+
+from ..entities.chatgpt import IFile
 
 from ..constants import (
     BUCKET_URL,
     BUCKET_NAME,
+    ALLOWED_MIME_TYPES,
+    UPLOAD_DIR,
 )
 
 
@@ -30,18 +42,6 @@ async def upload_file(
         f"upload/{filename}",
         image_bytes,
     )
-
-
-ALLOWED_MIME_TYPES = {
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "video/mp4",
-    "video/mov",
-    "video/quicktime",
-}
-
-UPLOAD_DIR = "uploads"
 
 
 def save_upload_file(
@@ -64,5 +64,33 @@ def save_upload_file(
     with open(save_path, "wb") as buffer:
         content = file.file.read()
         buffer.write(content)
+
+    return save_path
+
+
+async def upload_chatgpt_file(
+    body: Any,
+    image: UploadFile,
+) -> dict[str, Any]:
+    return IFile(
+        prompt=(None, body.prompt),
+        model=(None, "gpt-image-1"),
+        image=(image.filename, await image.read(), image.content_type),
+    ).dict
+
+
+def b64_json_to_image(
+    b64_string: str,
+):
+    os.makedirs(os.path.join(UPLOAD_DIR, "photo"), exist_ok=True)
+    image_bytes = b64decode(b64_string)
+
+    image = Image.open(BytesIO(image_bytes))
+
+    unique_name = f"{uuid.uuid4()}.jpg"
+
+    save_path = os.path.join(UPLOAD_DIR, "photo", unique_name)
+
+    image.save(save_path)
 
     return save_path

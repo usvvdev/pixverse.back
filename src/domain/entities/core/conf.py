@@ -89,6 +89,11 @@ class IConfEnv(BaseSettings):
         Field(...),
     ]
 
+    chatgpt_token: Annotated[
+        str,
+        Field(...),
+    ]
+
     allowed_hosts: Annotated[
         list[str],
         Field(default=["*"]),

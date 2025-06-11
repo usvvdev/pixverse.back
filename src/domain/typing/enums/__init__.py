@@ -4,7 +4,7 @@ from .env import ConfEnv
 
 from .request import RequestMethod, RequestError
 
-from .endpoint import PixverseEndpoint
+from .endpoint import PixverseEndpoint, ChatGPTEndpoint
 
 from .model import ModelVersion
 
