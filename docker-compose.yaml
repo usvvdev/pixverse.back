@@ -36,6 +36,6 @@ services:
   dashboard:
     <<: *service-template
     ports:
-      - 8003:${APP_PORT}
+      - 8004:${APP_PORT}
     environment:
       - APP_SERVICE=dashboard
