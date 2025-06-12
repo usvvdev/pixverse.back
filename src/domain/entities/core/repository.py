@@ -139,7 +139,7 @@ class IRepository:
             update(self._model)
             .filter_by(id=id)
             .values(
-                **data.dict,
+                **data.dict if not isinstance(data, dict) else data,
             ),
         )
         return data
@@ -154,3 +154,18 @@ class IRepository:
             ),
         )
         return True
+
+    async def fetch_one_with_filters(
+        self,
+        where: str,
+        value: str,
+        order_by: str,
+        many: bool = False,
+    ):
+        return await self.__fetch_records(
+            select(self._model)
+            .where(getattr(self._model, where).is_(value))
+            .order_by(getattr(self._model, order_by))
+            .limit(1),
+            many=many,
+        )

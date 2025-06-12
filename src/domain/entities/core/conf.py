@@ -74,16 +74,6 @@ class IConfEnv(BaseSettings):
         Field(...),
     ]
 
-    username: Annotated[
-        str,
-        Field(...),
-    ]
-
-    password: Annotated[
-        str,
-        Field(...),
-    ]
-
     domain_url: Annotated[
         str,
         Field(...),

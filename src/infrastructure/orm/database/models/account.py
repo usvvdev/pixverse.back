@@ -35,3 +35,8 @@ class PixverseAccounts(ITable):
         TINYINT,
         default=1,
     )
+    usage_count: int = Column(
+        Integer,
+        default=0,
+        nullable=False,
+    )

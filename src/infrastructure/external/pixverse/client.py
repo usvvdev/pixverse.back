@@ -13,6 +13,7 @@ from ....domain.errors import PixverseError
 from ....domain.entities.core import IConfEnv
 
 from ...orm.database.repositories import (
+    PixverseAccountRepository,
     PixverseStyleRepository,
     PixverseTemplateRepository,
 )
@@ -57,6 +58,12 @@ from ....domain.typing.enums import PixverseEndpoint
 
 conf: IConfEnv = app_conf()
 
+
+account_database = PixverseAccountRepository(
+    engine=IDatabase(conf),
+)
+
+
 style_database = PixverseStyleRepository(
     engine=IDatabase(conf),
 )
@@ -88,9 +95,13 @@ class PixVerseClient:
     async def auth_user(
         self,
     ) -> AuthRes:
+        account = await account_database.fetch_next_account()
         data: Response = await self._core.post(
             endpoint=PixverseEndpoint.AUTH,
-            body=UserCredentials(),
+            body=UserCredentials(
+                username=account.username,
+                password=account.password,
+            ),
         )
         if data.err_code != 0:
             raise PixverseError(
