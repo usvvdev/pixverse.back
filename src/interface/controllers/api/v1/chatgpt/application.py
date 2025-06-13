@@ -41,7 +41,7 @@ class PhotoGeneratorApplicationController:
         self,
     ) -> list[Application]:
         return await self._repository.fetch_all(
-            ["templates", "styles"],
+            ["templates"],
         )
 
     async def fetch_application_by_app_id(
@@ -51,7 +51,7 @@ class PhotoGeneratorApplicationController:
         return await self._repository.fetch_application(
             "app_id",
             app_id,
-            ["templates", "styles"],
+            ["templates"],
         )
 
     async def add_application(
