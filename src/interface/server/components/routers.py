@@ -8,12 +8,14 @@ from ....domain.entities.core import IConfEnv
 
 from ....infrastructure.api.routes.v1 import (
     pixverse_router,
-    account_router,
+    pixverse_account_router,
     auth_user_router,
-    style_router,
-    template_router,
-    application_router,
+    pixverse_style_router,
+    pixverse_template_router,
+    pixverse_application_router,
     chatgpt_router,
+    photo_generator_template_router,
+    photo_generator_application_router,
 )
 
 
@@ -37,9 +39,9 @@ class PixVerseRouter(AppRouting):
             config,
             routers=[
                 pixverse_router,
-                style_router,
-                template_router,
-                application_router,
+                pixverse_style_router,
+                pixverse_template_router,
+                pixverse_application_router,
             ],
         )
 
@@ -64,6 +66,8 @@ class ChatGPTRouter(AppRouting):
             config,
             routers=[
                 chatgpt_router,
+                photo_generator_template_router,
+                photo_generator_application_router,
             ],
         )
 
@@ -93,9 +97,11 @@ class DashboardRouter(AppRouting):
             app,
             config,
             routers=[
-                account_router,
-                style_router,
-                template_router,
-                application_router,
+                pixverse_account_router,
+                pixverse_style_router,
+                pixverse_template_router,
+                pixverse_application_router,
+                photo_generator_application_router,
+                photo_generator_template_router,
             ],
         )

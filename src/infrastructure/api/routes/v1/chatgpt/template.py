@@ -22,10 +22,10 @@ from ......interface.schemas.api import (
 )
 
 
-pixverse_template_router = APIRouter(tags=["Templates"])
+photo_generator_template_router = APIRouter(tags=["Templates"])
 
 
-@pixverse_template_router.get(
+@photo_generator_template_router.get(
     "/templates",
     include_in_schema=False,
 )
@@ -42,7 +42,7 @@ async def fetch_templates(
     return await view.fetch_templates()
 
 
-@pixverse_template_router.get(
+@photo_generator_template_router.get(
     "/templates/{template_id}",
     include_in_schema=False,
 )
@@ -68,7 +68,7 @@ async def fetch_template_by_template_id(
     )
 
 
-@pixverse_template_router.get(
+@photo_generator_template_router.get(
     "/templates/{id}",
     include_in_schema=False,
 )
@@ -94,7 +94,7 @@ async def fetch_template_by_id(
     )
 
 
-@pixverse_template_router.post(
+@photo_generator_template_router.post(
     "/templates",
     include_in_schema=False,
 )
@@ -141,7 +141,7 @@ async def add_template(
     )
 
 
-@pixverse_template_router.put(
+@photo_generator_template_router.put(
     "/templates/{id}",
     include_in_schema=False,
 )
@@ -186,7 +186,7 @@ async def update_template(
     )
 
 
-@pixverse_template_router.delete(
+@photo_generator_template_router.delete(
     "/templates/{id}",
     include_in_schema=False,
 )

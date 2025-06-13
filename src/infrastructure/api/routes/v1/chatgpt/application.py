@@ -20,10 +20,10 @@ from ......interface.schemas.api import (
 )
 
 
-application_router = APIRouter(tags=["Applications"])
+photo_generator_application_router = APIRouter(tags=["Applications"])
 
 
-@application_router.get(
+@photo_generator_application_router.get(
     "/applications",
     include_in_schema=False,
 )
@@ -40,7 +40,7 @@ async def fetch_applications(
     return await view.fetch_applications()
 
 
-@application_router.get(
+@photo_generator_application_router.get(
     "/get_templates/{app_id}",
     response_model_exclude_none=True,
     # include_in_schema=False,
@@ -67,7 +67,7 @@ async def get_templates_by_app_id(
     )
 
 
-@application_router.post(
+@photo_generator_application_router.post(
     "/applications",
     include_in_schema=False,
 )
@@ -110,7 +110,7 @@ async def add_application(
     )
 
 
-@application_router.put(
+@photo_generator_application_router.put(
     "/applications/{id}",
     include_in_schema=False,
 )
@@ -151,7 +151,7 @@ async def update_application(
     )
 
 
-@application_router.delete(
+@photo_generator_application_router.delete(
     "/applications/{id}",
     include_in_schema=False,
 )
