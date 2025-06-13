@@ -358,6 +358,8 @@ class PixVerseClient:
             body.template_id,
         )
 
+        print(template)
+
         await upload_file(
             image_bytes,
             image.filename,

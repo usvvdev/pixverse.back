@@ -1,18 +1,20 @@
 # coding utf-8
 
-from .pixverse import PixVerseViewFactory
+from .pixverse import (
+    PixVerseViewFactory,
+    PixverseTemplateViewFactory,
+    PixverseAccountViewFactory,
+    PixverseStyleViewFactory,
+    PixverseApplicationViewFactory,
+)
 
-from .account import PixverseAccountViewFactory
+from .auth import AuthUserViewFactory
 
-from .auth_user import AuthUserViewFactory
-
-from .styles import PixverseStyleViewFactory
-
-from .templates import PixverseTemplateViewFactory
-
-from .application import ApplicationViewFactory
-
-from .chatgpt import ChatGPTViewFactory
+from .chatgpt import (
+    ChatGPTViewFactory,
+    PhotoGeneratorApplicationViewFactory,
+    PhotoGeneratorTemplateViewFactory,
+)
 
 __all__: list[str] = [
     "PixVerseViewFactory",
@@ -20,6 +22,8 @@ __all__: list[str] = [
     "AuthUserViewFactory",
     "PixverseStyleViewFactory",
     "PixverseTemplateViewFactory",
-    "ApplicationViewFactory",
+    "PixverseApplicationViewFactory",
     "ChatGPTViewFactory",
+    "PhotoGeneratorApplicationViewFactory",
+    "PhotoGeneratorTemplateViewFactory",
 ]

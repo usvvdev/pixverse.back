@@ -1,25 +1,29 @@
 # coding utf-8
 
-from .pixverse import PixVerseController
+from .auth import AuthUserController
 
-from .account import PixverseAccountController
+from .pixverse import (
+    PixverseAccountController,
+    PixverseApplicationController,
+    PixVerseController,
+    PixverseStyleController,
+    PixverseTemplateController,
+)
 
-from .auth_user import AuthUserController
-
-from .style import PixverseStyleController
-
-from .template import PixverseTemplateController
-
-from .application import ApplicationController
-
-from .chatgpt import ChatGPTController
+from .chatgpt import (
+    ChatGPTController,
+    PhotoGeneratorApplicationController,
+    PhotoGeneratorTemplateController,
+)
 
 __all__: list[str] = [
+    "AuthUserController",
     "PixVerseController",
     "PixverseAccountController",
-    "AuthUserController",
     "PixverseStyleController",
     "PixverseTemplateController",
-    "ApplicationController",
+    "PixverseApplicationController",
     "ChatGPTController",
+    "PhotoGeneratorApplicationController",
+    "PhotoGeneratorTemplateController",
 ]

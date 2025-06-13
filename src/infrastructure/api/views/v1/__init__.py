@@ -1,18 +1,20 @@
 # coding utf-8
 
-from .pixverse import PixVerseView
+from .pixverse import (
+    PixVerseView,
+    PixverseTemplateView,
+    PixverseAccountView,
+    PixverseStyleView,
+    PixverseApplicationView,
+)
 
-from .account import PixverseAccountView
+from .auth import AuthUserView
 
-from .auth_user import AuthUserView
-
-from .style import PixverseStyleView
-
-from .template import PixverseTemplateView
-
-from .application import ApplicationView
-
-from .chatgpt import ChatGPTView
+from .chatgpt import (
+    ChatGPTView,
+    PhotoGeneratorTemplateView,
+    PhotoGeneratorApplicationView,
+)
 
 __all__: list[str] = [
     "PixVerseView",
@@ -20,6 +22,9 @@ __all__: list[str] = [
     "AuthUserView",
     "PixverseStyleView",
     "PixverseTemplateView",
+    "PixverseApplicationView",
     "ApplicationView",
     "ChatGPTView",
+    "PhotoGeneratorTemplateView",
+    "PhotoGeneratorApplicationView",
 ]
