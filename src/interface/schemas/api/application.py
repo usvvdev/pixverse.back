@@ -61,7 +61,7 @@ class ChangeApplication(ISchema):
     ]
 
 
-class Application(IApplication):
+class Application(PixverseApplication):
     id: Annotated[
         int,
         Field(...),
