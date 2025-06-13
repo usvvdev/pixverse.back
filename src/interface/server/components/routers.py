@@ -101,7 +101,5 @@ class DashboardRouter(AppRouting):
                 pixverse_style_router,
                 pixverse_template_router,
                 pixverse_application_router,
-                photo_generator_application_router,
-                photo_generator_template_router,
             ],
         )
