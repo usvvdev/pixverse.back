@@ -2,6 +2,8 @@
 
 from typing import Annotated
 
+from fake_useragent import UserAgent
+
 from pydantic import Field
 
 from uuid import uuid4
@@ -58,6 +60,11 @@ class ITokenHeaders(ISchema):
         Field(
             default="application/json, text/plain, */*",
         ),
+    ]
+
+    user_agent: Annotated[
+        str,
+        Field(default=UserAgent().random, alias="User-Agent"),
     ]
 
     platform: Annotated[
