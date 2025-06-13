@@ -17,7 +17,7 @@ from ......infrastructure.orm.database.models import (
 
 from .....schemas.api import (
     Application,
-    IApplication,
+    PhotoGeneratorApplication,
     ChangeApplication,
 )
 
@@ -56,8 +56,8 @@ class PhotoGeneratorApplicationController:
 
     async def add_application(
         self,
-        data: IApplication,
-    ) -> IApplication:
+        data: PhotoGeneratorApplication,
+    ) -> PhotoGeneratorApplication:
         return await self._repository.add_record(
             data,
         )
@@ -66,7 +66,7 @@ class PhotoGeneratorApplicationController:
         self,
         id: int,
         data: ChangeApplication,
-    ) -> IApplication:
+    ) -> PhotoGeneratorApplication:
         await self._repository.update_application(
             application_id=id,
             relation_table=PhotoGeneratorApplicationTemplates,

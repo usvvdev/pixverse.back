@@ -20,6 +20,13 @@ class IApplication(ISchema):
         list[Template] | None,
         Field(default=None),
     ]
+
+
+class PhotoGeneratorApplication(IApplication):
+    pass
+
+
+class PixverseApplication(IApplication):
     styles: Annotated[
         list[Style] | None,
         Field(default=None),

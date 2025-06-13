@@ -18,7 +18,7 @@ from ......infrastructure.orm.database.models import (
 
 from .....schemas.api import (
     Application,
-    IApplication,
+    PixverseApplication,
     ChangeApplication,
 )
 
@@ -57,8 +57,8 @@ class PixverseApplicationController:
 
     async def add_application(
         self,
-        data: IApplication,
-    ) -> IApplication:
+        data: PixverseApplication,
+    ) -> PixverseApplication:
         return await self._repository.add_record(
             data,
         )
@@ -67,7 +67,7 @@ class PixverseApplicationController:
         self,
         id: int,
         data: ChangeApplication,
-    ) -> IApplication:
+    ) -> PixverseApplication:
         await self._repository.update_application(
             application_id=id,
             relation_table=PixverseApplicationTemplates,

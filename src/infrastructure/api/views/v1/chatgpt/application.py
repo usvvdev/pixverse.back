@@ -4,7 +4,7 @@ from ......interface.controllers.api.v1 import PhotoGeneratorApplicationControll
 
 from ......interface.schemas.api import (
     Application,
-    IApplication,
+    PhotoGeneratorApplication,
     ChangeApplication,
 )
 
@@ -31,8 +31,8 @@ class PhotoGeneratorApplicationView:
 
     async def add_application(
         self,
-        data: IApplication,
-    ) -> IApplication:
+        data: PhotoGeneratorApplication,
+    ) -> PhotoGeneratorApplication:
         return await self._controller.add_application(
             data,
         )
@@ -41,7 +41,7 @@ class PhotoGeneratorApplicationView:
         self,
         id: int,
         data: ChangeApplication,
-    ) -> IApplication:
+    ) -> PhotoGeneratorApplication:
         return await self._controller.update_application(
             id,
             data,

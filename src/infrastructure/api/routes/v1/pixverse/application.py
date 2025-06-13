@@ -15,7 +15,7 @@ from .....factroies.api.v1 import PixverseApplicationViewFactory
 
 from ......interface.schemas.api import (
     Application,
-    IApplication,
+    PixverseApplication,
     ChangeApplication,
 )
 
@@ -95,10 +95,10 @@ async def get_templates_by_app_id(
     description="Роутер для нового создания объекта",
 )
 async def add_application(
-    data: IApplication,
+    data: PixverseApplication,
     _: str = Depends(validate_token),
     view: PixverseApplicationView = Depends(PixverseApplicationViewFactory.create),
-) -> IApplication:
+) -> PixverseApplication:
     return await view.add_application(
         data,
     )
@@ -136,7 +136,7 @@ async def update_application(
     data: ChangeApplication,
     _: str = Depends(validate_token),
     view: PixverseApplicationView = Depends(PixverseApplicationViewFactory.create),
-) -> IApplication:
+) -> PixverseApplication:
     return await view.update_application(
         id,
         data,

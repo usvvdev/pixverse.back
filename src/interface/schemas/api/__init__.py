@@ -27,6 +27,8 @@ from .application import (
     IApplication,
     ChangeApplication,
     Application,
+    PixverseApplication,
+    PhotoGeneratorApplication,
 )
 
 __all__: list[str] = [
@@ -44,4 +46,6 @@ __all__: list[str] = [
     "IApplication",
     "ChangeApplication",
     "Application",
+    "PixverseApplication",
+    "PhotoGeneratorApplication",
 ]

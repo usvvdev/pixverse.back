@@ -4,7 +4,7 @@ from ......interface.controllers.api.v1 import PixverseApplicationController
 
 from ......interface.schemas.api import (
     Application,
-    IApplication,
+    PixverseApplication,
     ChangeApplication,
 )
 
@@ -31,8 +31,8 @@ class PixverseApplicationView:
 
     async def add_application(
         self,
-        data: IApplication,
-    ) -> IApplication:
+        data: PixverseApplication,
+    ) -> PixverseApplication:
         return await self._controller.add_application(
             data,
         )
@@ -41,7 +41,7 @@ class PixverseApplicationView:
         self,
         id: int,
         data: ChangeApplication,
-    ) -> IApplication:
+    ) -> PixverseApplication:
         return await self._controller.update_application(
             id,
             data,
