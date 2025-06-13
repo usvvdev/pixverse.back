@@ -28,7 +28,7 @@ class PhotoGeneratorApplication(IApplication):
 
 class PixverseApplication(IApplication):
     styles: Annotated[
-        list[Style] | None,
+        list[Style] | list,
         Field(default=[]),
     ]
 
@@ -40,10 +40,10 @@ class PixverseApplication(IApplication):
     def validate_styles(
         cls,
         value: list,
-    ) -> list[Style] | None:
+    ) -> list[Style] | list:
         if len(value) > 0:
             return value
-        return None
+        return []
 
 
 class ChangeApplication(ISchema):
