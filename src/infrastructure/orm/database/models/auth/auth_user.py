@@ -9,7 +9,7 @@ from sqlalchemy import (
 
 from sqlalchemy.dialects.mysql import TINYINT
 
-from .....domain.entities.core import ITable
+from ......domain.entities.core import ITable
 
 
 class AuthUsers(ITable):

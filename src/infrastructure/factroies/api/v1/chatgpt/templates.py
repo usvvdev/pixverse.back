@@ -42,7 +42,7 @@ class PhotoGeneratorTemplateControllerFactory:
 class PhotoGeneratorTemplateViewFactory:
     @staticmethod
     def create(
-        controller: PixverseTemplateController = Depends(
+        controller: PhotoGeneratorTemplateController = Depends(
             PhotoGeneratorTemplateControllerFactory.get,
         ),
     ) -> PhotoGeneratorTemplateView:

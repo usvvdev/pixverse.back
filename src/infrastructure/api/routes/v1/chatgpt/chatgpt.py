@@ -7,15 +7,15 @@ from fastapi import (
     File,
 )
 
-from .....interface.schemas.external.response import ChatGPTResp
+from ......interface.schemas.external.response import ChatGPTResp
 
-from ...views.v1 import ChatGPTView
+from ....views.v1 import ChatGPTView
 
-from .....domain.tools import auto_docs
+from ......domain.tools import auto_docs
 
-from .....domain.entities.chatgpt import IBody, T2PBody
+from ......domain.entities.chatgpt import IBody, T2PBody
 
-from ....factroies.api.v1 import ChatGPTViewFactory
+from .....factroies.api.v1 import ChatGPTViewFactory
 
 
 chatgpt_router = APIRouter(tags=["ChatGPT"])

@@ -2,14 +2,14 @@
 
 from fastapi import Depends
 
-from ....external.chatgpt import (
+from .....external.chatgpt import (
     ChatGPTCore,
     ChatGPTClient,
 )
 
-from .....interface.controllers.api.v1 import ChatGPTController
+from ......interface.controllers.api.v1 import ChatGPTController
 
-from ....api.views.v1 import ChatGPTView
+from .....api.views.v1 import ChatGPTView
 
 
 class ChatGPTClientFactory:

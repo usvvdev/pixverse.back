@@ -1,8 +1,8 @@
 # coding utf-8
 
-from ..models import AuthUsers
+from ...models import AuthUsers
 
-from .....domain.repositories import (
+from ......domain.repositories import (
     IDatabase,
     DatabaseRepository,
 )

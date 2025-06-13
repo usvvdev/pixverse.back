@@ -30,4 +30,5 @@ __all__: list[str] = [
     "PixverseApplicationStyles",
     "PhotoGeneratorApplications",
     "PhotoGeneratorTemplates",
+    "PhotoGeneratorApplicationTemplates",
 ]
