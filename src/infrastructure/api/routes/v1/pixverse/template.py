@@ -171,8 +171,8 @@ async def update_template(
     return await view.update_template(
         id,
         data,
-        save_upload_file(preview_small, subdir="small"),
-        save_upload_file(preview_large, subdir="large"),
+        save_upload_file(preview_small, subdir="video/small"),
+        save_upload_file(preview_large, subdir="video/large"),
     )
 
 

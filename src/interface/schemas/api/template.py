@@ -49,6 +49,17 @@ class ChangeTemplate(ITemplate):
         Field(default=None),
     ]
 
+
+class Template(ChangeTemplate):
+    id: Annotated[
+        int,
+        Field(...),
+    ]
+    template_id: Annotated[
+        int | None,
+        Field(default=None),
+    ]
+
     @field_validator("preview_small", mode="after")
     @classmethod
     def create_preview_small_url(
@@ -72,17 +83,6 @@ class ChangeTemplate(ITemplate):
             if value is not None
             else value
         )
-
-
-class Template(ChangeTemplate):
-    id: Annotated[
-        int,
-        Field(...),
-    ]
-    template_id: Annotated[
-        int | None,
-        Field(default=None),
-    ]
 
     @classmethod
     def create(

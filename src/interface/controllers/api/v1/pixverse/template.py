@@ -56,10 +56,10 @@ class PixverseTemplateController:
     async def update_template(
         self,
         id: int,
-        data: Template,
+        data: ChangeTemplate,
         preview_small: str,
         preview_large: str,
-    ) -> Template:
+    ) -> ChangeTemplate:
         return await self._repository.update_record(
             id,
             ChangeTemplate(
