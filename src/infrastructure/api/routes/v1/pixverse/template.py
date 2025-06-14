@@ -1,7 +1,5 @@
 # coding utf-8
 
-from typing import Union
-
 from fastapi import (
     APIRouter,
     UploadFile,
@@ -165,27 +163,16 @@ async def add_template(
 async def update_template(
     id: int,
     data: ITemplate = Depends(),
-    preview_small: Union[UploadFile, str, None] = None,
-    preview_large: Union[UploadFile, str, None] = None,
+    preview_small: UploadFile | None = None,
+    preview_large: UploadFile | None = None,
     _: str = Depends(validate_token),
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
 ) -> ChangeTemplate:
-    small_path = (
-        save_upload_file(preview_small, subdir="video/small")
-        if isinstance(preview_small, UploadFile)
-        else preview_small
-    )
-    large_path = (
-        save_upload_file(preview_large, subdir="video/large")
-        if isinstance(preview_large, UploadFile)
-        else preview_large
-    )
-
     return await view.update_template(
         id,
         data,
-        small_path,
-        large_path,
+        save_upload_file(preview_small, subdir="video/small"),
+        save_upload_file(preview_large, subdir="video/large"),
     )
 
 
