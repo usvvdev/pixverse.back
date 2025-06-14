@@ -91,7 +91,6 @@ class PixVerseClient:
     ) -> None:
         self._core = core
 
-    @lru_cache
     async def auth_user(
         self,
     ) -> AuthRes:
