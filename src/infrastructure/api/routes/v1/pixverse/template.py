@@ -58,7 +58,7 @@ async def fetch_templates(
 async def fetch_template_by_template_id(
     template_id: int,
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
-) -> Template:
+) -> ChangeTemplate:
     return await view.fetch_template_by_template_id(
         template_id,
     )
@@ -82,7 +82,7 @@ async def fetch_template_by_template_id(
 async def fetch_template_by_id(
     id: int,
     view: PixverseTemplateView = Depends(PixverseTemplateViewFactory.create),
-) -> Template:
+) -> ChangeTemplate:
     return await view.fetch_template_by_id(
         id,
     )
