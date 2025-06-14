@@ -62,10 +62,10 @@ class ITokenHeaders(ISchema):
         ),
     ]
 
-    user_agent: Annotated[
-        str,
-        Field(default=UserAgent().random, alias="User-Agent"),
-    ]
+    # user_agent: Annotated[
+    #     str,
+    #     Field(default=UserAgent().random, alias="User-Agent"),
+    # ]
 
     platform: Annotated[
         str,

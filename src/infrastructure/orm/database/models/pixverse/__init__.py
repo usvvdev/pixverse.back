@@ -8,9 +8,12 @@ from .template import PixverseTemplates
 
 from .application import PixverseApplications
 
+from .user_generation import UserGenerations
+
 __all__: list[str] = [
     "PixverseAccounts",
     "PixverseStyles",
     "PixverseTemplates",
     "PixverseApplications",
+    "UserGenerations",
 ]

@@ -7,6 +7,7 @@ from .pixverse import (
     PixverseApplicationRepository,
     PixverseStyleRepository,
     PixverseTemplateRepository,
+    UserGenerationRepository,
 )
 
 from .chatgpt import (
@@ -22,4 +23,5 @@ __all__: list[str] = [
     "PixverseApplicationRepository",
     "PhotoGeneratorTemplateRepository",
     "PhotoGeneratorApplicationRepository",
+    "UserGenerationRepository",
 ]

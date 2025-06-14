@@ -13,6 +13,7 @@ from .pixverse import (
     PixverseApplications,
     PixverseStyles,
     PixverseTemplates,
+    UserGenerations,
 )
 
 from .chatgpt import (
@@ -28,6 +29,7 @@ __all__: list[str] = [
     "PixverseApplications",
     "PixverseApplicationTemplates",
     "PixverseApplicationStyles",
+    "UserGenerations",
     "PhotoGeneratorApplications",
     "PhotoGeneratorTemplates",
     "PhotoGeneratorApplicationTemplates",

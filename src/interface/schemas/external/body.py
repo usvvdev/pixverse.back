@@ -2,6 +2,8 @@
 
 from typing import Annotated
 
+from uuid import uuid4
+
 from pydantic import Field, field_validator
 
 from ....domain.entities.core import ISchema
@@ -137,4 +139,19 @@ class TemplateBody(ISchema):
     limit: Annotated[
         int,
         Field(default=100),
+    ]
+
+
+class GenerationData(ISchema):
+    uuid: Annotated[
+        str,
+        Field(default_factory=lambda: str(uuid4())),
+    ]
+    generation_id: Annotated[
+        int,
+        Field(...),
+    ]
+    account_id: Annotated[
+        int,
+        Field(...),
     ]

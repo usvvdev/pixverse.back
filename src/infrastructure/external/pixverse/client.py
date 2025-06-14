@@ -4,18 +4,20 @@ from fastapi import UploadFile
 
 from .core import PixverseCore
 
-from functools import lru_cache
-
 from ....domain.conf import app_conf
 
 from ....domain.errors import PixverseError
 
-from ....domain.entities.core import IConfEnv
+from ....domain.entities.core import (
+    IConfEnv,
+    ITable,
+)
 
 from ...orm.database.repositories import (
     PixverseAccountRepository,
     PixverseStyleRepository,
     PixverseTemplateRepository,
+    UserGenerationRepository,
 )
 
 from ....domain.repositories import IDatabase
@@ -49,6 +51,7 @@ from ....interface.schemas.external import (
     TokensResponse,
     EffectResponse,
     TemplateResp,
+    GenerationData,
 )
 
 from ....interface.schemas.api import Style, Template
@@ -63,12 +66,15 @@ account_database = PixverseAccountRepository(
     engine=IDatabase(conf),
 )
 
-
 style_database = PixverseStyleRepository(
     engine=IDatabase(conf),
 )
 
 templates_database = PixverseTemplateRepository(
+    engine=IDatabase(conf),
+)
+
+user_generations_database = UserGenerationRepository(
     engine=IDatabase(conf),
 )
 
@@ -93,8 +99,8 @@ class PixVerseClient:
 
     async def auth_user(
         self,
+        account,
     ) -> AuthRes:
-        account = await account_database.fetch_next_account()
         data: Response = await self._core.post(
             endpoint=PixverseEndpoint.AUTH,
             body=UserCredentials(
@@ -167,7 +173,16 @@ class PixVerseClient:
         self,
         id: int,
     ) -> GenerationStatus:
-        user: AuthRes = await self.auth_user()
+        generation_data = await user_generations_database.fetch_generation(
+            "generation_id", id
+        )
+
+        account = await account_database.fetch_account(
+            "id",
+            generation_data.account_id,
+        )
+
+        user: AuthRes = await self.auth_user(account)
 
         data: Response = await self._core.post(
             token=user.access_token,
@@ -230,7 +245,11 @@ class PixVerseClient:
         self,
         body: T2VBody,
     ) -> Resp:
-        user: AuthRes = await self.auth_user()
+        account = await account_database.fetch_next_account()
+
+        account_id = account.id
+
+        user: AuthRes = await self.auth_user(account)
 
         data: Response = await self._core.post(
             token=user.access_token,
@@ -243,6 +262,13 @@ class PixVerseClient:
             raise PixverseError(
                 status_code=data.err_code,
             )
+        await user_generations_database.add_record(
+            GenerationData(
+                generation_id=data.resp.video_id,
+                account_id=account_id,
+            )
+        )
+
         return data.resp
 
     async def image_to_video(
@@ -250,7 +276,11 @@ class PixVerseClient:
         body: I2VBody,
         image: UploadFile,
     ) -> Resp:
-        user: AuthRes = await self.auth_user()
+        account = await account_database.fetch_next_account()
+
+        account_id = account.id
+
+        user: AuthRes = await self.auth_user(account)
 
         token_data: UTResp = await self.upload_token(
             user.access_token,
@@ -283,6 +313,13 @@ class PixVerseClient:
             raise PixverseError(
                 status_code=data.err_code,
             )
+        await user_generations_database.add_record(
+            GenerationData(
+                generation_id=data.resp.video_id,
+                account_id=account_id,
+            )
+        )
+
         return data.resp
 
     async def restyle_video(
@@ -290,7 +327,11 @@ class PixVerseClient:
         body: R2VBody,
         video: UploadFile,
     ):
-        user: AuthRes = await self.auth_user()
+        account = await account_database.fetch_next_account()
+
+        account_id = account.id
+
+        user: AuthRes = await self.auth_user(account)
 
         token_data: UTResp = await self.upload_token(
             user.access_token,
@@ -338,6 +379,13 @@ class PixVerseClient:
             raise PixverseError(
                 status_code=data.err_code,
             )
+        await user_generations_database.add_record(
+            GenerationData(
+                generation_id=data.resp.video_id,
+                account_id=account_id,
+            )
+        )
+
         return data.resp
 
     async def template_video(
@@ -345,7 +393,11 @@ class PixVerseClient:
         body: TE2VBody,
         image: UploadFile,
     ):
-        user: AuthRes = await self.auth_user()
+        account = await account_database.fetch_next_account()
+
+        account_id = account.id
+
+        user: AuthRes = await self.auth_user(account)
 
         token_data: UTResp = await self.upload_token(
             user.access_token,
@@ -356,8 +408,6 @@ class PixVerseClient:
             "template_id",
             body.template_id,
         )
-
-        print(template)
 
         await upload_file(
             image_bytes,
@@ -385,4 +435,10 @@ class PixVerseClient:
             raise PixverseError(
                 status_code=data.err_code,
             )
+        await user_generations_database.add_record(
+            GenerationData(
+                generation_id=data.resp.video_id,
+                account_id=account_id,
+            )
+        )
         return data.resp
