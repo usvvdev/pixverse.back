@@ -56,7 +56,7 @@ class PixverseTemplateController:
     async def update_template(
         self,
         id: int,
-        data: ITemplate,
+        data: ChangeTemplate,
         preview_small: str,
         preview_large: str,
     ) -> ChangeTemplate:
