@@ -48,6 +48,10 @@ class ChangeTemplate(ITemplate):
         str | None,
         Field(default=None),
     ]
+    template_id: Annotated[
+        int | None,
+        Field(default=None),
+    ]
 
 
 class Template(ChangeTemplate):

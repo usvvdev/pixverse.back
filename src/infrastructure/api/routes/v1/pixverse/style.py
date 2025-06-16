@@ -126,8 +126,8 @@ async def add_style(
 ) -> ChangeStyle:
     return await view.add_style(
         data,
-        save_upload_file(preview_small, subdir="small"),
-        save_upload_file(preview_large, subdir="large"),
+        save_upload_file(preview_small, subdir="video/small"),
+        save_upload_file(preview_large, subdir="video/large"),
     )
 
 

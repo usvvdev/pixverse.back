@@ -24,3 +24,11 @@ class UserGenerations(ITable):
         Integer,
         nullable=False,
     )
+    user_id: str = Column(
+        Integer,
+        nullable=False,
+    )
+    app_id: str = Column(
+        Integer,
+        nullable=False,
+    )
