@@ -155,3 +155,11 @@ class GenerationData(ISchema):
         int,
         Field(...),
     ]
+    user_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_id: Annotated[
+        str,
+        Field(...),
+    ]

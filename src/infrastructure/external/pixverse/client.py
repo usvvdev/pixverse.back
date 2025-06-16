@@ -266,9 +266,10 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
             )
         )
-
         return data.resp
 
     async def image_to_video(
@@ -317,9 +318,10 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
             )
         )
-
         return data.resp
 
     async def restyle_video(
@@ -383,9 +385,10 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
             )
         )
-
         return data.resp
 
     async def template_video(
@@ -439,6 +442,8 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
             )
         )
         return data.resp
