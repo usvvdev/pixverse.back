@@ -2,8 +2,6 @@
 
 from typing import Any
 
-from asyncio import gather
-
 from .core import PixverseCelery
 
 from ....domain.repositories import IDatabase
@@ -33,11 +31,13 @@ class PixverseAccountCelery(PixverseCelery):
         self,
         account: PixverseAccounts,
         balance: int,
+        is_active: bool = True,
     ) -> AccountBalance:
         return await self._repository.update_record(
             account.id,
             data=AccountBalance(
                 balance=balance,
+                is_active=is_active,
             ),
         )
 
@@ -63,6 +63,7 @@ class PixverseAccountCelery(PixverseCelery):
     async def update_account_balance(
         self,
         account: PixverseAccounts,
+        is_active: bool = False,
     ) -> Any:
         balance: TokensResponse = await self.fetch_account_balance(
             account,
@@ -71,6 +72,12 @@ class PixverseAccountCelery(PixverseCelery):
             return await self.update_account_record(
                 account,
                 balance.credits,
+            )
+        elif account.balance <= 100:
+            return await self.update_account_record(
+                account,
+                balance.credits,
+                is_active,
             )
 
     async def update_accounts(

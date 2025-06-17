@@ -6,7 +6,7 @@ from celery.schedules import crontab
 
 from src.domain.entities.core import ITask
 
-from src.infrastructure.tasks.pixverse.account import PixverseAccountCelery
+from src.infrastructure.tasks.pixverse import PixverseAccountCelery
 
 
 app = PixverseAccountCelery()

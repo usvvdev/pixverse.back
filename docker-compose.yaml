@@ -49,3 +49,15 @@ services:
     environment:
       - TASK_APP=pixverse_account
     entrypoint: ["sh", "./scripts/start_job.sh"]
+
+  pixverse-template-worker:
+    <<: *service-template
+    environment:
+      - TASK_APP=pixverse_template
+    entrypoint: ["sh", "./scripts/start_job.sh"]
+
+  pixverse-style-worker:
+    <<: *service-template
+    environment:
+      - TASK_APP=pixverse_style
+    entrypoint: ["sh", "./scripts/start_job.sh"]

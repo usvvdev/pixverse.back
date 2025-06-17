@@ -41,3 +41,7 @@ class AccountBalance(ISchema):
         int,
         Field(...),
     ]
+    is_active: Annotated[
+        bool,
+        Field(default=1),
+    ]
