@@ -31,7 +31,7 @@ start_celery_worker() {
 
 # Main execution
 main() {
-    load_app_conf || exit 1
+    load_config || exit 1
     start_celery_worker
 }
 
