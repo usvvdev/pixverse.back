@@ -1,23 +1,19 @@
 #!/bin/bash
 
 # Load application configuration
-load_app_conf() {
+load_config() {
     local env_file=".env"
-    
-    if [[ ! -f "${env_file}" ]]; then
-        echo "ERROR: Configuration file '${env_file}' not found." >&2
+
+    if [ ! -f "$env_file" ]; then
+        echo "ERROR" "Configuration file '$env_file' not found."
         return 1
     fi
 
-    # Load all variables except comments
-    while IFS= read -r line; do
-        [[ -z "${line}" || "${line}" =~ ^# ]] && continue
-        export "${line?}"
-    done < "${env_file}"
-
-    echo "INFO: Application configuration loaded successfully"
-    return 0
+    if export $(grep -v '^#' "$env_file" | xargs) > /dev/null 2>&1; then
+        echo "INFO" "Application configuration has been loaded successfully."
+    fi
 }
+
 
 # Start Celery worker with beat scheduler
 start_celery_worker() {
