@@ -19,12 +19,14 @@ services:
       - 8001:${APP_PORT}
     environment:
       - APP_SERVICE=auth
+    entrypoint: ["sh", "./scripts/start_api.sh"]
   pixverse:
     <<: *service-template
     ports:
       - 8002:${APP_PORT}
     environment:
       - APP_SERVICE=pixverse
+    entrypoint: ["sh", "./scripts/start_api.sh"]
 
   chatgpt:
     <<: *service-template
@@ -32,6 +34,7 @@ services:
       - 8003:${APP_PORT}
     environment:
       - APP_SERVICE=chatgpt
+    entrypoint: ["sh", "./scripts/start_api.sh"]
   
   dashboard:
     <<: *service-template
@@ -39,3 +42,10 @@ services:
       - 8004:${APP_PORT}
     environment:
       - APP_SERVICE=dashboard
+    entrypoint: ["sh", "./scripts/start_api.sh"]
+
+  pixverse-account-worker:
+    <<: *service-template
+    environment:
+      - TASK_APP=pixverse_account
+    entrypoint: ["sh", "./scripts/start_job.sh"]

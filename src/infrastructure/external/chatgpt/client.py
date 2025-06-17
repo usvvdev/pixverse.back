@@ -75,7 +75,7 @@ class ChatGPTClient:
         self,
         body: IBody,
         image: UploadFile,
-    ) -> ChatGPTResp:
+    ):
         files = await upload_chatgpt_file(
             body,
             image,

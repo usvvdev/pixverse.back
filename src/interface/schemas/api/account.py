@@ -34,3 +34,10 @@ class Account(ChangeAccount):
         int,
         Field(...),
     ]
+
+
+class AccountBalance(ISchema):
+    balance: Annotated[
+        int,
+        Field(...),
+    ]

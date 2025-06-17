@@ -73,9 +73,9 @@ async def upload_chatgpt_file(
     image: UploadFile,
 ) -> dict[str, Any]:
     return IFile(
-        prompt=(None, body.prompt),
         model=(None, "gpt-image-1"),
         image=(image.filename, await image.read(), image.content_type),
+        prompt=(None, body.prompt),
     ).dict
 
 

@@ -95,7 +95,7 @@ async def photo_to_photo(
     body: IBody = Depends(),
     image: UploadFile = File(),
     view: ChatGPTView = Depends(ChatGPTViewFactory.create),
-) -> ChatGPTResp:
+):
     """
     Генерирует видео на основе текстового запроса.
 

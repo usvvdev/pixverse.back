@@ -4,6 +4,7 @@ from .account import (
     Account,
     ChangeAccount,
     IAccount,
+    AccountBalance,
 )
 
 from .auth_user import (
@@ -35,6 +36,7 @@ __all__: list[str] = [
     "Account",
     "ChangeAccount",
     "IAccount",
+    "AccountBalance",
     "AuthUserCredentials",
     "UserRefreshToken",
     "Style",

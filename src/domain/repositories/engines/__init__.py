@@ -10,6 +10,8 @@ from .database import (
     DatabaseRepository,
 )
 
+from .celery import ICelery
+
 
 __all__: list[str] = [
     # clickhouse
@@ -18,4 +20,6 @@ __all__: list[str] = [
     # database
     "IDatabase",
     "DatabaseRepository",
+    # celery
+    "ICelery",
 ]

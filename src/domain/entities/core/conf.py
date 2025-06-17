@@ -64,6 +64,15 @@ class IConfEnv(BaseSettings):
         Field(...),
     ]
 
+    rabbitmq_dsn_url: Annotated[
+        str,
+        Field(...),
+    ]
+    redis_dsn_url: Annotated[
+        str,
+        Field(...),
+    ]
+
     secret_key: Annotated[
         str,
         Field(...),

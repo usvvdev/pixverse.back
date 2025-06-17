@@ -3,6 +3,7 @@
 from .engines import (
     IClickHouse,
     IDatabase,
+    ICelery,
     ClickHouseRepository,
     DatabaseRepository,
 )
@@ -14,4 +15,6 @@ __all__: list[str] = [
     # database
     "IDatabase",
     "DatabaseRepository",
+    # celery
+    "ICelery",
 ]

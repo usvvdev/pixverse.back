@@ -48,4 +48,9 @@ class IEngine:
         self,
     ) -> AsyncGenerator[AsyncSession, Any]:
         async with self.session_factory() as session:
-            yield session
+            try:
+                yield session
+            except Exception:
+                await session.rollback()
+            finally:
+                await session.close()

@@ -64,5 +64,3 @@ RUN poetry config virtualenvs.create false && \
 # Копирование проекта
 COPY . ${PROJECT_DIR}/
 
-# Точка входа
-ENTRYPOINT ["sh", "./scripts/start.sh"]

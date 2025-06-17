@@ -48,7 +48,7 @@ class HttpClient:
             AsyncClient: Экземпляр асинхронного HTTP клиента
 
         """
-        async with AsyncClient(headers=headers, timeout=30) as client:
+        async with AsyncClient(headers=headers, timeout=60) as client:
             yield client
 
     async def __make_request(

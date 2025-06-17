@@ -22,10 +22,3 @@ class IAuthHeaders(ISchema):
             alias="Authorization",
         ),
     ]
-
-    accept: Annotated[
-        str,
-        Field(
-            default="application/json, text/plain, */*",
-        ),
-    ]

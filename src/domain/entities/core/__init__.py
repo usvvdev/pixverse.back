@@ -14,6 +14,8 @@ from .repository import IRepository
 
 from .table import ITable
 
+from .task import ITask
+
 __all__: list[str] = [
     "ISchema",
     "IConfEnv",
@@ -22,4 +24,5 @@ __all__: list[str] = [
     "IEngine",
     "IRepository",
     "ITable",
+    "ITask",
 ]
