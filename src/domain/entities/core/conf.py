@@ -93,6 +93,15 @@ class IConfEnv(BaseSettings):
         Field(...),
     ]
 
+    telegram_bot_token: Annotated[
+        str,
+        Field(...),
+    ]
+    telegram_chat_id: Annotated[
+        int,
+        Field(...),
+    ]
+
     allowed_hosts: Annotated[
         list[str],
         Field(default=["*"]),

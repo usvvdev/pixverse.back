@@ -10,7 +10,6 @@ from ....domain.errors import PixverseError
 
 from ....domain.entities.core import (
     IConfEnv,
-    ITable,
 )
 
 from ...orm.database.repositories import (
@@ -21,6 +20,8 @@ from ...orm.database.repositories import (
 )
 
 from ....domain.repositories import IDatabase
+
+from ....domain.entities.bot import IBotReporter
 
 from ....domain.entities.pixverse import (
     IT2VBody,
@@ -78,6 +79,10 @@ user_generations_database = UserGenerationRepository(
     engine=IDatabase(conf),
 )
 
+telegram_bot = IBotReporter(
+    conf,
+)
+
 
 class PixVerseClient:
     """Клиентский интерфейс для работы с PixVerse API.
@@ -109,9 +114,12 @@ class PixVerseClient:
             ),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error(error=error)
+
+            raise error
         return data.resp.result
 
     async def upload_token(
@@ -123,9 +131,12 @@ class PixVerseClient:
             endpoint=PixverseEndpoint.UPLOAD_TOKEN,
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error_message(error=error)
+
+            raise error
         return data.resp
 
     async def upload_image(
@@ -144,9 +155,12 @@ class PixVerseClient:
             ),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error_message(error=error)
+
+            raise error
         return True
 
     async def upload_video(
@@ -164,9 +178,12 @@ class PixVerseClient:
             ),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error_message(error=error)
+
+            raise error
         return True
 
     async def generation_status(
@@ -190,9 +207,12 @@ class PixVerseClient:
             body=StatusBody(),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error_message(error=error)
+
+            raise error
         for video in data.resp.data:
             if video.video_id == id:
                 if video.video_status == 1 and video.first_frame:
@@ -210,9 +230,12 @@ class PixVerseClient:
             endpoint=PixverseEndpoint.TOKEN,
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error_message(error=error)
+
+            raise error
         return data.resp
 
     async def fetch_styles(
@@ -224,9 +247,12 @@ class PixVerseClient:
             body=body,
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error_message(error=error)
+
+            raise error
         return data.resp.items
 
     async def fetch_templates(
@@ -236,9 +262,12 @@ class PixVerseClient:
             endpoint=PixverseEndpoint.TEMPLATES,
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            await telegram_bot.send_error_message(error=error)
+
+            raise error
         return data.resp
 
     async def text_to_video(
@@ -259,9 +288,16 @@ class PixVerseClient:
             ),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            context = f"Account data: \n {account.username} \n {account.password}"
+            await telegram_bot.send_error_message(
+                error=error,
+                context=context,
+            )
+
+            raise error
         await user_generations_database.add_record(
             GenerationData(
                 generation_id=data.resp.video_id,
@@ -311,9 +347,16 @@ class PixVerseClient:
             ),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            context = f"Account data: \n {account.username} \n {account.password}"
+            await telegram_bot.send_error_message(
+                error=error,
+                context=context,
+            )
+
+            raise error
         await user_generations_database.add_record(
             GenerationData(
                 generation_id=data.resp.video_id,
@@ -378,9 +421,16 @@ class PixVerseClient:
             ),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            context = f"Account data: \n {account.username} \n {account.password}"
+            await telegram_bot.send_error_message(
+                error=error,
+                context=context,
+            )
+
+            raise error
         await user_generations_database.add_record(
             GenerationData(
                 generation_id=data.resp.video_id,
@@ -435,9 +485,16 @@ class PixVerseClient:
             ),
         )
         if data.err_code != 0:
-            raise PixverseError(
+            error = PixverseError(
                 status_code=data.err_code,
             )
+            context = f"Account data: \n {account.username} \n {account.password}"
+            await telegram_bot.send_error_message(
+                error=error,
+                context=context,
+            )
+
+            raise error
         await user_generations_database.add_record(
             GenerationData(
                 generation_id=data.resp.video_id,
