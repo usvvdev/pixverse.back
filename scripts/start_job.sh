@@ -1,25 +1,42 @@
 #!/bin/bash
 
-load_config() {
+# Load application configuration
+load_app_conf() {
     local env_file=".env"
-
-    if [ ! -f "$env_file" ]; then
-        echo "ERROR" "Configuration file '$env_file' not found."
+    
+    if [[ ! -f "${env_file}" ]]; then
+        echo "ERROR: Configuration file '${env_file}' not found." >&2
         return 1
     fi
 
-    if export $(grep -v '^#' "$env_file" | xargs) > /dev/null 2>&1; then
-        echo "INFO" "Application configuration has been loaded successfully."
-    fi
+    # Load all variables except comments
+    while IFS= read -r line; do
+        [[ -z "${line}" || "${line}" =~ ^# ]] && continue
+        export "${line?}"
+    done < "${env_file}"
+
+    echo "INFO: Application configuration loaded successfully"
+    return 0
 }
 
-# Функция для запуска задачи
-start_celery_task() {
-    echo "INFO" "Running Job."
-    celery "$@"
+# Start Celery worker with beat scheduler
+start_celery_worker() {
+    local app_name="services.jobs.${TASK_APP}.celery"
+    local schedule_file="/tmp/celerybeat-${TASK_APP}.db"
+    
+    echo "INFO: Starting Celery worker for ${TASK_APP}"
+    
+    # Start Celery with file-based scheduler
+    celery -A "${app_name}" worker \
+        --beat \
+        --loglevel="info" \
+        --schedule="${schedule_file}"
 }
 
-load_config
+# Main execution
+main() {
+    load_app_conf || exit 1
+    start_celery_worker
+}
 
-
-start_celery_task -A services.jobs.${TASK_APP}.celery worker --beat --loglevel=info --scheduler celerybeat-schedule-${TASK_APP}
+main "$@"
