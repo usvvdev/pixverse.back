@@ -30,15 +30,11 @@ class PixverseAccountCelery(PixverseCelery):
     async def update_account_record(
         self,
         account: PixverseAccounts,
-        balance: int,
-        is_active: bool = True,
+        data: AccountBalance,
     ) -> AccountBalance:
         return await self._repository.update_record(
             account.id,
-            data=AccountBalance(
-                balance=balance,
-                is_active=is_active,
-            ),
+            data=data,
         )
 
     async def fetch_account_token(
@@ -63,7 +59,6 @@ class PixverseAccountCelery(PixverseCelery):
     async def update_account_balance(
         self,
         account: PixverseAccounts,
-        is_active: bool = False,
     ) -> Any:
         balance: TokensResponse = await self.fetch_account_balance(
             account,
@@ -71,13 +66,12 @@ class PixverseAccountCelery(PixverseCelery):
         if balance.credits != account.balance:
             return await self.update_account_record(
                 account,
-                balance.credits,
-            )
-        elif account.balance <= 100 and account.is_active is True:
-            return await self.update_account_record(
-                account,
-                balance.credits,
-                is_active,
+                data=AccountBalance(
+                    balance=balance.credits,
+                    is_active=False
+                    if account.balance <= 100 and account.is_active is True
+                    else True,
+                ),
             )
 
     async def update_accounts(
