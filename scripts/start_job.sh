@@ -22,4 +22,4 @@ start_celery_task() {
 load_config
 
 
-start_celery_task -A services.jobs.${TASK_APP}.celery worker --beat --loglevel=info -E
+start_celery_task -A services.jobs.${TASK_APP}.celery worker --beat --loglevel=info --scheduler celerybeat-schedule-${TASK_APP}
