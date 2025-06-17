@@ -73,7 +73,7 @@ class PixverseAccountCelery(PixverseCelery):
                 account,
                 balance.credits,
             )
-        elif account.balance <= 100:
+        elif account.balance <= 100 and account.is_active is True:
             return await self.update_account_record(
                 account,
                 balance.credits,
