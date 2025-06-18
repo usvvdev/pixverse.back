@@ -122,10 +122,6 @@ async def photo_to_photo(
     "POST",
     description="Роутер для фото по опреденному шаблону и фото.",
     params={
-        "promt": {
-            "type": "string",
-            "description": "Текст для создания видео фрагмента",
-        },
         "userId": {
             "type": "string",
             "description": "Уникальный идентификатор пользователя",
@@ -134,7 +130,7 @@ async def photo_to_photo(
             "type": "string",
             "description": "Уникальный идентификатор приложения",
         },
-        "tempalte_id": {
+        "id": {
             "type": "integer",
             "description": "Уникальный идентификатор шаблона",
         },
