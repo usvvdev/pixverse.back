@@ -85,7 +85,7 @@ async def text_to_photo(
             "type": "string",
             "description": "Уникальный идентификатор приложения",
         },
-        "iamge": {
+        "image": {
             "type": "bytes",
             "description": "Фотонрафия для приложения",
         },
