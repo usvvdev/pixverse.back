@@ -94,8 +94,8 @@ class ChatGPTClient:
         image: UploadFile,
     ) -> ChatGPTResp:
         template: Template | None = await templates_database.fetch_template(
-            "template_id",
-            body.template_id,
+            "id",
+            body.id,
         )
         files = await upload_chatgpt_file(
             template,

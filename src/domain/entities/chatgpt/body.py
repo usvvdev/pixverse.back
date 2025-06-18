@@ -57,7 +57,7 @@ class T2PBody(ISchema):
         str,
         Field(...),
     ]
-    template_id: Annotated[
+    id: Annotated[
         int,
         Field(...),
     ]
