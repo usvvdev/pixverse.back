@@ -61,3 +61,26 @@ class T2PBody(ISchema):
         int,
         Field(...),
     ]
+
+
+class TB2PBody(ISchema):
+    user_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_id: Annotated[
+        str,
+        Field(...),
+    ]
+    box_name: Annotated[
+        str,
+        Field(...),
+    ]
+    box_color: Annotated[
+        str,
+        Field(...),
+    ]
+    in_box: Annotated[
+        str,
+        Field(...),
+    ]

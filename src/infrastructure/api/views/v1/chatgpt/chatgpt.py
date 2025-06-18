@@ -2,7 +2,7 @@
 
 from fastapi import UploadFile
 
-from ......domain.entities.chatgpt import IBody, T2PBody
+from ......domain.entities.chatgpt import IBody, T2PBody, TB2PBody
 
 from ......interface.controllers.api.v1 import ChatGPTController
 
@@ -38,6 +38,16 @@ class ChatGPTView:
         image: UploadFile,
     ):
         return await self._controller.template_to_photo(
+            body,
+            image,
+        )
+
+    async def template_toybox_to_photo(
+        self,
+        body: TB2PBody,
+        image: UploadFile,
+    ):
+        return await self._controller.template_toybox_to_photo(
             body,
             image,
         )

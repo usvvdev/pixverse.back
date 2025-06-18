@@ -4,6 +4,7 @@ from .body import (
     IBody,
     T2PBody,
     PhotoBody,
+    TB2PBody,
 )
 
 from .file import IFile
@@ -15,4 +16,5 @@ __all__: list[str] = [
     "IBody",
     "T2PBody",
     "IFile",
+    "TB2PBody",
 ]

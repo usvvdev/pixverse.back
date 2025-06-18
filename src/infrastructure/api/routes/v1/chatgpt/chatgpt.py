@@ -13,7 +13,7 @@ from ....views.v1 import ChatGPTView
 
 from ......domain.tools import auto_docs
 
-from ......domain.entities.chatgpt import IBody, T2PBody
+from ......domain.entities.chatgpt import IBody, T2PBody, TB2PBody
 
 from .....factroies.api.v1 import ChatGPTViewFactory
 
@@ -153,6 +153,31 @@ async def template_to_photo(
         ResponseModel: Ответ с данными о результате генерации видео.
     """
     return await view.template_to_photo(
+        body,
+        image,
+    )
+
+
+@chatgpt_router.post(
+    "/toybox",
+)
+async def template_toybox_to_photo(
+    body: TB2PBody = Depends(),
+    image: UploadFile = File(),
+    view: ChatGPTView = Depends(ChatGPTViewFactory.create),
+) -> ChatGPTResp:
+    """
+    Генерирует видео на основе текстового запроса.
+
+    Аргументы:
+        body (IBody): Тело запроса, содержащее текст (prompt) и дополнительные параметры.
+        token (str): OAuth2 access token для авторизации пользователя.
+        view (PixVerseView): Зависимость, обрабатывающая бизнес-логику генерации видео.
+
+    Возвращает:
+        ResponseModel: Ответ с данными о результате генерации видео.
+    """
+    return await view.template_toybox_to_photo(
         body,
         image,
     )
