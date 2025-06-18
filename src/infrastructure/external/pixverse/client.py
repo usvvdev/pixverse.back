@@ -1,5 +1,7 @@
 # coding utf-8
 
+import os
+
 from fastapi import UploadFile
 
 from .core import PixverseCore
@@ -319,7 +321,7 @@ class PixVerseClient:
 
         account_id = account.id
 
-        filename = str(uuid4())
+        filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
         user: AuthRes = await self.auth_user(account)
 
@@ -380,7 +382,7 @@ class PixVerseClient:
 
         account_id = account.id
 
-        filename = str(uuid4())
+        filename = f"{uuid4()}{os.path.splitext(video.filename)[-1]}"
 
         user: AuthRes = await self.auth_user(account)
 
@@ -456,7 +458,7 @@ class PixVerseClient:
 
         account_id = account.id
 
-        filename = str(uuid4())
+        filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
         user: AuthRes = await self.auth_user(account)
 
