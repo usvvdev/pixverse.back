@@ -21,7 +21,7 @@ class IAccount(ISchema):
 class ChangeAccount(IAccount):
     is_active: Annotated[
         bool,
-        Field(default=1),
+        Field(default=0),
     ]
     balance: Annotated[
         int,

@@ -15,6 +15,7 @@ load_config() {
 }
 
 
+
 # Start Celery worker with beat scheduler
 start_celery_worker() {
     local app_name="services.jobs.${TASK_APP}.celery"
@@ -23,7 +24,7 @@ start_celery_worker() {
     echo "INFO: Starting Celery worker for ${TASK_APP}"
     
     # Start Celery with file-based scheduler
-    celery -A "${app_name}" worker \
+    celery -A "${app_name}" worker -E \
         --beat \
         --loglevel="info" \
         --schedule="${schedule_file}"
