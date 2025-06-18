@@ -4,6 +4,8 @@ from fastapi import UploadFile
 
 from .core import PixverseCore
 
+from uuid import uuid4
+
 from ....domain.conf import app_conf
 
 from ....domain.errors import PixverseError
@@ -317,6 +319,8 @@ class PixVerseClient:
 
         account_id = account.id
 
+        filename = str(uuid4())
+
         user: AuthRes = await self.auth_user(account)
 
         token_data: UTResp = await self.upload_token(
@@ -327,13 +331,13 @@ class PixVerseClient:
 
         await upload_file(
             image_bytes,
-            image.filename,
+            filename,
             **token_data.dict,
         )
 
         await self.upload_image(
             user.access_token,
-            image.filename,
+            filename,
             size=len(image_bytes),
         )
 
@@ -341,8 +345,8 @@ class PixVerseClient:
             token=user.access_token,
             endpoint=PixverseEndpoint.IMAGE,
             body=II2VBody(
-                img_path=image.filename,
-                img_url=image.filename,
+                img_path=filename,
+                img_url=filename,
                 prompt=body.prompt,
             ),
         )
@@ -376,6 +380,8 @@ class PixVerseClient:
 
         account_id = account.id
 
+        filename = str(uuid4())
+
         user: AuthRes = await self.auth_user(account)
 
         token_data: UTResp = await self.upload_token(
@@ -391,21 +397,21 @@ class PixVerseClient:
 
         await upload_file(
             video_bytes,
-            video.filename,
+            filename,
             **token_data.dict,
         )
 
         await self.upload_video(
             user.access_token,
-            video.filename,
-            video.filename,
+            filename,
+            filename,
         )
 
         frame_data = await self._core.post(
             token=user.access_token,
             endpoint=PixverseEndpoint.LAST_FRAME,
             body=LFBody(
-                video_path=video.filename,
+                video_path=filename,
             ),
         )
 
@@ -413,8 +419,8 @@ class PixVerseClient:
             token=user.access_token,
             endpoint=PixverseEndpoint.RESTYLE,
             body=IRVBody(
-                video_path=video.filename,
-                video_url=video.filename,
+                video_path=filename,
+                video_url=filename,
                 video_duration=5,
                 restyle_prompt=style.prompt,
                 last_frame_url=frame_data.resp.last_frame,
@@ -450,6 +456,8 @@ class PixVerseClient:
 
         account_id = account.id
 
+        filename = str(uuid4())
+
         user: AuthRes = await self.auth_user(account)
 
         token_data: UTResp = await self.upload_token(
@@ -464,13 +472,13 @@ class PixVerseClient:
 
         await upload_file(
             image_bytes,
-            image.filename,
+            filename,
             **token_data.dict,
         )
 
         await self.upload_image(
             user.access_token,
-            image.filename,
+            filename,
             size=len(image_bytes),
         )
 
@@ -478,8 +486,8 @@ class PixVerseClient:
             token=user.access_token,
             endpoint=PixverseEndpoint.IMAGE,
             body=IIT2VBody(
-                img_path=image.filename,
-                img_url=image.filename,
+                img_path=filename,
+                img_url=filename,
                 prompt=template.prompt,
                 template_id=body.template_id,
             ),
