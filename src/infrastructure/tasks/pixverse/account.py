@@ -85,7 +85,7 @@ class PixverseAccountCelery(PixverseCelery):
         acc: Any,
         token: str,
     ):
-        account_token = await self._account_repository.fetch_with_filters(
+        account_token = await self._token_repository.fetch_with_filters(
             account_id=acc.id
         )
         body = UserToken(account_id=acc.id, jwt_token=token)
