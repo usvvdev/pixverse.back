@@ -90,7 +90,7 @@ class PixverseAccountCelery(PixverseCelery):
         )
         body = UserToken(account_id=acc.id, jwt_token=token)
         if account_token is not None:
-            return await self._account_repository.update_record(
+            return await self._token_repository.update_record(
                 account_token.id,
                 body,
             )
