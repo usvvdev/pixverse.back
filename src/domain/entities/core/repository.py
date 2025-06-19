@@ -11,6 +11,7 @@ from sqlalchemy import (
     insert,
     delete,
     update,
+    and_,
 )
 
 from sqlalchemy.orm import (
@@ -167,5 +168,20 @@ class IRepository:
             .where(getattr(self._model, where).is_(value))
             .order_by(getattr(self._model, order_by))
             .limit(1),
+            many=many,
+        )
+
+    async def fetch_with_filters(
+        self,
+        many: bool = False,
+        **filters: str,
+    ) -> list[Any] | Any | None:
+        conditions = [
+            getattr(self._model, field) == value for field, value in filters.items()
+        ]
+        return await self.__fetch_records(
+            select(self._model).where(
+                and_(*conditions),
+            ),
             many=many,
         )

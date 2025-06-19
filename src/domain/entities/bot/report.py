@@ -26,13 +26,11 @@ class IBotReporter:
         context: str = None,
     ) -> None:
         error_message = (
-            f"⚠️ <b>Error occurred</b> ⚠️\n\n"
-            f"<b>Status:</b> {error.status_code}\n"
-            f"<b>Message:</b> {error.detail}\n"
+            f"⚠️ <b>{error.detail}</b> ⚠️\n\n<b>Status:</b> {error.status_code}\n\n"
         )
 
         if context:
-            error_message += f"\n<b>Context:</b> {context}"
+            error_message += f"{context}"
 
         try:
             await self._bot.telegram_bot.send_message(

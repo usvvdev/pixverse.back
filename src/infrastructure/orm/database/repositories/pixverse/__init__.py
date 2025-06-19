@@ -10,10 +10,16 @@ from .application import PixverseApplicationRepository
 
 from .user_generation import UserGenerationRepository
 
+from .user_data import UserDataRepository
+
+from .token import PixverseAccountsTokensRepository
+
 __all__: list[str] = [
     "PixverseAccountRepository",
     "PixverseTemplateRepository",
     "PixverseStyleRepository",
     "PixverseApplicationRepository",
     "UserGenerationRepository",
+    "UserDataRepository",
+    "PixverseAccountsTokensRepository",
 ]

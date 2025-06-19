@@ -12,6 +12,8 @@ from .user_generation import UserGenerations
 
 from .user_data import UserData
 
+from .tokens import PixverseAccountsTokens
+
 __all__: list[str] = [
     "PixverseAccounts",
     "PixverseStyles",
@@ -19,4 +21,5 @@ __all__: list[str] = [
     "PixverseApplications",
     "UserGenerations",
     "UserData",
+    "PixverseAccountsTokens",
 ]

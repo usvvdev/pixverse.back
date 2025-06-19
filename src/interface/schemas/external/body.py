@@ -163,3 +163,29 @@ class GenerationData(ISchema):
         str,
         Field(...),
     ]
+
+
+class UsrData(ISchema):
+    user_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_id_usage: Annotated[
+        int,
+        Field(default=1),
+    ]
+
+
+class UserToken(ISchema):
+    account_id: Annotated[
+        str,
+        Field(...),
+    ]
+    jwt_token: Annotated[
+        str,
+        Field(...),
+    ]

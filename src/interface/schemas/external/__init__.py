@@ -17,6 +17,8 @@ from .body import (
     TemplateBody,
     VideoBody,
     GenerationData,
+    UsrData,
+    UserToken,
 )
 
 from .response import (
@@ -59,4 +61,6 @@ __all__ = [
     "ChatGPTResponse",
     "ChatGPTResp",
     "GenerationData",
+    "UsrData",
+    "UserToken",
 ]

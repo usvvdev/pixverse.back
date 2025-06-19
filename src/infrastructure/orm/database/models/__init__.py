@@ -14,6 +14,8 @@ from .pixverse import (
     PixverseStyles,
     PixverseTemplates,
     UserGenerations,
+    UserData,
+    PixverseAccountsTokens,
 )
 
 from .chatgpt import (
@@ -30,6 +32,8 @@ __all__: list[str] = [
     "PixverseApplicationTemplates",
     "PixverseApplicationStyles",
     "UserGenerations",
+    "UserData",
+    "PixverseAccountsTokens",
     "PhotoGeneratorApplications",
     "PhotoGeneratorTemplates",
     "PhotoGeneratorApplicationTemplates",

@@ -21,6 +21,8 @@ from ...orm.database.repositories import (
     PixverseStyleRepository,
     PixverseTemplateRepository,
     UserGenerationRepository,
+    UserDataRepository,
+    PixverseAccountsTokensRepository,
 )
 
 from ....domain.repositories import IDatabase
@@ -57,6 +59,7 @@ from ....interface.schemas.external import (
     EffectResponse,
     TemplateResp,
     GenerationData,
+    UsrData,
 )
 
 from ....interface.schemas.api import Style, Template
@@ -80,6 +83,14 @@ templates_database = PixverseTemplateRepository(
 )
 
 user_generations_database = UserGenerationRepository(
+    engine=IDatabase(conf),
+)
+
+user_data_database = UserDataRepository(
+    engine=IDatabase(conf),
+)
+
+pixverse_account_token_database = PixverseAccountsTokensRepository(
     engine=IDatabase(conf),
 )
 
@@ -121,7 +132,7 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            await telegram_bot.send_error(error=error)
+            # await telegram_bot.send_error(error=error)
 
             raise error
         return data.resp.result
@@ -138,7 +149,7 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            await telegram_bot.send_error_message(error=error)
+            # await telegram_bot.send_error_message(error=error)
 
             raise error
         return data.resp
@@ -154,7 +165,11 @@ class PixVerseClient:
             endpoint=PixverseEndpoint.UPLOAD_IMAGE,
             body=IMGBody(
                 images=[
-                    UploadIMG(name=filename, size=size, path=f"upload/{filename}").dict
+                    UploadIMG(
+                        name=filename,
+                        size=size,
+                        path=f"upload/{filename}",
+                    ).dict
                 ]
             ),
         )
@@ -162,7 +177,7 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            await telegram_bot.send_error_message(error=error)
+            # await telegram_bot.send_error_message(error=error)
 
             raise error
         return True
@@ -185,7 +200,7 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            await telegram_bot.send_error_message(error=error)
+            # await telegram_bot.send_error_message(error=error)
 
             raise error
         return True
@@ -237,7 +252,7 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            await telegram_bot.send_error_message(error=error)
+            # await telegram_bot.send_error_message(error=error)
 
             raise error
         return data.resp
@@ -282,10 +297,17 @@ class PixVerseClient:
 
         account_id = account.id
 
-        user: AuthRes = await self.auth_user(account)
+        token = await pixverse_account_token_database.fetch_token(
+            "account_id",
+            account_id,
+        )
+        if token is None:
+            user: AuthRes = await self.auth_user(account)
+
+            token = user.access_token
 
         data: Response = await self._core.post(
-            token=user.access_token,
+            token=token,
             endpoint=PixverseEndpoint.TEXT,
             body=IT2VBody(
                 prompt=body.prompt,
@@ -295,7 +317,15 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            context = f"Account data: \n {account.username} \n {account.password}"
+            active_accounts = await account_database.fetch_with_filters(
+                many=True,
+                is_active=True,
+            )
+            context = (
+                f"<b>Account username:</b> {account.username}\n"
+                f"<b>Account password:</b> {account.password}\n\n"
+                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
+            )
             await telegram_bot.send_error_message(
                 error=error,
                 context=context,
@@ -306,6 +336,12 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
+            )
+        )
+        await user_data_database.create_or_update_user_data(
+            UsrData(
                 user_id=body.user_id,
                 app_id=body.app_id,
             )
@@ -323,10 +359,17 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
-        user: AuthRes = await self.auth_user(account)
+        token = await pixverse_account_token_database.fetch_token(
+            "account_id",
+            account_id,
+        )
+        if token is None:
+            user: AuthRes = await self.auth_user(account)
+
+            token = user.access_token
 
         token_data: UTResp = await self.upload_token(
-            user.access_token,
+            token,
         )
 
         image_bytes: bytes = await image.read()
@@ -338,13 +381,13 @@ class PixVerseClient:
         )
 
         await self.upload_image(
-            user.access_token,
+            token,
             filename,
             size=len(image_bytes),
         )
 
         data = await self._core.post(
-            token=user.access_token,
+            token=token,
             endpoint=PixverseEndpoint.IMAGE,
             body=II2VBody(
                 img_path=filename,
@@ -356,7 +399,15 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            context = f"Account data: \n {account.username} \n {account.password}"
+            active_accounts = await account_database.fetch_with_filters(
+                many=True,
+                is_active=True,
+            )
+            context = (
+                f"<b>Account username:</b> {account.username}\n"
+                f"<b>Account password:</b> {account.password}\n\n"
+                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
+            )
             await telegram_bot.send_error_message(
                 error=error,
                 context=context,
@@ -367,6 +418,12 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
+            )
+        )
+        await user_data_database.create_or_update_user_data(
+            UsrData(
                 user_id=body.user_id,
                 app_id=body.app_id,
             )
@@ -384,10 +441,17 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(video.filename)[-1]}"
 
-        user: AuthRes = await self.auth_user(account)
+        token = await pixverse_account_token_database.fetch_token(
+            "account_id",
+            account_id,
+        )
+        if token is None:
+            user: AuthRes = await self.auth_user(account)
+
+            token = user.access_token
 
         token_data: UTResp = await self.upload_token(
-            user.access_token,
+            token,
         )
 
         video_bytes: bytes = await video.read()
@@ -404,13 +468,13 @@ class PixVerseClient:
         )
 
         await self.upload_video(
-            user.access_token,
+            token,
             filename,
             filename,
         )
 
         frame_data = await self._core.post(
-            token=user.access_token,
+            token=token,
             endpoint=PixverseEndpoint.LAST_FRAME,
             body=LFBody(
                 video_path=filename,
@@ -418,7 +482,7 @@ class PixVerseClient:
         )
 
         data: Response = await self._core.post(
-            token=user.access_token,
+            token=token,
             endpoint=PixverseEndpoint.RESTYLE,
             body=IRVBody(
                 video_path=filename,
@@ -428,11 +492,20 @@ class PixVerseClient:
                 last_frame_url=frame_data.resp.last_frame,
             ),
         )
+        print(data)
         if data.err_code != 0:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            context = f"Account data: \n {account.username} \n {account.password}"
+            active_accounts = await account_database.fetch_with_filters(
+                many=True,
+                is_active=True,
+            )
+            context = (
+                f"<b>Account username:</b> {account.username}\n"
+                f"<b>Account password:</b> {account.password}\n\n"
+                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
+            )
             await telegram_bot.send_error_message(
                 error=error,
                 context=context,
@@ -443,6 +516,12 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
+            )
+        )
+        await user_data_database.create_or_update_user_data(
+            UsrData(
                 user_id=body.user_id,
                 app_id=body.app_id,
             )
@@ -460,10 +539,17 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
-        user: AuthRes = await self.auth_user(account)
+        token = await pixverse_account_token_database.fetch_token(
+            "account_id",
+            account_id,
+        )
+        if token is None:
+            user: AuthRes = await self.auth_user(account)
+
+            token = user.access_token
 
         token_data: UTResp = await self.upload_token(
-            user.access_token,
+            token,
         )
         image_bytes: bytes = await image.read()
 
@@ -479,13 +565,13 @@ class PixVerseClient:
         )
 
         await self.upload_image(
-            user.access_token,
+            token,
             filename,
             size=len(image_bytes),
         )
 
         data: Response = await self._core.post(
-            token=user.access_token,
+            token=token,
             endpoint=PixverseEndpoint.IMAGE,
             body=IIT2VBody(
                 img_path=filename,
@@ -498,7 +584,15 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            context = f"Account data: \n {account.username} \n {account.password}"
+            active_accounts = await account_database.fetch_with_filters(
+                many=True,
+                is_active=True,
+            )
+            context = (
+                f"<b>Account username:</b> {account.username}\n"
+                f"<b>Account password:</b> {account.password}\n\n"
+                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
+            )
             await telegram_bot.send_error_message(
                 error=error,
                 context=context,
@@ -509,6 +603,12 @@ class PixVerseClient:
             GenerationData(
                 generation_id=data.resp.video_id,
                 account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
+            )
+        )
+        await user_data_database.create_or_update_user_data(
+            UsrData(
                 user_id=body.user_id,
                 app_id=body.app_id,
             )
