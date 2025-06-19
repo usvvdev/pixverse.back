@@ -25,7 +25,7 @@ class ICelery:
         return Celery(
             main=self._app_name,
             broker=self._conf.rabbitmq_dsn_url,
-            backend=self._conf.redis_dsn_url,
+            # backend=self._conf.redis_dsn_url,
         )
 
     def register_tasks(self) -> None: ...
