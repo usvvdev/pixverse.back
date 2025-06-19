@@ -16,6 +16,7 @@ from ....infrastructure.api.routes.v1 import (
     chatgpt_router,
     photo_generator_template_router,
     photo_generator_application_router,
+    user_data_router,
 )
 
 
@@ -101,5 +102,6 @@ class DashboardRouter(AppRouting):
                 pixverse_style_router,
                 pixverse_template_router,
                 pixverse_application_router,
+                user_data_router,
             ],
         )

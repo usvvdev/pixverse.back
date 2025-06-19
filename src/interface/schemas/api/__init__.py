@@ -32,6 +32,8 @@ from .application import (
     PhotoGeneratorApplication,
 )
 
+from .user_data import UserData
+
 __all__: list[str] = [
     "Account",
     "ChangeAccount",
@@ -50,4 +52,5 @@ __all__: list[str] = [
     "Application",
     "PixverseApplication",
     "PhotoGeneratorApplication",
+    "UserData",
 ]

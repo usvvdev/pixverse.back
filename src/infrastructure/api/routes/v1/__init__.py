@@ -6,6 +6,7 @@ from .pixverse import (
     pixverse_style_router,
     pixverse_template_router,
     pixverse_application_router,
+    user_data_router,
 )
 
 from .auth import auth_user_router
@@ -23,6 +24,7 @@ __all__: list[str] = [
     "pixverse_style_router",
     "pixverse_template_router",
     "pixverse_application_router",
+    "user_data_router",
     "chatgpt_router",
     "photo_generator_application_router",
     "photo_generator_template_router",

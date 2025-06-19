@@ -10,10 +10,13 @@ from .template import PixverseTemplateController
 
 from .application import PixverseApplicationController
 
+from .user_generation import UserDataController
+
 __all__: list[str] = [
     "PixVerseController",
     "PixverseAccountController",
     "PixverseStyleController",
     "PixverseTemplateController",
     "PixverseApplicationController",
+    "UserDataController",
 ]

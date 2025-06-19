@@ -6,6 +6,7 @@ from .pixverse import (
     PixverseAccountViewFactory,
     PixverseStyleViewFactory,
     PixverseApplicationViewFactory,
+    UserDataViewFactory,
 )
 
 from .auth import AuthUserViewFactory
@@ -23,6 +24,7 @@ __all__: list[str] = [
     "PixverseStyleViewFactory",
     "PixverseTemplateViewFactory",
     "PixverseApplicationViewFactory",
+    "UserDataViewFactory",
     "ChatGPTViewFactory",
     "PhotoGeneratorApplicationViewFactory",
     "PhotoGeneratorTemplateViewFactory",

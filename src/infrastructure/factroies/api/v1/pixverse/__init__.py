@@ -10,6 +10,8 @@ from .templates import PixverseTemplateViewFactory
 
 from .application import PixverseApplicationViewFactory
 
+from .user_data import UserDataViewFactory
+
 
 __all__: list[str] = [
     "PixVerseViewFactory",
@@ -17,4 +19,5 @@ __all__: list[str] = [
     "PixverseStyleViewFactory",
     "PixverseTemplateViewFactory",
     "PixverseApplicationViewFactory",
+    "UserDataViewFactory",
 ]

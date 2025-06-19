@@ -8,6 +8,7 @@ from .pixverse import (
     PixVerseController,
     PixverseStyleController,
     PixverseTemplateController,
+    UserDataController,
 )
 
 from .chatgpt import (
@@ -23,6 +24,7 @@ __all__: list[str] = [
     "PixverseStyleController",
     "PixverseTemplateController",
     "PixverseApplicationController",
+    "UserDataController",
     "ChatGPTController",
     "PhotoGeneratorApplicationController",
     "PhotoGeneratorTemplateController",

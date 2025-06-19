@@ -10,10 +10,13 @@ from .template import PixverseTemplateView
 
 from .application import PixverseApplicationView
 
+from .user_data import UserDataView
+
 __all__: list[str] = [
     "PixVerseView",
     "PixverseAccountView",
     "PixverseTemplateView",
     "PixverseStyleView",
     "PixverseApplicationView",
+    "UserDataView",
 ]
