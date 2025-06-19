@@ -54,10 +54,10 @@ class PixverseAccountCelery(PixverseCelery):
 
     async def fetch_account_balance(
         self,
-        token: AuthRes,
+        token: str,
     ) -> TokensResponse:
         return await self.client.credits_amount(
-            token.access_token,
+            token,
         )
 
     async def update_account_balance(
