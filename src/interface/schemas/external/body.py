@@ -182,7 +182,7 @@ class UsrData(ISchema):
 
 class UserToken(ISchema):
     account_id: Annotated[
-        str,
+        int,
         Field(...),
     ]
     jwt_token: Annotated[

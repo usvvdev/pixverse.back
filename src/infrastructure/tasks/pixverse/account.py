@@ -105,10 +105,10 @@ class PixverseAccountCelery(PixverseCelery):
         for acc in accounts:
             token = await self.fetch_account_token(acc)
             await self.update_account_balance(
-                token,
+                token.access_token,
                 acc,
             )
             await self.update_account_jwt_token(
                 acc,
-                token,
+                token.access_token,
             )
