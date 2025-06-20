@@ -159,7 +159,7 @@ async def template_to_photo(
 
 
 @chatgpt_router.post(
-    "/toybox",
+    "/photo2toybox",
 )
 async def template_toybox_to_photo(
     body: TB2PBody = Depends(),

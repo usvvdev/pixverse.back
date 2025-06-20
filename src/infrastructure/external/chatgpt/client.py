@@ -8,7 +8,7 @@ from ....domain.conf import app_conf
 
 from ....domain.entities.core import IConfEnv
 
-from ...orm.database.repositories import PixverseTemplateRepository
+from ...orm.database.repositories import PhotoGeneratorTemplateRepository
 
 from ....domain.repositories import IDatabase
 
@@ -21,6 +21,7 @@ from ....domain.entities.chatgpt import (
     IBody,
     T2PBody,
     PhotoBody,
+    TB2PBody,
 )
 
 from ....domain.typing.enums import ChatGPTEndpoint
@@ -32,11 +33,13 @@ from ....interface.schemas.external import (
     ChatGPTResp,
 )
 
+from ....domain.constants import BODY_TOYBOX_PROMT
+
 
 conf: IConfEnv = app_conf()
 
 
-templates_database = PixverseTemplateRepository(
+templates_database = PhotoGeneratorTemplateRepository(
     engine=IDatabase(conf),
 )
 
@@ -99,6 +102,38 @@ class ChatGPTClient:
         )
         files = await upload_chatgpt_file(
             template,
+            image,
+        )
+        response: ChatGPTResponse = await self._core.post(
+            endpoint=ChatGPTEndpoint.PHOTO,
+            files=files,
+        )
+        return ChatGPTResp(
+            url=b64_json_to_image(response.data[0].b64_json),
+        )
+
+    async def toybox_to_photo(
+        self,
+        body: TB2PBody,
+        image: UploadFile,
+    ):
+        if body.box_color and body.in_box is not None:
+            data = IBody(
+                user_id=body.user_id,
+                app_id=body.app_id,
+                prompt=BODY_TOYBOX_PROMT.format(
+                    box_color=body.box_color,
+                    in_box=body.in_box,
+                    box_name=body.box_name,
+                ),
+            )
+        data: Template | None = await templates_database.fetch_template(
+            "id",
+            body.id,
+            body.box_name,
+        )
+        files = await upload_chatgpt_file(
+            data,
             image,
         )
         response: ChatGPTResponse = await self._core.post(

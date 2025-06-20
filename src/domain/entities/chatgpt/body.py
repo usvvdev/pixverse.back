@@ -66,21 +66,25 @@ class T2PBody(ISchema):
 class TB2PBody(ISchema):
     user_id: Annotated[
         str,
-        Field(...),
+        Field(..., alias="userId"),
     ]
     app_id: Annotated[
         str,
-        Field(...),
+        Field(..., alias="appId"),
     ]
     box_name: Annotated[
         str,
-        Field(...),
+        Field(..., alias="boxName"),
+    ]
+    id: Annotated[
+        int | None,
+        Field(default=None),
     ]
     box_color: Annotated[
-        str,
-        Field(...),
+        str | None,
+        Field(default=None, alias="boxColor"),
     ]
     in_box: Annotated[
-        str,
-        Field(...),
+        str | None,
+        Field(default=None, alias="inBox"),
     ]

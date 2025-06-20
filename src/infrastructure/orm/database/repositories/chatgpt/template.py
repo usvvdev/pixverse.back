@@ -9,6 +9,8 @@ from ......domain.repositories import (
     DatabaseRepository,
 )
 
+from ......domain.constants import BODY_TOYBOX_NAME_PROMPT
+
 
 class PhotoGeneratorTemplateRepository(DatabaseRepository):
     def __init__(
@@ -24,12 +26,16 @@ class PhotoGeneratorTemplateRepository(DatabaseRepository):
         self,
         field_name: str,
         value: str | int,
+        box_name: str | None = None,
     ) -> PhotoGeneratorTemplates | None:
-        return await self.fetch_field(
+        data: PhotoGeneratorTemplates | None = await self.fetch_field(
             field_name,
             value,
             many=False,
         )
+        if box_name is not None:
+            data.prompt += BODY_TOYBOX_NAME_PROMPT.format(box_name=box_name)
+        return data
 
     async def fetch_templates_by_id(
         self,
