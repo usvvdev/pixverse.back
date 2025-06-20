@@ -127,11 +127,12 @@ class ChatGPTClient:
                     box_name=body.box_name,
                 ),
             )
-        data: Template | None = await templates_database.fetch_template(
-            "id",
-            body.id,
-            body.box_name,
-        )
+        else:
+            data: Template | None = await templates_database.fetch_template(
+                "id",
+                body.id,
+                body.box_name,
+            )
         files = await upload_chatgpt_file(
             data,
             image,
