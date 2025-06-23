@@ -132,7 +132,6 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            # await telegram_bot.send_error(error=error)
 
             raise error
         return data.resp.result
@@ -210,7 +209,8 @@ class PixVerseClient:
         id: int,
     ) -> GenerationStatus:
         generation_data = await user_generations_database.fetch_generation(
-            "generation_id", id
+            "generation_id",
+            id,
         )
 
         account = await account_database.fetch_account(
@@ -218,10 +218,19 @@ class PixVerseClient:
             generation_data.account_id,
         )
 
-        user: AuthRes = await self.auth_user(account)
+        account_id = account.id
+
+        token = await pixverse_account_token_database.fetch_token(
+            "account_id",
+            account_id,
+        )
+        if token is None:
+            user: AuthRes = await self.auth_user(account)
+
+            token = user.access_token
 
         data: Response = await self._core.post(
-            token=user.access_token,
+            token=token,
             endpoint=PixverseEndpoint.STATUS,
             body=StatusBody(),
         )
@@ -492,7 +501,6 @@ class PixVerseClient:
                 last_frame_url=frame_data.resp.last_frame,
             ),
         )
-        print(data)
         if data.err_code != 0:
             error = PixverseError(
                 status_code=data.err_code,
