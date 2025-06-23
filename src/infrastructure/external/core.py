@@ -70,11 +70,13 @@ class HttpClient:
 
         """
         async for client in self.get_client(headers):
-            yield await client.request(
+            response = await client.request(
                 method,
                 url="".join((self._url, endpoint)),
                 **kwargs,
             )
+            client.cookies.clear()
+            yield response
 
     async def send_request(
         self,
