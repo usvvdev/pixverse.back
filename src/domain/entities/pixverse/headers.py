@@ -76,3 +76,8 @@ class ITokenHeaders(ISchema):
         str,
         Field(default="application/json", alias="content-type"),
     ]
+
+    # connection: Annotated[
+    #     str,
+    #     Field(default="close", alias="Connection"),
+    # ]
