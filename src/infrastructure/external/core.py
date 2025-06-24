@@ -41,6 +41,7 @@ class HttpClient:
     async def get_client(
         self,
         headers: dict[str, Any],
+        timeout: int,
     ) -> AsyncGenerator[AsyncClient, Any]:
         """Асинхронный генератор HTTP клиента с управлением контекстом.
 
@@ -48,7 +49,7 @@ class HttpClient:
             AsyncClient: Экземпляр асинхронного HTTP клиента
 
         """
-        async with AsyncClient(headers=headers, timeout=60) as client:
+        async with AsyncClient(headers=headers, timeout=timeout) as client:
             yield client
 
     async def __make_request(
@@ -56,6 +57,7 @@ class HttpClient:
         method: str,
         endpoint: str,
         headers: dict[str, Any],
+        timeout: int,
         **kwargs: Any,
     ) -> AsyncGenerator[Response, Any]:
         """Внутренний метод выполнения запроса.
@@ -69,7 +71,7 @@ class HttpClient:
             Response: Объект ответа от сервера
 
         """
-        async for client in self.get_client(headers):
+        async for client in self.get_client(headers, timeout):
             response = await client.request(
                 method,
                 url="".join((self._url, endpoint)),
@@ -83,6 +85,7 @@ class HttpClient:
         method: str,
         headers: ISchema,
         endpoint: str,
+        timeout: int = 60,
         body: ISchema = None,
         files=None,
     ) -> dict[str, Any]:
@@ -101,6 +104,7 @@ class HttpClient:
             method,
             endpoint,
             headers.dict if headers else None,
+            timeout,
             json=body.dict if body else None,
             files=files if files else None,
         ):

@@ -61,6 +61,7 @@ class ChatGPTCore(HttpClient):
             response: dict[str, Any] = await super().send_request(
                 RequestMethod.POST,
                 headers=IAuthHeaders(),
+                timeout=90,
                 *args,
                 **kwargs,
             )
@@ -88,6 +89,7 @@ class ChatGPTCore(HttpClient):
             response: dict[str, Any] = await super().send_request(
                 RequestMethod.GET,
                 headers=IAuthHeaders(),
+                timeout=90,
                 *args,
                 **kwargs,
             )
