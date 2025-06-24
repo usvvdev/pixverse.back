@@ -5,6 +5,10 @@ from .body import (
     T2PBody,
     PhotoBody,
     TB2PBody,
+    CaloriesBody,
+    IMessage,
+    ITextContent,
+    IImageContent,
 )
 
 from .file import IFile
@@ -17,4 +21,8 @@ __all__: list[str] = [
     "T2PBody",
     "IFile",
     "TB2PBody",
+    "CaloriesBody",
+    "IMessage",
+    "ITextContent",
+    "IImageContent",
 ]

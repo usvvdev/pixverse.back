@@ -17,6 +17,8 @@ from .chatgpt import (
     photo_generator_template_router,
 )
 
+from .calories import calories_router
+
 __all__: list[str] = [
     "auth_user_router",
     "pixverse_router",
@@ -28,4 +30,5 @@ __all__: list[str] = [
     "chatgpt_router",
     "photo_generator_application_router",
     "photo_generator_template_router",
+    "calories_router",
 ]

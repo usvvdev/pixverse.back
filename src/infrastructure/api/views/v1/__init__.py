@@ -17,6 +17,8 @@ from .chatgpt import (
     PhotoGeneratorApplicationView,
 )
 
+from .calories import CaloriesView
+
 __all__: list[str] = [
     "PixVerseView",
     "PixverseAccountView",
@@ -29,4 +31,5 @@ __all__: list[str] = [
     "ChatGPTView",
     "PhotoGeneratorTemplateView",
     "PhotoGeneratorApplicationView",
+    "CaloriesView",
 ]

@@ -44,6 +44,14 @@ services:
       - APP_SERVICE=dashboard
     entrypoint: ["sh", "./scripts/start_api.sh"]
 
+  calories:
+    <<: *service-template
+    ports:
+      - 8005:${APP_PORT}
+    environment:
+      - APP_SERVICE=calories
+    entrypoint: ["sh", "./scripts/start_api.sh"]
+
   pixverse-account-worker:
     <<: *service-template
     environment:

@@ -17,6 +17,7 @@ from ....infrastructure.api.routes.v1 import (
     photo_generator_template_router,
     photo_generator_application_router,
     user_data_router,
+    calories_router,
 )
 
 
@@ -104,4 +105,17 @@ class DashboardRouter(AppRouting):
                 pixverse_application_router,
                 user_data_router,
             ],
+        )
+
+
+class CaloriesRouter(AppRouting):
+    def __init__(
+        self,
+        app: FastAPI,
+        config: IConfEnv,
+    ) -> None:
+        super().__init__(
+            app,
+            config,
+            routers=[calories_router],
         )

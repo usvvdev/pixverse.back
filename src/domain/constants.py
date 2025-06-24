@@ -73,3 +73,32 @@ UPLOAD_DIR = "uploads"
 BODY_TOYBOX_PROMT = "Создай игрушку по моему фото в формате экшн-фигурки. Фигурка должна быть в полный рост и помещаться внутри {box_color} коробки в левой части, справа рядом размести ее аксессуары: {in_box}. На верхней части коробки напиши {box_name}. Изображение должно быть максимально реалистичным"
 
 BODY_TOYBOX_NAME_PROMPT = "На верхней части коробки напиши {box_name}. Изображение должно быть максимально реалистичным"
+
+BODY_CALORIES_SYSTEM_PROMPT = """
+You are a top-tier nutrition and health assistant. Analyze the provided food input (text or image) and return only a strict JSON array.
+
+Each array element must include:
+- "title" (string): Name of the food item
+- "weight" (integer): Estimated weight in grams
+- "kilocalories_per100g" (float)
+- "proteins_per100g" (float)
+- "fats_per100g" (float)
+- "carbohydrates_per100g" (float)
+- "fiber_per100g" (float)
+
+⚠️ Output ONLY the JSON array. No explanations, markdown, or additional text.
+⚠️ If no food is detected, return an empty array: []
+
+Example:
+[
+  {
+    "title": "Sushi Rice",
+    "weight": 100,
+    "kilocalories_per100g": 130,
+    "proteins_per100g": 2.5,
+    "fats_per100g": 0.2,
+    "carbohydrates_per100g": 28.7,
+    "fiber_per100g": 0.5
+  }
+]
+"""

@@ -1,10 +1,15 @@
 # coding utf-8
 
-from typing import Annotated
+from typing import (
+    Annotated,
+    Union,
+)
 
 from pydantic import Field
 
 from ..core import ISchema
+
+from ...constants import BODY_CALORIES_SYSTEM_PROMPT
 
 
 class IBody(ISchema):
@@ -88,3 +93,107 @@ class TB2PBody(ISchema):
         str | None,
         Field(default=None),
     ]
+
+
+class IImageUrl(ISchema):
+    url: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class IImageContent(ISchema):
+    type: Annotated[
+        str,
+        Field(default="image_url"),
+    ]
+    image_url: Annotated[
+        IImageUrl,
+        Field(...),
+    ]
+
+
+class ITextContent(ISchema):
+    type: Annotated[
+        str,
+        Field(default="text"),
+    ]
+    text: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class IMessage(ISchema):
+    role: Annotated[
+        str,
+        Field(...),
+    ]
+    content: list[Union[str, ITextContent, IImageContent]]
+
+
+class CaloriesBody(ISchema):
+    model: Annotated[
+        str,
+        Field(default="gpt-4o"),
+    ]
+    temperature: Annotated[
+        int,
+        Field(default=0),
+    ]
+    top_p: Annotated[
+        int,
+        Field(default=1),
+    ]
+    frequency_penalty: Annotated[
+        int,
+        Field(default=0),
+    ]
+    presence_penalty: Annotated[
+        int,
+        Field(default=0),
+    ]
+    messages: list[IMessage]
+
+    @classmethod
+    def create_text(cls, description: str) -> "CaloriesBody":
+        return cls(
+            model="gpt-4o",
+            temperature=0,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            messages=[
+                IMessage(
+                    role="system",
+                    content=[ITextContent(text=BODY_CALORIES_SYSTEM_PROMPT)],
+                ),
+                IMessage(
+                    role="user",
+                    content=[ITextContent(text=f"Analyze this food: {description}")],
+                ),
+            ],
+        )
+
+    @classmethod
+    def create_image(cls, image_url: str) -> "CaloriesBody":
+        return cls(
+            model="gpt-4o",
+            temperature=0,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            messages=[
+                IMessage(
+                    role="system",
+                    content=[ITextContent(text=BODY_CALORIES_SYSTEM_PROMPT)],
+                ),
+                IMessage(
+                    role="user",
+                    content=[
+                        ITextContent(text="Analyze the food in this image."),
+                        IImageContent(image_url=IImageUrl(url=image_url)),
+                    ],
+                ),
+            ],
+        )
