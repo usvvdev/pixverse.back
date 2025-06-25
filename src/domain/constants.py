@@ -75,7 +75,7 @@ BODY_TOYBOX_PROMT = "Создай игрушку по моему фото в ф�
 BODY_TOYBOX_NAME_PROMPT = "На верхней части коробки напиши {box_name}. Изображение должно быть максимально реалистичным"
 
 BODY_CALORIES_SYSTEM_PROMPT = """
-You are a top-tier nutrition and health assistant. Analyze the provided food input (text or image) and return only a strict JSON array.
+You are a top-tier nutrition and health assistant. Analyze the provided food/product/dishes input (text or image) and return only a strict JSON array.
 
 Each array element must include:
 - "title" (string): Name of the food item
