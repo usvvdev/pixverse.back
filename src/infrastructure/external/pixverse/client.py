@@ -218,16 +218,16 @@ class PixVerseClient:
             generation_data.account_id,
         )
 
-        account_id = account.id
+        # account_id = account.id
 
-        token = await pixverse_account_token_database.fetch_token(
-            "account_id",
-            account_id,
-        )
-        if token is None:
-            user: AuthRes = await self.auth_user(account)
+        # token = await pixverse_account_token_database.fetch_token(
+        #     "account_id",
+        #     account_id,
+        # )
+        # if token is None:
+        user: AuthRes = await self.auth_user(account)
 
-            token = user.access_token
+        token = user.access_token
 
         data: Response = await self._core.post(
             token=token,
@@ -306,14 +306,14 @@ class PixVerseClient:
 
         account_id = account.id
 
-        token = await pixverse_account_token_database.fetch_token(
-            "account_id",
-            account_id,
-        )
-        if token is None:
-            user: AuthRes = await self.auth_user(account)
+        # token = await pixverse_account_token_database.fetch_token(
+        #     "account_id",
+        #     account_id,
+        # )
+        # if token is None:
+        user: AuthRes = await self.auth_user(account)
 
-            token = user.access_token
+        token = user.access_token
 
         data: Response = await self._core.post(
             token=token,
@@ -368,14 +368,14 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
-        token = await pixverse_account_token_database.fetch_token(
-            "account_id",
-            account_id,
-        )
-        if token is None:
-            user: AuthRes = await self.auth_user(account)
+        # token = await pixverse_account_token_database.fetch_token(
+        #     "account_id",
+        #     account_id,
+        # )
+        # if token is None:
+        user: AuthRes = await self.auth_user(account)
 
-            token = user.access_token
+        token = user.access_token
 
         token_data: UTResp = await self.upload_token(
             token,
@@ -450,14 +450,14 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(video.filename)[-1]}"
 
-        token = await pixverse_account_token_database.fetch_token(
-            "account_id",
-            account_id,
-        )
-        if token is None:
-            user: AuthRes = await self.auth_user(account)
+        # token = await pixverse_account_token_database.fetch_token(
+        #     "account_id",
+        #     account_id,
+        # )
+        # if token is None:
+        user: AuthRes = await self.auth_user(account)
 
-            token = user.access_token
+        token = user.access_token
 
         token_data: UTResp = await self.upload_token(
             token,
@@ -547,14 +547,14 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
-        token = await pixverse_account_token_database.fetch_token(
-            "account_id",
-            account_id,
-        )
-        if token is None:
-            user: AuthRes = await self.auth_user(account)
+        # token = await pixverse_account_token_database.fetch_token(
+        #     "account_id",
+        #     account_id,
+        # )
+        # if token is None:
+        user: AuthRes = await self.auth_user(account)
 
-            token = user.access_token
+        token = user.access_token
 
         token_data: UTResp = await self.upload_token(
             token,
