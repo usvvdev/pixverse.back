@@ -221,6 +221,11 @@ class PixVerseClient:
 
             token = user.access_token
 
+            await update_account_token(
+                account,
+                token,
+            )
+
         return token
 
     async def __get_video_status(
