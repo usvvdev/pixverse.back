@@ -22,7 +22,7 @@ PIXVERSE_ERROR = {
     400: (status.HTTP_400_BAD_REQUEST, "Invalid req"),
     10001: (status.HTTP_401_UNAUTHORIZED, "Token is invalid"),
     10003: (status.HTTP_403_FORBIDDEN, "Token not provided"),
-    10005: (status.HTTP_401_UNAUTHORIZED, "Invalid token provided"),
+    10005: (status.HTTP_409_CONFLICT, "Retry the request later"),
     400011: (status.HTTP_422_UNPROCESSABLE_ENTITY, "Empty parameter"),
     400012: (status.HTTP_401_UNAUTHORIZED, "Invalid account"),
     400013: (status.HTTP_400_BAD_REQUEST, "Invalid binding request"),

@@ -32,6 +32,10 @@ class IDatabase(IEngine):
         return create_async_engine(
             self._conf.database_dsn_url,
             future=True,
+            pool_size=10,
+            max_overflow=5,
+            pool_timeout=30,
+            pool_recycle=1800,
         )
 
     @cached_property

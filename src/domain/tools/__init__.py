@@ -15,6 +15,8 @@ from .auth import (
     oauth2_scheme,
 )
 
+from .account import update_account_token
+
 __all__: list[str] = [
     "upload_file",
     "auto_docs",
@@ -24,4 +26,5 @@ __all__: list[str] = [
     "upload_chatgpt_file",
     "b64_json_to_image",
     "oauth2_scheme",
+    "update_account_token",
 ]

@@ -71,7 +71,13 @@ class PixverseCore(HttpClient):
             )
             return Response(**response)
         except HTTPError as err:
-            raise HTTPException(status_code=502, detail=f"{str(err)}")
+            if err.response is not None:
+                try:
+                    error_json = err.response.json()
+                    return Response(**error_json)
+                except Exception as json_err:
+                    raise json_err
+            raise HTTPException(status_code=502, detail=str(err))
 
     async def get(
         self,
@@ -103,4 +109,10 @@ class PixverseCore(HttpClient):
             )
             return Response(**response)
         except HTTPError as err:
-            raise HTTPException(status_code=502, detail=f"{str(err)}")
+            if err.response is not None:
+                try:
+                    error_json = err.response.json()
+                    return Response(**error_json)
+                except Exception as json_err:
+                    raise json_err
+            raise HTTPException(status_code=502, detail=str(err))

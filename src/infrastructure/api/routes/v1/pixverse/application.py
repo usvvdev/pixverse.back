@@ -57,7 +57,7 @@ async def fetch_applications(
 async def get_templates_by_app_id(
     app_id: str,
     view: PixverseApplicationView = Depends(PixverseApplicationViewFactory.create),
-) -> Application:
+) -> Application | None:
     return await view.fetch_application_by_app_id(
         app_id,
     )

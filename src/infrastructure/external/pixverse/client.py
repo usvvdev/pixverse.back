@@ -8,6 +8,8 @@ from .core import PixverseCore
 
 from uuid import uuid4
 
+from asyncio import sleep
+
 from ....domain.conf import app_conf
 
 from ....domain.errors import PixverseError
@@ -37,7 +39,10 @@ from ....domain.entities.pixverse import (
     LFBody,
 )
 
-from ....domain.tools import upload_file
+from ....domain.tools import (
+    upload_file,
+    update_account_token,
+)
 
 from ....interface.schemas.external import (
     AuthRes,
@@ -204,6 +209,86 @@ class PixVerseClient:
             raise error
         return True
 
+    async def __get_account_token(
+        self,
+        account,
+    ) -> str:
+        token = await pixverse_account_token_database.fetch_token(
+            "account_id", account.id
+        )
+        if token is None:
+            user: AuthRes = await self.auth_user(account)
+
+            token = user.access_token
+
+        return token
+
+    async def __get_video_status(
+        self,
+        data: Response,
+        id: int,
+    ) -> GenerationStatus | None:
+        for video in data.resp.data:
+            if video.video_id == id:
+                if video.video_status == 1 and video.first_frame:
+                    return GenerationStatus(status="success", video_url=video.url)
+                return GenerationStatus(
+                    status="generating" if video.video_status == 10 else "error"
+                )
+
+    async def __reauthenticate(
+        self,
+        account,
+    ) -> str:
+        user: AuthRes = await self.auth_user(account)
+
+        return user.access_token
+
+    async def __handle_success(
+        self,
+        data: Response,
+        account_id: int,
+        body: I2VBody,
+    ) -> Resp:
+        await user_generations_database.add_record(
+            GenerationData(
+                generation_id=data.resp.video_id,
+                account_id=account_id,
+                user_id=body.user_id,
+                app_id=body.app_id,
+            )
+        )
+        await user_data_database.create_or_update_user_data(
+            UsrData(
+                user_id=body.user_id,
+                app_id=body.app_id,
+            )
+        )
+        return data.resp
+
+    async def __handle_failure(
+        self,
+        account,
+        error_code: int,
+    ) -> None:
+        active_accounts = await account_database.fetch_with_filters(
+            many=True,
+            is_active=True,
+        )
+        context = (
+            f"<b>Account username:</b> {account.username}\n"
+            f"<b>Account password:</b> {account.password}\n\n"
+            f"<b>Active accounts:</b> {len(active_accounts) - 1}"
+        )
+        error = PixverseError(status_code=10005 if not error_code else error_code)
+
+        await telegram_bot.send_error_message(
+            error=error,
+            context=context,
+        )
+
+        raise error
+
     async def generation_status(
         self,
         id: int,
@@ -218,36 +303,63 @@ class PixVerseClient:
             generation_data.account_id,
         )
 
-        # account_id = account.id
+        max_attempts = 10
 
-        # token = await pixverse_account_token_database.fetch_token(
-        #     "account_id",
-        #     account_id,
-        # )
-        # if token is None:
-        user: AuthRes = await self.auth_user(account)
+        last_err_code = None
 
-        token = user.access_token
-
-        data: Response = await self._core.post(
-            token=token,
-            endpoint=PixverseEndpoint.STATUS,
-            body=StatusBody(),
-        )
-        if data.err_code != 0:
-            error = PixverseError(
-                status_code=data.err_code,
+        for attempt in range(max_attempts):
+            token = await self.__get_account_token(
+                account,
             )
-            await telegram_bot.send_error_message(error=error)
 
-            raise error
-        for video in data.resp.data:
-            if video.video_id == id:
-                if video.video_status == 1 and video.first_frame:
-                    return GenerationStatus(status="success", video_url=video.url)
-                return GenerationStatus(
-                    status="generating" if video.video_status == 10 else "error"
-                )
+            try:
+
+                async def call(
+                    token: str,
+                ) -> Response:
+                    return await self._core.post(
+                        token=token,
+                        endpoint=PixverseEndpoint.STATUS,
+                        body=StatusBody(),
+                    )
+
+                data = await call(token)
+
+                if data.err_code == 0:
+                    return await self.__get_video_status(
+                        data,
+                        id,
+                    )
+
+                elif data.err_code == 10005:
+                    last_err_code = data.err_code
+                    continue
+
+                raise PixverseError(last_err_code)
+
+            except PixverseError:
+                if attempt == max_attempts - 1:
+                    token = await self.__reauthenticate(account)
+
+                    await update_account_token(
+                        account,
+                        token,
+                    )
+
+                    try:
+                        data = await call(token)
+
+                        if data.err_code == 0:
+                            return await self.__get_video_status(
+                                data,
+                                id,
+                            )
+                    except Exception as final_err:
+                        raise final_err
+                    raise PixverseError(status_code=data.err_code)
+                await sleep(1)
+
+        return await self.__handle_failure(last_err_code)
 
     async def credits_amount(
         self,
@@ -306,56 +418,65 @@ class PixVerseClient:
 
         account_id = account.id
 
-        # token = await pixverse_account_token_database.fetch_token(
-        #     "account_id",
-        #     account_id,
-        # )
-        # if token is None:
-        user: AuthRes = await self.auth_user(account)
+        max_attempts = 10
 
-        token = user.access_token
+        last_err_code = None
 
-        data: Response = await self._core.post(
-            token=token,
-            endpoint=PixverseEndpoint.TEXT,
-            body=IT2VBody(
-                prompt=body.prompt,
-            ),
-        )
-        if data.err_code != 0:
-            error = PixverseError(
-                status_code=data.err_code,
-            )
-            active_accounts = await account_database.fetch_with_filters(
-                many=True,
-                is_active=True,
-            )
-            context = (
-                f"<b>Account username:</b> {account.username}\n"
-                f"<b>Account password:</b> {account.password}\n\n"
-                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
-            )
-            await telegram_bot.send_error_message(
-                error=error,
-                context=context,
+        for attempt in range(max_attempts):
+            token = await self.__get_account_token(
+                account,
             )
 
-            raise error
-        await user_generations_database.add_record(
-            GenerationData(
-                generation_id=data.resp.video_id,
-                account_id=account_id,
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        await user_data_database.create_or_update_user_data(
-            UsrData(
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        return data.resp
+            try:
+
+                async def call(token: str) -> Response:
+                    return await self._core.post(
+                        token=token,
+                        endpoint=PixverseEndpoint.TEXT,
+                        body=IT2VBody(
+                            prompt=body.prompt,
+                        ),
+                    )
+
+                data: Response = await call(token)
+
+                if data.err_code == 0:
+                    return await self.__handle_success(
+                        data,
+                        account_id,
+                        body,
+                    )
+
+                elif data.err_code == 10005:
+                    last_err_code = data.err_code
+                    continue
+
+                raise PixverseError(last_err_code)
+
+            except PixverseError:
+                if attempt == max_attempts - 1:
+                    token = await self.__reauthenticate(account)
+
+                    await update_account_token(
+                        account,
+                        token,
+                    )
+
+                    try:
+                        data = await call(token)
+
+                        if data.err_code == 0:
+                            return await self.__handle_success(
+                                data,
+                                account_id,
+                                body,
+                            )
+                    except Exception as final_err:
+                        raise final_err
+                    raise PixverseError(status_code=data.err_code)
+                await sleep(1)
+
+        return await self.__handle_failure(last_err_code)
 
     async def image_to_video(
         self,
@@ -368,76 +489,80 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
-        # token = await pixverse_account_token_database.fetch_token(
-        #     "account_id",
-        #     account_id,
-        # )
-        # if token is None:
-        user: AuthRes = await self.auth_user(account)
-
-        token = user.access_token
-
-        token_data: UTResp = await self.upload_token(
-            token,
-        )
-
         image_bytes: bytes = await image.read()
 
-        await upload_file(
-            image_bytes,
-            filename,
-            **token_data.dict,
-        )
+        max_attempts = 10
 
-        await self.upload_image(
-            token,
-            filename,
-            size=len(image_bytes),
-        )
+        last_err_code = None
 
-        data = await self._core.post(
-            token=token,
-            endpoint=PixverseEndpoint.IMAGE,
-            body=II2VBody(
-                img_path=filename,
-                img_url=filename,
-                prompt=body.prompt,
-            ),
-        )
-        if data.err_code != 0:
-            error = PixverseError(
-                status_code=data.err_code,
-            )
-            active_accounts = await account_database.fetch_with_filters(
-                many=True,
-                is_active=True,
-            )
-            context = (
-                f"<b>Account username:</b> {account.username}\n"
-                f"<b>Account password:</b> {account.password}\n\n"
-                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
-            )
-            await telegram_bot.send_error_message(
-                error=error,
-                context=context,
+        for attempt in range(max_attempts):
+            token = await self.__get_account_token(
+                account,
             )
 
-            raise error
-        await user_generations_database.add_record(
-            GenerationData(
-                generation_id=data.resp.video_id,
-                account_id=account_id,
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        await user_data_database.create_or_update_user_data(
-            UsrData(
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        return data.resp
+            try:
+
+                async def call(
+                    token: str,
+                ) -> Response:
+                    token_data: UTResp = await self.upload_token(token)
+
+                    await upload_file(image_bytes, filename, **token_data.dict)
+
+                    await self.upload_image(token, filename, size=len(image_bytes))
+
+                    data = await self._core.post(
+                        token=token,
+                        endpoint=PixverseEndpoint.IMAGE,
+                        body=II2VBody(
+                            img_path=filename,
+                            img_url=filename,
+                            prompt=body.prompt,
+                        ),
+                    )
+                    return data
+
+                data: Response = await call(token)
+
+                if data.err_code == 0:
+                    return await self.__handle_success(
+                        data,
+                        account_id,
+                        body,
+                    )
+
+                elif data.err_code == 10005:
+                    await sleep(1)
+                    continue
+
+                last_err_code = data.err_code
+
+                raise PixverseError(last_err_code)
+
+            except PixverseError:
+                if attempt == max_attempts - 1:
+                    token = await self.__reauthenticate(account)
+
+                    await update_account_token(
+                        account,
+                        token,
+                    )
+
+                    try:
+                        data = await call(token)
+
+                        if data.err_code == 0:
+                            return await self.__handle_success(
+                                data,
+                                account_id,
+                                body,
+                            )
+                    except Exception as final_err:
+                        raise final_err
+                    raise PixverseError(status_code=data.err_code)
+                await sleep(1)
+
+        return await self.__handle_failure(last_err_code)
 
     async def restyle_video(
         self,
@@ -450,91 +575,108 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(video.filename)[-1]}"
 
-        # token = await pixverse_account_token_database.fetch_token(
-        #     "account_id",
-        #     account_id,
-        # )
-        # if token is None:
-        user: AuthRes = await self.auth_user(account)
-
-        token = user.access_token
-
-        token_data: UTResp = await self.upload_token(
-            token,
-        )
-
         video_bytes: bytes = await video.read()
 
-        style: Style | None = await style_database.fetch_style(
-            "template_id",
-            body.template_id,
-        )
+        max_attempts = 10
 
-        await upload_file(
-            video_bytes,
-            filename,
-            **token_data.dict,
-        )
+        last_err_code = None
 
-        await self.upload_video(
-            token,
-            filename,
-            filename,
-        )
-
-        frame_data = await self._core.post(
-            token=token,
-            endpoint=PixverseEndpoint.LAST_FRAME,
-            body=LFBody(
-                video_path=filename,
-            ),
-        )
-
-        data: Response = await self._core.post(
-            token=token,
-            endpoint=PixverseEndpoint.RESTYLE,
-            body=IRVBody(
-                video_path=filename,
-                video_url=filename,
-                video_duration=5,
-                restyle_prompt=style.prompt,
-                last_frame_url=frame_data.resp.last_frame,
-            ),
-        )
-        if data.err_code != 0:
-            error = PixverseError(
-                status_code=data.err_code,
-            )
-            active_accounts = await account_database.fetch_with_filters(
-                many=True,
-                is_active=True,
-            )
-            context = (
-                f"<b>Account username:</b> {account.username}\n"
-                f"<b>Account password:</b> {account.password}\n\n"
-                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
-            )
-            await telegram_bot.send_error_message(
-                error=error,
-                context=context,
+        for attempt in range(max_attempts):
+            token = await self.__get_account_token(
+                account,
             )
 
-            raise error
-        await user_generations_database.add_record(
-            GenerationData(
-                generation_id=data.resp.video_id,
-                account_id=account_id,
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        await user_data_database.create_or_update_user_data(
-            UsrData(
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        return data.resp
+            try:
+
+                async def call(
+                    token: str,
+                ) -> Response:
+                    token_data: UTResp = await self.upload_token(
+                        token,
+                    )
+
+                    style: Style | None = await style_database.fetch_style(
+                        "template_id",
+                        body.template_id,
+                    )
+
+                    if style is None:
+                        raise PixverseError(status_code=500070)
+
+                    await upload_file(
+                        video_bytes,
+                        filename,
+                        **token_data.dict,
+                    )
+
+                    await self.upload_video(
+                        token,
+                        filename,
+                        filename,
+                    )
+
+                    frame_data = await self._core.post(
+                        token=token,
+                        endpoint=PixverseEndpoint.LAST_FRAME,
+                        body=LFBody(
+                            video_path=filename,
+                        ),
+                    )
+
+                    data: Response = await self._core.post(
+                        token=token,
+                        endpoint=PixverseEndpoint.RESTYLE,
+                        body=IRVBody(
+                            video_path=filename,
+                            video_url=filename,
+                            video_duration=5,
+                            restyle_prompt=style.prompt,
+                            last_frame_url=frame_data.resp.last_frame,
+                        ),
+                    )
+                    return data
+
+                data: Response = await call(token)
+
+                if data.err_code == 0:
+                    return await self.__handle_success(
+                        data,
+                        account_id,
+                        body,
+                    )
+
+                elif data.err_code == 10005:
+                    await sleep(1)
+                    continue
+
+                last_err_code = data.err_code
+
+                raise PixverseError(last_err_code)
+
+            except PixverseError:
+                if attempt == max_attempts - 1:
+                    token = await self.__reauthenticate(account)
+
+                    await update_account_token(
+                        account,
+                        token,
+                    )
+
+                    try:
+                        data = await call(token)
+
+                        if data.err_code == 0:
+                            return await self.__handle_success(
+                                data,
+                                account_id,
+                                body,
+                            )
+                    except Exception as final_err:
+                        raise final_err
+                    raise PixverseError(status_code=data.err_code)
+                await sleep(1)
+
+        return await self.__handle_failure(last_err_code)
 
     async def template_video(
         self,
@@ -547,78 +689,96 @@ class PixVerseClient:
 
         filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
 
-        # token = await pixverse_account_token_database.fetch_token(
-        #     "account_id",
-        #     account_id,
-        # )
-        # if token is None:
-        user: AuthRes = await self.auth_user(account)
-
-        token = user.access_token
-
-        token_data: UTResp = await self.upload_token(
-            token,
-        )
         image_bytes: bytes = await image.read()
 
-        template: Template | None = await templates_database.fetch_template(
-            "template_id",
-            body.template_id,
-        )
+        max_attempts = 10
 
-        await upload_file(
-            image_bytes,
-            filename,
-            **token_data.dict,
-        )
+        last_err_code = None
 
-        await self.upload_image(
-            token,
-            filename,
-            size=len(image_bytes),
-        )
-
-        data: Response = await self._core.post(
-            token=token,
-            endpoint=PixverseEndpoint.IMAGE,
-            body=IIT2VBody(
-                img_path=filename,
-                img_url=filename,
-                prompt=template.prompt,
-                template_id=body.template_id,
-            ),
-        )
-        if data.err_code != 0:
-            error = PixverseError(
-                status_code=data.err_code,
-            )
-            active_accounts = await account_database.fetch_with_filters(
-                many=True,
-                is_active=True,
-            )
-            context = (
-                f"<b>Account username:</b> {account.username}\n"
-                f"<b>Account password:</b> {account.password}\n\n"
-                f"<b>Active accounts:</b> {len(active_accounts) - 1}"
-            )
-            await telegram_bot.send_error_message(
-                error=error,
-                context=context,
+        for attempt in range(max_attempts):
+            token = await self.__get_account_token(
+                account,
             )
 
-            raise error
-        await user_generations_database.add_record(
-            GenerationData(
-                generation_id=data.resp.video_id,
-                account_id=account_id,
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        await user_data_database.create_or_update_user_data(
-            UsrData(
-                user_id=body.user_id,
-                app_id=body.app_id,
-            )
-        )
-        return data.resp
+            try:
+
+                async def call(
+                    token: str,
+                ) -> Response:
+                    token_data: UTResp = await self.upload_token(
+                        token,
+                    )
+
+                    template: Template | None = await templates_database.fetch_template(
+                        "template_id",
+                        body.template_id,
+                    )
+
+                    if template is None:
+                        raise PixverseError(status_code=500070)
+
+                    await upload_file(
+                        image_bytes,
+                        filename,
+                        **token_data.dict,
+                    )
+
+                    await self.upload_image(
+                        token,
+                        filename,
+                        size=len(image_bytes),
+                    )
+
+                    data: Response = await self._core.post(
+                        token=token,
+                        endpoint=PixverseEndpoint.IMAGE,
+                        body=IIT2VBody(
+                            img_path=filename,
+                            img_url=filename,
+                            prompt=template.prompt,
+                            template_id=body.template_id,
+                        ),
+                    )
+                    return data
+
+                data: Response = await call(token)
+
+                if data.err_code == 0:
+                    return await self.__handle_success(
+                        data,
+                        account_id,
+                        body,
+                    )
+
+                elif data.err_code == 10005:
+                    await sleep(1)
+                    continue
+
+                last_err_code = data.err_code
+
+                raise PixverseError(last_err_code)
+
+            except PixverseError:
+                if attempt == max_attempts - 1:
+                    token = await self.__reauthenticate(account)
+
+                    await update_account_token(
+                        account,
+                        token,
+                    )
+
+                    try:
+                        data = await call(token)
+
+                        if data.err_code == 0:
+                            return await self.__handle_success(
+                                data,
+                                account_id,
+                                body,
+                            )
+                    except Exception as final_err:
+                        raise final_err
+                    raise PixverseError(status_code=data.err_code)
+                await sleep(1)
+
+        return await self.__handle_failure(last_err_code)

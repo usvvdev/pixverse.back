@@ -2,6 +2,8 @@
 
 from sqlalchemy import delete, insert
 
+from fastapi import status, HTTPException
+
 from ...models import (
     PixverseApplications,
     PixverseTemplates,
@@ -61,7 +63,6 @@ class PixverseApplicationRepository(DatabaseRepository):
                 )
             )
 
-            # Добавляем новые связи, если они есть
             if relation_ids:
                 await session.execute(
                     insert(relation_table),
