@@ -53,6 +53,24 @@ class PhotoBody(ISchema):
     ]
 
 
+class I2CBody(ISchema):
+    user_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_id: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class T2CBody(I2CBody):
+    description: Annotated[
+        str,
+        Field(...),
+    ]
+
+
 class T2PBody(ISchema):
     user_id: Annotated[
         str,

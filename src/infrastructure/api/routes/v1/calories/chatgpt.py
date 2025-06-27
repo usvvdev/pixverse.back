@@ -13,6 +13,11 @@ from ....views.v1 import CaloriesView
 
 # from ......domain.tools import auto_docs
 
+from ......domain.entities.chatgpt import (
+    T2CBody,
+    I2CBody,
+)
+
 from .....factroies.api.v1 import CaloriesViewFactory
 
 
@@ -23,23 +28,24 @@ calories_router = APIRouter(tags=["Calories"])
     "/text2calories",
 )
 async def text_to_calories(
-    description: str,
+    body: T2CBody = Depends(),
     view: CaloriesView = Depends(CaloriesViewFactory.create),
 ):
     response = await view.text_to_calories(
-        description,
+        body.description,
     )
-    return {"response": loads(response)}
+    return loads(response)
 
 
 @calories_router.post(
     "/photo2calories",
 )
 async def photo_to_calories(
+    body: I2CBody = Depends(),
     image: UploadFile = File(),
     view: CaloriesView = Depends(CaloriesViewFactory.create),
 ):
     response = await view.photo_to_calories(
         image,
     )
-    return {"response": loads(response)}
+    return loads(response)

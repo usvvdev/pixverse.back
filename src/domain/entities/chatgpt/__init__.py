@@ -9,6 +9,8 @@ from .body import (
     IMessage,
     ITextContent,
     IImageContent,
+    T2CBody,
+    I2CBody,
 )
 
 from .file import IFile
@@ -25,4 +27,6 @@ __all__: list[str] = [
     "IMessage",
     "ITextContent",
     "IImageContent",
+    "T2CBody",
+    "I2CBody",
 ]
