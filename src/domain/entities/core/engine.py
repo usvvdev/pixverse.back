@@ -14,6 +14,8 @@ from sqlalchemy.ext.asyncio import (
     AsyncSession,
 )
 
+from contextlib import asynccontextmanager
+
 from .conf import IConfEnv
 
 from ...errors import EngineError
@@ -44,13 +46,14 @@ class IEngine:
             "SessionFactory",
         )
 
+    @asynccontextmanager
     async def get_session(
         self,
     ) -> AsyncGenerator[AsyncSession, Any]:
         async with self.session_factory() as session:
             try:
                 yield session
-            except Exception:
+            except Exception as err:
                 await session.rollback()
-            finally:
-                await session.close()
+
+                raise err

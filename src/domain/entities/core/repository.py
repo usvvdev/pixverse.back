@@ -39,7 +39,7 @@ class IRepository:
         self,
         query: Executable,
     ) -> None:
-        async for session in self._engine.get_session():
+        async with self._engine.get_session() as session:
             await session.execute(
                 query,
             )
@@ -49,7 +49,7 @@ class IRepository:
         self,
         query: Executable,
     ) -> ScalarResult | None:
-        async for session in self._engine.get_session():
+        async with self._engine.get_session() as session:
             result: Result = await session.execute(
                 query,
             )

@@ -328,7 +328,7 @@ class PixVerseClient:
                         body=StatusBody(),
                     )
 
-                data = await call(token)
+                data: Response = await call(token)
 
                 if data.err_code == 0:
                     return await self.__get_video_status(
@@ -359,6 +359,7 @@ class PixVerseClient:
                                 data,
                                 id,
                             )
+
                     except Exception as final_err:
                         raise final_err
                     raise PixverseError(status_code=data.err_code)
