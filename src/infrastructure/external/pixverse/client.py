@@ -364,7 +364,7 @@ class PixVerseClient:
                     raise PixverseError(status_code=data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(last_err_code)
+        return await self.__handle_failure(account, last_err_code)
 
     async def credits_amount(
         self,
@@ -481,7 +481,7 @@ class PixVerseClient:
                     raise PixverseError(status_code=data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(last_err_code)
+        return await self.__handle_failure(account, last_err_code)
 
     async def image_to_video(
         self,
@@ -567,7 +567,7 @@ class PixVerseClient:
                     raise PixverseError(status_code=data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(last_err_code)
+        return await self.__handle_failure(account, last_err_code)
 
     async def restyle_video(
         self,
@@ -681,7 +681,7 @@ class PixVerseClient:
                     raise PixverseError(status_code=data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(last_err_code)
+        return await self.__handle_failure(account, last_err_code)
 
     async def template_video(
         self,
@@ -786,4 +786,4 @@ class PixVerseClient:
                     raise PixverseError(status_code=data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(last_err_code)
+        return await self.__handle_failure(account, last_err_code)
