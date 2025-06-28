@@ -53,7 +53,7 @@ class PhotoGeneratorApplicationRepository(DatabaseRepository):
         relation_ids: list[int],
         relation_column_name: str,
     ):
-        async for session in self._engine.get_session():
+        async with self._engine.get_session() as session:
             await session.execute(
                 delete(relation_table).where(
                     relation_table.c.application_id == application_id
