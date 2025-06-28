@@ -285,7 +285,7 @@ class PixVerseClient:
             f"<b>Account password:</b> {account.password}\n\n"
             f"<b>Active accounts:</b> {len(active_accounts) - 1}"
         )
-        error = PixverseError(status_code=10005 if not error_code else error_code)
+        error = PixverseError(status_code=10005 if error_code is None else error_code)
 
         await telegram_bot.send_error_message(
             error=error,
