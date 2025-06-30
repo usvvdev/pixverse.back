@@ -56,11 +56,11 @@ class PhotoBody(ISchema):
 class I2CBody(ISchema):
     user_id: Annotated[
         str,
-        Field(...),
+        Field(..., alias="userId"),
     ]
     app_id: Annotated[
         str,
-        Field(...),
+        Field(..., alias="appId"),
     ]
 
 
