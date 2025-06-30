@@ -100,6 +100,7 @@ Each object in `"items"` must contain:
 - `"fiber_per100g"` (float)
 
 The `"total"` object must contain:
+- `"title"` (string): Name of the dish (if it's a dish) or the ingredient name (if only one product is detected)
 - `"kilocalories_per100g"` (float)
 - `"proteins_per100g"` (float)
 - `"fats_per100g"` (float)
@@ -109,5 +110,5 @@ The `"total"` object must contain:
 ⚠️ Output only the **raw JSON object**. No explanations, markdown, text, or formatting.
 ⚠️ Capitalize the first letter of every `"title"` value.
 ⚠️ If no ingredients are found, return this exact object:
-{"items":[],"total":{"kilocalories_per100g":0.0,"proteins_per100g":0.0,"fats_per100g":0.0,"carbohydrates_per100g":0.0,"fiber_per100g":0.0}}
+{"items":[],"total":{"title":"Unknown","kilocalories_per100g":0.0,"proteins_per100g":0.0,"fats_per100g":0.0,"carbohydrates_per100g":0.0,"fiber_per100g":0.0}}
 """
