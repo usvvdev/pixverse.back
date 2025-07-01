@@ -1,13 +1,25 @@
 # coding utf-8
 
-from ...models import UserData
+from collections import defaultdict
+
+from sqlalchemy import select
+
+from ...models import (
+    UserData,
+    UserGenerations,
+    PixverseAccounts,
+)
 
 from ......domain.repositories import (
     IDatabase,
     DatabaseRepository,
 )
 
-from ......interface.schemas.external import UsrData
+from ......interface.schemas.external import (
+    UsrData,
+    AccountInfo,
+    UserStatistics,
+)
 
 
 class UserDataRepository(DatabaseRepository):
@@ -38,3 +50,60 @@ class UserDataRepository(DatabaseRepository):
                 ),
             )
         return await self.add_record(body)
+
+    async def fetch_all(self) -> list[UserStatistics]:
+        stmt = (
+            select(
+                UserData.id,
+                UserData.user_id,
+                UserData.app_id,
+                UserData.balance,
+                UserData.app_id_usage,
+                UserGenerations.generation_id,
+                PixverseAccounts.id.label("account_id"),
+                PixverseAccounts.username,
+            )
+            .outerjoin(
+                UserGenerations,
+                (UserData.user_id == UserGenerations.user_id)
+                & (UserData.app_id == UserGenerations.app_id),
+            )
+            .outerjoin(
+                PixverseAccounts, UserGenerations.account_id == PixverseAccounts.id
+            )
+        )
+
+        async with self._engine.get_session() as session:
+            rows = (await session.execute(stmt)).all()
+
+        grouped = defaultdict(lambda: {"generation_ids": set(), "accounts": {}})
+        output = []
+
+        for row in rows:
+            uid = row.id
+            grouped[uid]["generation_ids"].add(
+                row.generation_id
+            ) if row.generation_id else None
+            if row.account_id:
+                grouped[uid]["accounts"][row.account_id] = row.username
+
+        for row in rows:
+            uid = row.id
+            if any(s.id == uid for s in output):
+                continue
+            output.append(
+                UserStatistics(
+                    id=uid,
+                    user_id=row.user_id,
+                    app_id=row.app_id,
+                    balance=row.balance,
+                    app_id_usage=row.app_id_usage,
+                    generation_ids=sorted(grouped[uid]["generation_ids"]),
+                    accounts=[
+                        AccountInfo(id=aid, username=uname)
+                        for aid, uname in grouped[uid]["accounts"].items()
+                    ],
+                )
+            )
+
+        return output

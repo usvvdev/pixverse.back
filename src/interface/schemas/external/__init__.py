@@ -19,6 +19,8 @@ from .body import (
     GenerationData,
     UsrData,
     UserToken,
+    AccountInfo,
+    UserStatistics,
 )
 
 from .response import (
@@ -71,4 +73,6 @@ __all__ = [
     "ChatGPTError",
     "ChatGPTCaloriesResponse",
     "ChatGPTCalories",
+    "AccountInfo",
+    "UserStatistics",
 ]

@@ -2,9 +2,7 @@
 
 from ......interface.controllers.api.v1 import UserDataController
 
-from ......interface.schemas.api import (
-    UserData,
-)
+from ......interface.schemas.external import UserStatistics
 
 
 class UserDataView:
@@ -16,5 +14,5 @@ class UserDataView:
 
     async def fetch_user_data(
         self,
-    ) -> list[UserData]:
+    ) -> list[UserStatistics]:
         return await self._controller.fetch_user_data()

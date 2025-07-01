@@ -189,3 +189,45 @@ class UserToken(ISchema):
         str,
         Field(...),
     ]
+
+
+class AccountInfo(ISchema):
+    id: Annotated[
+        int,
+        Field(...),
+    ]
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class UserStatistics(ISchema):
+    id: Annotated[
+        int,
+        Field(...),
+    ]
+    user_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_id: Annotated[
+        str,
+        Field(...),
+    ]
+    balance: Annotated[
+        int,
+        Field(...),
+    ]
+    app_id_usage: Annotated[
+        int,
+        Field(...),
+    ]
+    generation_ids: Annotated[
+        list[int],
+        Field(...),
+    ]
+    accounts: Annotated[
+        list[AccountInfo],
+        Field(...),
+    ]

@@ -4,9 +4,7 @@ from ......infrastructure.orm.database.repositories import (
     UserDataRepository,
 )
 
-from .....schemas.api import (
-    UserData,
-)
+from .....schemas.external import UserStatistics
 
 
 class UserDataController:
@@ -18,5 +16,5 @@ class UserDataController:
 
     async def fetch_user_data(
         self,
-    ) -> list[UserData]:
+    ) -> list[UserStatistics]:
         return await self._repository.fetch_all()
