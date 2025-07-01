@@ -20,6 +20,10 @@ BUCKET_NAME = "pixverse-fe-upload"
 
 PIXVERSE_ERROR = {
     400: (status.HTTP_400_BAD_REQUEST, "Invalid req"),
+    985: (
+        status.HTTP_400_BAD_REQUEST,
+        "There aren't active accounts, try the request later",
+    ),
     10001: (status.HTTP_401_UNAUTHORIZED, "Token is invalid"),
     10003: (status.HTTP_403_FORBIDDEN, "Token not provided"),
     10005: (status.HTTP_409_CONFLICT, "Retry the request later"),
@@ -88,6 +92,7 @@ ERROR_TRANSLATIONS = {
     "Authentication user error": "Ошибка аутентификации пользователя",
     "Unknown error": "Неизвестная ошибка",
     "Please try again later": "Пожалуста, попробуйте сделать запрос позже",
+    "There aren't active accounts, try the request later": "В данный момент нет активных аккаунтов, попробуйте позже",
     # openai errors
     "Country, region, or territory not supported": "Страна, регион или территория не поддерживаются",
     "You exceeded your current quota, please check your plan and billing details.": "Вы превысили текущую квоту. Проверьте тарифный план и платёжные данные.",

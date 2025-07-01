@@ -7,6 +7,8 @@ from ......domain.repositories import (
     DatabaseRepository,
 )
 
+from ......domain.errors import PixverseError
+
 
 class PixverseAccountRepository(DatabaseRepository):
     def __init__(
@@ -37,6 +39,8 @@ class PixverseAccountRepository(DatabaseRepository):
             value=True,
             order_by="usage_count",
         )
+        if account is None:
+            raise PixverseError(status_code=985)
         await self.update_record(
             id=account.id, data={"usage_count": int(1 + account.usage_count)}
         )

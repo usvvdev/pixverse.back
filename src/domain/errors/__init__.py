@@ -10,10 +10,13 @@ from .calories import CaloriesError
 
 from .chatgpt import PhotoGeneratorError
 
+from .account import AccountError
+
 __all__: list[str] = [
     "PixverseError",
     "EngineError",
     "TokenError",
     "CaloriesError",
     "PhotoGeneratorError",
+    "AccountError",
 ]
