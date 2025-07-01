@@ -1,5 +1,7 @@
 # coding utf-8
 
+from typing import Any
+
 from httpx import HTTPError
 
 from fastapi import HTTPException
@@ -11,6 +13,11 @@ from ....domain.constants import CHATGPT_API_URL
 from ....domain.entities.chatgpt import IAuthHeaders
 
 from ....domain.typing.enums import RequestMethod
+
+from ....interface.schemas.external import (
+    ChatGPTCaloriesResponse,
+    ChatGPTErrorResponse,
+)
 
 
 class CaloriesCore(HttpClient):
@@ -38,9 +45,10 @@ class CaloriesCore(HttpClient):
 
     async def post(
         self,
+        token: str | None = None,
         *args,
         **kwargs,
-    ):
+    ) -> ChatGPTCaloriesResponse | ChatGPTErrorResponse:
         """Отправка POST-запроса к PixVerse API.
 
         Args:
@@ -54,21 +62,35 @@ class CaloriesCore(HttpClient):
 
         """
         try:
-            return await super().send_request(
+            response: dict[str, Any] = await super().send_request(
                 RequestMethod.POST,
-                headers=IAuthHeaders(),
+                headers=IAuthHeaders(
+                    token=token,
+                )
+                if token is not None
+                else None,
                 timeout=90,
                 *args,
                 **kwargs,
             )
+            if not response.get("error"):
+                return ChatGPTCaloriesResponse(**response)
+            return ChatGPTErrorResponse(**response)
         except HTTPError as err:
-            raise HTTPException(status_code=502, detail=f"{str(err)}")
+            if err.response is not None:
+                try:
+                    error_json = err.response.json()
+                    return ChatGPTErrorResponse(**error_json)
+                except Exception as json_err:
+                    raise json_err
+            raise HTTPException(status_code=502, detail=str(err))
 
     async def get(
         self,
+        token: str | None = None,
         *args,
         **kwargs,
-    ):
+    ) -> ChatGPTCaloriesResponse | ChatGPTErrorResponse:
         """Отправка GET-запроса к PixVerse API.
 
         Args:
@@ -81,12 +103,25 @@ class CaloriesCore(HttpClient):
 
         """
         try:
-            return await super().send_request(
+            response: dict[str, Any] = await super().send_request(
                 RequestMethod.GET,
-                headers=IAuthHeaders(),
+                headers=IAuthHeaders(
+                    token=token,
+                )
+                if token is not None
+                else None,
                 timeout=90,
                 *args,
                 **kwargs,
             )
+            if not response.get("error"):
+                return ChatGPTCaloriesResponse(**response)
+            return ChatGPTErrorResponse(**response)
         except HTTPError as err:
-            raise HTTPException(status_code=502, detail=f"{str(err)}")
+            if err.response is not None:
+                try:
+                    error_json = err.response.json()
+                    return ChatGPTErrorResponse(**error_json)
+                except Exception as json_err:
+                    raise json_err
+            raise HTTPException(status_code=502, detail=str(err))

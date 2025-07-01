@@ -31,7 +31,7 @@ class PixverseAccountRepository(DatabaseRepository):
 
     async def fetch_next_account(
         self,
-    ):
+    ) -> PixverseAccounts | None:
         account = await self.fetch_one_with_filters(
             where="is_active",
             value=True,

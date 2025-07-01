@@ -2,6 +2,8 @@
 
 from typing import Annotated, Any
 
+from json import loads
+
 from pydantic import (
     Field,
     field_validator,
@@ -216,6 +218,107 @@ class Response(ISchema):
 class ChatGPTData(ISchema):
     b64_json: Annotated[
         str,
+        Field(...),
+    ]
+
+
+class ChatGPTError(ISchema):
+    code: Annotated[
+        str | None,
+        Field(default=None),
+    ]
+    message: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class ICalories(ISchema):
+    title: Annotated[
+        str,
+        Field(...),
+    ]
+    kilocalories_per100g: Annotated[
+        float,
+        Field(...),
+    ]
+    proteins_per100g: Annotated[
+        float,
+        Field(...),
+    ]
+    fats_per100g: Annotated[
+        float,
+        Field(...),
+    ]
+    carbohydrates_per100g: Annotated[
+        float,
+        Field(...),
+    ]
+    fiber_per100g: Annotated[
+        float,
+        Field(...),
+    ]
+
+
+class CaloriesItems(ICalories):
+    weight: Annotated[
+        int,
+        Field(...),
+    ]
+
+
+class ChatGPTCalories(ISchema):
+    items: Annotated[
+        list[CaloriesItems],
+        Field(...),
+    ]
+    total: Annotated[
+        ICalories,
+        Field(...),
+    ]
+
+
+class ChatGPTCaloriesMessage(ISchema):
+    content: Annotated[
+        ChatGPTCalories,
+        Field(...),
+    ]
+
+    @field_validator("content", mode="before")
+    @classmethod
+    def validate_content(
+        cls,
+        value,
+    ) -> Any:
+        return loads(value)
+
+
+class ChatGPTCaloriesChoice(ISchema):
+    index: Annotated[
+        int,
+        Field(...),
+    ]
+    message: Annotated[
+        ChatGPTCaloriesMessage,
+        Field(...),
+    ]
+
+
+class ChatGPTCaloriesResponse(ISchema):
+    choices: Annotated[
+        list[ChatGPTCaloriesChoice],
+        Field(...),
+    ]
+
+    def fetch_data(
+        self,
+    ) -> ChatGPTCalories:
+        return self.choices[0].message.content
+
+
+class ChatGPTErrorResponse(ISchema):
+    error: Annotated[
+        ChatGPTError,
         Field(...),
     ]
 

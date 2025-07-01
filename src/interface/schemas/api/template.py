@@ -38,6 +38,14 @@ class ITemplate(ISchema):
         Field(default=True),
     ]
 
+    @field_validator("name", "category", mode="before")
+    @classmethod
+    def validate_app_id(
+        cls,
+        value: str,
+    ) -> str:
+        return " ".join(value.split())
+
 
 class ChangeTemplate(ITemplate):
     preview_small: Annotated[

@@ -29,8 +29,6 @@ from ...orm.database.repositories import (
 
 from ....domain.repositories import IDatabase
 
-from ....domain.entities.bot import IBotReporter
-
 from ....domain.entities.pixverse import (
     IT2VBody,
     II2VBody,
@@ -97,10 +95,6 @@ user_data_database = UserDataRepository(
 
 pixverse_account_token_database = PixverseAccountsTokensRepository(
     engine=IDatabase(conf),
-)
-
-telegram_bot = IBotReporter(
-    conf,
 )
 
 
@@ -273,23 +267,12 @@ class PixVerseClient:
 
     async def __handle_failure(
         self,
-        account,
-        error_code: int,
-    ) -> None:
-        active_accounts = await account_database.fetch_with_filters(
-            many=True,
-            is_active=True,
-        )
-        context = (
-            f"<b>Account username:</b> {account.username}\n"
-            f"<b>Account password:</b> {account.password}\n\n"
-            f"<b>Active accounts:</b> {len(active_accounts) - 1}"
-        )
-        error = PixverseError(status_code=10005 if error_code is None else error_code)
-
-        await telegram_bot.send_error_message(
-            error=error,
-            context=context,
+        status_code: int,
+        extra: dict[str] = {},
+    ) -> PixverseError:
+        error = PixverseError(
+            status_code=10005 if status_code is None else status_code,
+            extra=extra,
         )
 
         raise error
@@ -302,6 +285,9 @@ class PixVerseClient:
             "generation_id",
             id,
         )
+
+        if generation_data is None:
+            raise PixverseError(status_code=500008)
 
         account = await account_database.fetch_account(
             "id",
@@ -359,10 +345,18 @@ class PixVerseClient:
 
                     except Exception as final_err:
                         raise final_err
-                    raise PixverseError(status_code=data.err_code)
+                    return await self.__handle_failure(data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(account, last_err_code)
+        return await self.__handle_failure(
+            last_err_code,
+            extra={
+                "Данные аккаунта": {
+                    "Имя аккаунта": account.username,
+                    "Пароль аккаунта": account.password,
+                }
+            },
+        )
 
     async def credits_amount(
         self,
@@ -376,7 +370,6 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            # await telegram_bot.send_error_message(error=error)
 
             raise error
         return data.resp
@@ -393,7 +386,6 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            await telegram_bot.send_error_message(error=error)
 
             raise error
         return data.resp.items
@@ -408,7 +400,6 @@ class PixVerseClient:
             error = PixverseError(
                 status_code=data.err_code,
             )
-            await telegram_bot.send_error_message(error=error)
 
             raise error
         return data.resp
@@ -475,10 +466,18 @@ class PixVerseClient:
                             )
                     except Exception as final_err:
                         raise final_err
-                    raise PixverseError(status_code=data.err_code)
+                    return await self.__handle_failure(data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(account, last_err_code)
+        return await self.__handle_failure(
+            last_err_code,
+            extra={
+                "Данные аккаунта": {
+                    "логин": account.username,
+                    "пароль": account.password,
+                }
+            },
+        )
 
     async def image_to_video(
         self,
@@ -558,10 +557,18 @@ class PixVerseClient:
                             )
                     except Exception as final_err:
                         raise final_err
-                    raise PixverseError(status_code=data.err_code)
+                    return await self.__handle_failure(data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(account, last_err_code)
+        return await self.__handle_failure(
+            last_err_code,
+            extra={
+                "Данные аккаунта": {
+                    "логин": account.username,
+                    "пароль": account.password,
+                }
+            },
+        )
 
     async def restyle_video(
         self,
@@ -669,10 +676,18 @@ class PixVerseClient:
                             )
                     except Exception as final_err:
                         raise final_err
-                    raise PixverseError(status_code=data.err_code)
+                    return await self.__handle_failure(data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(account, last_err_code)
+        return await self.__handle_failure(
+            last_err_code,
+            extra={
+                "Данные аккаунта": {
+                    "логин": account.username,
+                    "пароль": account.password,
+                }
+            },
+        )
 
     async def template_video(
         self,
@@ -771,7 +786,15 @@ class PixVerseClient:
                             )
                     except Exception as final_err:
                         raise final_err
-                    raise PixverseError(status_code=data.err_code)
+                    return await self.__handle_failure(data.err_code)
                 await sleep(1)
 
-        return await self.__handle_failure(account, last_err_code)
+        return await self.__handle_failure(
+            last_err_code,
+            extra={
+                "Данные аккаунта": {
+                    "логин": account.username,
+                    "пароль": account.password,
+                }
+            },
+        )

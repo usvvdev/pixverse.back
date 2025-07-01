@@ -2,13 +2,22 @@
 
 from fastapi import UploadFile
 
+from asyncio import sleep
+
 from .core import ChatGPTCore
 
 from ....domain.conf import app_conf
 
+from ....domain.errors import (
+    PixverseError,
+    PhotoGeneratorError,
+)
+
 from ....domain.entities.core import IConfEnv
 
 from ...orm.database.repositories import PhotoGeneratorTemplateRepository
+
+from ...orm.database.models import PhotoGeneratorTemplates
 
 from ....domain.repositories import IDatabase
 
@@ -31,6 +40,8 @@ from ....interface.schemas.api import Template
 from ....interface.schemas.external import (
     ChatGPTResponse,
     ChatGPTResp,
+    ChatGPTErrorResponse,
+    ChatGPTError,
 )
 
 from ....domain.constants import BODY_TOYBOX_PROMT
@@ -62,33 +73,126 @@ class ChatGPTClient:
     ) -> None:
         self._core = core
 
+    async def __handle_success(
+        self,
+        data: ChatGPTResponse,
+    ) -> ChatGPTResp:
+        return ChatGPTResp(
+            url=b64_json_to_image(data.data[0].b64_json),
+        )
+
+    async def __handle_failure(
+        self,
+        last_error: ChatGPTError,
+        status_code: int | None = None,
+        extra: dict[str] = {},
+    ) -> PhotoGeneratorError:
+        error = PhotoGeneratorError(
+            status_code=status_code if status_code is not None else 400,
+            detail=last_error.message,
+            extra=extra,
+        )
+        raise error
+
     async def text_to_photo(
         self,
         body: IBody,
     ) -> ChatGPTResp:
-        response: ChatGPTResponse = await self._core.post(
-            endpoint=ChatGPTEndpoint.TEXT,
-            body=PhotoBody(prompt=body.prompt),
-        )
-        return ChatGPTResp(
-            url=b64_json_to_image(response.data[0].b64_json),
+        max_attempts = 10
+
+        last_error = None
+
+        for attempt in range(max_attempts):
+            token = conf.chatgpt_token
+            try:
+
+                async def call(
+                    token: str,
+                ) -> ChatGPTResponse | ChatGPTErrorResponse:
+                    return await self._core.post(
+                        token=token,
+                        endpoint=ChatGPTEndpoint.TEXT,
+                        body=PhotoBody(
+                            prompt=body.prompt,
+                        ),
+                    )
+
+                data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
+
+                if not isinstance(data, ChatGPTErrorResponse):
+                    return await self.__handle_success(data)
+
+                last_error = data.error
+
+            except Exception:
+                if attempt == max_attempts - 1:
+                    try:
+                        data = await call(token)
+
+                        if not data.error:
+                            return await self.__handle_success(
+                                data,
+                            )
+
+                    except Exception as final_err:
+                        raise final_err
+                    return await self.__handle_failure(last_error)
+                await sleep(1)
+        return await self.__handle_failure(
+            last_error,
+            extra={"Токен авторизации": token},
         )
 
     async def photo_to_photo(
         self,
         body: IBody,
         image: UploadFile,
-    ):
-        files = await upload_chatgpt_file(
-            body,
-            image,
-        )
-        response: ChatGPTResponse = await self._core.post(
-            endpoint=ChatGPTEndpoint.PHOTO,
-            files=files,
-        )
-        return ChatGPTResp(
-            url=b64_json_to_image(response.data[0].b64_json),
+    ) -> ChatGPTResp:
+        max_attempts = 10
+
+        last_error = None
+
+        for attempt in range(max_attempts):
+            token = conf.chatgpt_token
+            try:
+
+                async def call(
+                    token: str,
+                ) -> ChatGPTResponse | ChatGPTErrorResponse:
+                    files = await upload_chatgpt_file(
+                        body,
+                        image,
+                    )
+                    return await self._core.post(
+                        token=token,
+                        endpoint=ChatGPTEndpoint.PHOTO,
+                        files=files,
+                    )
+
+                data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
+
+                if not isinstance(data, ChatGPTErrorResponse):
+                    return await self.__handle_success(data)
+
+                last_error = data.error
+
+            except Exception:
+                if attempt == max_attempts - 1:
+                    try:
+                        data = await call(token)
+
+                        if not data.error:
+                            return await self.__handle_success(
+                                data,
+                            )
+
+                    except Exception as final_err:
+                        raise final_err
+                    return await self.__handle_failure(last_error)
+                await sleep(1)
+        return await self.__handle_failure(
+            last_error,
+            extra={"Токен авторизации": token},
         )
 
     async def template_to_photo(
@@ -96,29 +200,72 @@ class ChatGPTClient:
         body: T2PBody,
         image: UploadFile,
     ) -> ChatGPTResp:
-        template: Template | None = await templates_database.fetch_template(
-            "id",
-            body.id,
-        )
-        files = await upload_chatgpt_file(
-            template,
-            image,
-        )
-        response: ChatGPTResponse = await self._core.post(
-            endpoint=ChatGPTEndpoint.PHOTO,
-            files=files,
-        )
-        return ChatGPTResp(
-            url=b64_json_to_image(response.data[0].b64_json),
+        max_attempts = 10
+
+        last_error = None
+
+        for attempt in range(max_attempts):
+            token = conf.chatgpt_token
+
+            try:
+
+                async def call(
+                    token: str,
+                ) -> ChatGPTResponse | ChatGPTErrorResponse:
+                    template: Template | None = await templates_database.fetch_template(
+                        "id",
+                        body.id,
+                    )
+                    if template is None:
+                        raise PixverseError(status_code=500070)
+
+                    files = await upload_chatgpt_file(
+                        template,
+                        image,
+                    )
+                    return await self._core.post(
+                        token=token,
+                        endpoint=ChatGPTEndpoint.PHOTO,
+                        files=files,
+                    )
+
+                data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
+
+                if not isinstance(data, ChatGPTErrorResponse):
+                    return await self.__handle_success(data)
+
+                last_error = data.error
+
+            except Exception:
+                if attempt == max_attempts - 1:
+                    try:
+                        data = await call(token)
+
+                        if not data.error:
+                            return await self.__handle_success(
+                                data,
+                            )
+
+                    except Exception as final_err:
+                        raise final_err
+                    return await self.__handle_failure(last_error)
+                await sleep(1)
+        return await self.__handle_failure(
+            last_error,
+            extra={"Токен авторизации": token},
         )
 
     async def toybox_to_photo(
         self,
         body: TB2PBody,
         image: UploadFile,
-    ):
-        if body.box_color and body.in_box is not None:
-            data = IBody(
+    ) -> ChatGPTResp:
+        max_attempts = 10
+
+        last_error = None
+
+        data: IBody | PhotoGeneratorTemplates = (
+            IBody(
                 user_id=body.user_id,
                 app_id=body.app_id,
                 prompt=BODY_TOYBOX_PROMT.format(
@@ -127,20 +274,50 @@ class ChatGPTClient:
                     box_name=body.box_name,
                 ),
             )
-        else:
-            data: Template | None = await templates_database.fetch_template(
-                "id",
-                body.id,
-                body.box_name,
-            )
-        files = await upload_chatgpt_file(
-            data,
-            image,
+            if body.box_color and body.in_box is not None
+            else await templates_database.fetch_template("id", body.id, body.box_name)
         )
-        response: ChatGPTResponse = await self._core.post(
-            endpoint=ChatGPTEndpoint.PHOTO,
-            files=files,
-        )
-        return ChatGPTResp(
-            url=b64_json_to_image(response.data[0].b64_json),
+
+        for attempt in range(max_attempts):
+            token = conf.chatgpt_token
+
+            try:
+                files = await upload_chatgpt_file(
+                    data,
+                    image,
+                )
+
+                async def call(
+                    token: str,
+                ) -> ChatGPTResponse | ChatGPTErrorResponse:
+                    return await self._core.post(
+                        token=token,
+                        endpoint=ChatGPTEndpoint.PHOTO,
+                        files=files,
+                    )
+
+                data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
+
+                if not isinstance(data, ChatGPTErrorResponse):
+                    return await self.__handle_success(data)
+
+                last_error = data.error
+
+            except Exception:
+                if attempt == max_attempts - 1:
+                    try:
+                        data = await call(token)
+
+                        if not data.error:
+                            return await self.__handle_success(
+                                data,
+                            )
+
+                    except Exception as final_err:
+                        raise final_err
+                    return await self.__handle_failure(last_error)
+                await sleep(1)
+        return await self.__handle_failure(
+            last_error,
+            extra={"Токен авторизации": token},
         )

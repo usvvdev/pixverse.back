@@ -4,6 +4,8 @@ from fastapi import UploadFile
 
 from ......infrastructure.external.calories import CaloriesClient
 
+from ......interface.schemas.external import ChatGPTCalories
+
 
 class CaloriesController:
     def __init__(
@@ -15,7 +17,7 @@ class CaloriesController:
     async def text_to_calories(
         self,
         description: str,
-    ):
+    ) -> ChatGPTCalories:
         return await self._client.text_to_calories(
             description,
         )
@@ -23,7 +25,7 @@ class CaloriesController:
     async def photo_to_calories(
         self,
         image: UploadFile,
-    ):
+    ) -> ChatGPTCalories:
         return await self._client.photo_to_calories(
             image,
         )

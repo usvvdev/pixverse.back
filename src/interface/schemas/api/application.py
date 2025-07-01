@@ -21,6 +21,14 @@ class IApplication(ISchema):
         Field(default=None),
     ]
 
+    @field_validator("app_id", mode="before")
+    @classmethod
+    def validate_app_id(
+        cls,
+        value: str,
+    ) -> str:
+        return " ".join(value.split())
+
 
 class PhotoGeneratorApplication(IApplication):
     pass

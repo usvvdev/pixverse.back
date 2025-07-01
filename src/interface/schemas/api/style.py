@@ -34,6 +34,14 @@ class IStyle(ISchema):
         Field(default=True),
     ]
 
+    @field_validator("name", mode="before")
+    @classmethod
+    def validate_app_id(
+        cls,
+        value: str,
+    ) -> str:
+        return " ".join(value.split())
+
 
 class ChangeStyle(IStyle):
     preview_small: Annotated[

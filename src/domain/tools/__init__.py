@@ -17,6 +17,8 @@ from .auth import (
 
 from .account import update_account_token
 
+from .error import format_error_with_request
+
 __all__: list[str] = [
     "upload_file",
     "auto_docs",
@@ -27,4 +29,5 @@ __all__: list[str] = [
     "b64_json_to_image",
     "oauth2_scheme",
     "update_account_token",
+    "format_error_with_request",
 ]

@@ -1,6 +1,6 @@
 # coding utf-8
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from fastapi.staticfiles import StaticFiles
 
@@ -14,6 +14,8 @@ from src.interface.server.components import CaloriesRouter
 
 from src.interface.middleware import LimitUploadSize
 
+from src.interface.handlers import http_exception_handler
+
 
 def main() -> FastAPI:
     conf: IConfEnv = app_conf()
@@ -26,6 +28,11 @@ def main() -> FastAPI:
         "/static",
         StaticFiles(directory="uploads"),
         name="static",
+    )
+
+    app.add_exception_handler(
+        HTTPException,
+        http_exception_handler,
     )
 
     app.add_middleware(LimitUploadSize)

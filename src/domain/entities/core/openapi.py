@@ -51,7 +51,7 @@ class IOpenAPI(ISchema):
 
     openapi_prefix: Annotated[
         str,
-        Field(default=f"/{getenv('APP_SERVICE', 'dashboard')}"),
+        Field(default=f"/{getenv('APP_SERVICE', 'default')}"),
     ]
     """Префикс для всех OpenAPI-эндпоинтов.
     
@@ -112,5 +112,5 @@ class IOpenAPI(ISchema):
 
     title: Annotated[
         str,
-        Field(default="PIXVERSE API SERVICE"),
+        Field(default=f"{getenv('APP_SERVICE', 'default').upper()} API SERVICE"),
     ]

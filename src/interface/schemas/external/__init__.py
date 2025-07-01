@@ -33,6 +33,10 @@ from .response import (
     EffectResponse,
     ChatGPTResponse,
     ChatGPTResp,
+    ChatGPTErrorResponse,
+    ChatGPTError,
+    ChatGPTCaloriesResponse,
+    ChatGPTCalories,
 )
 
 __all__ = [
@@ -63,4 +67,8 @@ __all__ = [
     "GenerationData",
     "UsrData",
     "UserToken",
+    "ChatGPTErrorResponse",
+    "ChatGPTError",
+    "ChatGPTCaloriesResponse",
+    "ChatGPTCalories",
 ]

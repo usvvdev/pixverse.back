@@ -14,7 +14,10 @@ from ....domain.entities.chatgpt import IAuthHeaders
 
 from ....domain.typing.enums import RequestMethod
 
-from ....interface.schemas.external import ChatGPTResponse
+from ....interface.schemas.external import (
+    ChatGPTResponse,
+    ChatGPTErrorResponse,
+)
 
 
 class ChatGPTCore(HttpClient):
@@ -42,9 +45,10 @@ class ChatGPTCore(HttpClient):
 
     async def post(
         self,
+        token: str = None,
         *args,
         **kwargs,
-    ) -> ChatGPTResponse:
+    ) -> ChatGPTResponse | ChatGPTErrorResponse:
         """Отправка POST-запроса к PixVerse API.
 
         Args:
@@ -60,20 +64,33 @@ class ChatGPTCore(HttpClient):
         try:
             response: dict[str, Any] = await super().send_request(
                 RequestMethod.POST,
-                headers=IAuthHeaders(),
+                headers=IAuthHeaders(
+                    token=token,
+                )
+                if token is not None
+                else None,
                 timeout=90,
                 *args,
                 **kwargs,
             )
-            return ChatGPTResponse(**response)
+            if not response.get("error"):
+                return ChatGPTResponse(**response)
+            return ChatGPTErrorResponse(**response)
         except HTTPError as err:
-            raise HTTPException(status_code=502, detail=f"{str(err)}")
+            if err.response is not None:
+                try:
+                    error_json = err.response.json()
+                    return ChatGPTErrorResponse(**error_json)
+                except Exception as json_err:
+                    raise json_err
+            raise HTTPException(status_code=502, detail=str(err))
 
     async def get(
         self,
+        token: str = None,
         *args,
         **kwargs,
-    ) -> ChatGPTResponse:
+    ) -> ChatGPTResponse | ChatGPTErrorResponse:
         """Отправка GET-запроса к PixVerse API.
 
         Args:
@@ -88,11 +105,23 @@ class ChatGPTCore(HttpClient):
         try:
             response: dict[str, Any] = await super().send_request(
                 RequestMethod.GET,
-                headers=IAuthHeaders(),
+                headers=IAuthHeaders(
+                    token=token,
+                )
+                if token is not None
+                else None,
                 timeout=90,
                 *args,
                 **kwargs,
             )
-            return ChatGPTResponse(**response)
+            if not response.get("error"):
+                return ChatGPTResponse(**response)
+            return ChatGPTErrorResponse(**response)
         except HTTPError as err:
-            raise HTTPException(status_code=502, detail=f"{str(err)}")
+            if err.response is not None:
+                try:
+                    error_json = err.response.json()
+                    return ChatGPTErrorResponse(**error_json)
+                except Exception as json_err:
+                    raise json_err
+            raise HTTPException(status_code=502, detail=str(err))

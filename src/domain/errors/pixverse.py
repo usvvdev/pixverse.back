@@ -17,7 +17,9 @@ class PixverseError(IError):
     def __init__(
         self,
         status_code: int,
+        extra: dict[str] = {},
     ) -> None:
+        self.extra = extra
         args = dict(
             zip(
                 ("status_code", "detail"),

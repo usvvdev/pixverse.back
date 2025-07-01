@@ -6,7 +6,7 @@ from starlette.requests import Request
 
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from starlette.responses import PlainTextResponse
+from fastapi.responses import JSONResponse
 
 
 class LimitUploadSize(BaseHTTPMiddleware):
@@ -22,8 +22,13 @@ class LimitUploadSize(BaseHTTPMiddleware):
         self,
         request: Request,
         call_next,
-    ) -> PlainTextResponse | Response:
+    ) -> JSONResponse | Response:
         content_length: str | None = request.headers.get("content-length")
         if content_length and int(content_length) > self.max_upload_size:
-            return PlainTextResponse("File too large", status_code=413)
+            return JSONResponse(
+                content={
+                    "detail": "File too large",
+                },
+                status_code=413,
+            )
         return await call_next(request)
