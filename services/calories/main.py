@@ -12,6 +12,8 @@ from src.domain.entities.core import IConfEnv
 
 from src.interface.server.components import CaloriesRouter
 
+from src.interface.middleware import LimitUploadSize
+
 
 def main() -> FastAPI:
     conf: IConfEnv = app_conf()
@@ -25,6 +27,8 @@ def main() -> FastAPI:
         StaticFiles(directory="uploads"),
         name="static",
     )
+
+    app.add_middleware(LimitUploadSize)
 
     app.add_middleware(
         CORSMiddleware,

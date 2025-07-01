@@ -310,8 +310,6 @@ class PixVerseClient:
 
         max_attempts = 10
 
-        last_err_code = None
-
         for attempt in range(max_attempts):
             token = await self.__get_account_token(
                 account,
@@ -337,12 +335,11 @@ class PixVerseClient:
                     )
 
                 elif data.err_code == 10005:
-                    last_err_code = data.err_code
-                    continue
+                    raise PixverseError(data.err_code)
 
-                raise PixverseError(last_err_code)
+                last_err_code = data.err_code
 
-            except PixverseError:
+            except Exception:
                 if attempt == max_attempts - 1:
                     token = await self.__reauthenticate(account)
 
@@ -454,12 +451,11 @@ class PixVerseClient:
                     )
 
                 elif data.err_code == 10005:
-                    last_err_code = data.err_code
-                    continue
+                    raise PixverseError(data.err_code)
 
-                raise PixverseError(last_err_code)
+                last_err_code = data.err_code
 
-            except PixverseError:
+            except Exception:
                 if attempt == max_attempts - 1:
                     token = await self.__reauthenticate(account)
 
@@ -538,14 +534,11 @@ class PixVerseClient:
                     )
 
                 elif data.err_code == 10005:
-                    await sleep(1)
-                    continue
+                    raise PixverseError(data.err_code)
 
                 last_err_code = data.err_code
 
-                raise PixverseError(last_err_code)
-
-            except PixverseError:
+            except Exception:
                 if attempt == max_attempts - 1:
                     token = await self.__reauthenticate(account)
 
@@ -652,14 +645,11 @@ class PixVerseClient:
                     )
 
                 elif data.err_code == 10005:
-                    await sleep(1)
-                    continue
+                    raise PixverseError(data.err_code)
 
                 last_err_code = data.err_code
 
-                raise PixverseError(last_err_code)
-
-            except PixverseError:
+            except Exception:
                 if attempt == max_attempts - 1:
                     token = await self.__reauthenticate(account)
 
@@ -757,14 +747,11 @@ class PixVerseClient:
                     )
 
                 elif data.err_code == 10005:
-                    await sleep(1)
-                    continue
+                    raise PixverseError(data.err_code)
 
                 last_err_code = data.err_code
 
-                raise PixverseError(last_err_code)
-
-            except PixverseError:
+            except Exception:
                 if attempt == max_attempts - 1:
                     token = await self.__reauthenticate(account)
 
