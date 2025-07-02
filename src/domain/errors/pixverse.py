@@ -25,7 +25,7 @@ class PixverseError(IError):
                 ("status_code", "detail"),
                 PIXVERSE_ERROR.get(
                     status_code,
-                    PIXVERSE_ERROR[400051],
+                    PIXVERSE_ERROR[99999],
                 ),
             )
         )
