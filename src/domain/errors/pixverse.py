@@ -23,7 +23,10 @@ class PixverseError(IError):
         args = dict(
             zip(
                 ("status_code", "detail"),
-                PIXVERSE_ERROR[status_code],
+                PIXVERSE_ERROR.get(
+                    status_code,
+                    PIXVERSE_ERROR[400051],
+                ),
             )
         )
         super().__init__(**args)
