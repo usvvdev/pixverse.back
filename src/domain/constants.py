@@ -34,7 +34,7 @@ PIXVERSE_ERROR = {
     400018: (status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Prompt too long"),
     400019: (status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Prompt too long"),
     400032: (status.HTTP_422_UNPROCESSABLE_ENTITY, "Invalid image ID"),
-    400051: (status.HTTP_400_BAD_REQUEST, "Invalid binding request"),
+    400051: (status.HTTP_400_BAD_REQUEST, "Please try again later"),
     500008: (status.HTTP_404_NOT_FOUND, "Requested data not found"),
     500020: (status.HTTP_403_FORBIDDEN, "Permission denied"),
     500030: (status.HTTP_413_REQUEST_ENTITY_TOO_LARGE, "Image too large"),
