@@ -11,6 +11,7 @@ async def format_error_with_request(
     status_code: int,
     request: Request,
     title: str,
+    project: str,
 ) -> str:
     url: str = request.url.path
     params: QueryParams = request.query_params
@@ -18,6 +19,7 @@ async def format_error_with_request(
 
     message = (
         f"⚠️ <b>Статус:</b> <code>{status_code}</code> — {title}"
+        f"\n\n🛠 <b>Проект:</b> <code>{project}</code>"
         f"\n\n🔗 <b>Запрос:</b> <code>{request.method} {query}</code>"
     )
     custom_context = []

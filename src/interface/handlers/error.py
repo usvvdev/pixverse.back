@@ -2,6 +2,8 @@
 
 from fastapi import Request
 
+from os import getenv
+
 from fastapi.responses import JSONResponse
 
 from fastapi.exceptions import HTTPException
@@ -33,12 +35,14 @@ async def http_exception_handler(
         exc.detail,
         "Произошла неизвестная ошибка",
     )
+    project = getenv("APP_SERVICE", "Pixverse")
 
     message = await format_error_with_request(
         exc=exc,
         status_code=exc.status_code,
         request=request,
         title=title,
+        project=project,
     )
 
     await telegram_bot.send_error(text=message)
