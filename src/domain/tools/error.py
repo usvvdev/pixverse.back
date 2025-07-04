@@ -19,7 +19,7 @@ async def format_error_with_request(
 
     message = (
         f"⚠️ <b>Статус:</b> <code>{status_code}</code> — {title}"
-        f"\n\n🛠 <b>Проект:</b> <code>{project}</code>"
+        f"\n\n🛠 <b>Проект:</b> <code>{project.capitalize()}</code>"
         f"\n\n🔗 <b>Запрос:</b> <code>{request.method} {query}</code>"
     )
     custom_context = []
