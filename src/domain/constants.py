@@ -124,10 +124,14 @@ ALLOWED_MIME_TYPES = {
     "image/jpeg",
     "image/png",
     "image/webp",
+    "image/heif",
+    "image/heic",
     "video/mp4",
     "video/mov",
     "video/quicktime",
 }
+
+HEIF_EXTENSIONS = {".heic", ".heif"}
 
 UPLOAD_DIR = "uploads"
 

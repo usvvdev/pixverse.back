@@ -40,7 +40,10 @@ from ....domain.entities.pixverse import (
 from ....domain.tools import (
     upload_file,
     update_account_token,
+    convert_heic_to_jpg,
 )
+
+from ....domain.constants import HEIF_EXTENSIONS
 
 from ....interface.schemas.external import (
     AuthRes,
@@ -488,9 +491,14 @@ class PixVerseClient:
 
         account_id = account.id
 
-        filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
-
         image_bytes: bytes = await image.read()
+
+        ext = str(os.path.splitext(image.filename)[-1]).lower()
+
+        if ext in HEIF_EXTENSIONS:
+            image_bytes, ext = await convert_heic_to_jpg(image_bytes)
+
+        filename = f"{uuid4()}{ext}"
 
         max_attempts = 10
 
@@ -698,9 +706,14 @@ class PixVerseClient:
 
         account_id = account.id
 
-        filename = f"{uuid4()}{os.path.splitext(image.filename)[-1]}"
-
         image_bytes: bytes = await image.read()
+
+        ext = str(os.path.splitext(image.filename)[-1]).lower()
+
+        if ext in HEIF_EXTENSIONS:
+            image_bytes, ext = await convert_heic_to_jpg(image_bytes)
+
+        filename = f"{uuid4()}{ext}"
 
         max_attempts = 10
 

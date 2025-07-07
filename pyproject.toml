@@ -29,7 +29,8 @@ dependencies = [
     "fake-useragent (>=2.2.0,<3.0.0)",
     "celery (==5.5.3)",
     "redis (>=6.2.0,<7.0.0)",
-    "aiogram (>=3.20.0.post0,<4.0.0)"
+    "aiogram (>=3.20.0.post0,<4.0.0)",
+    "pillow-heif (>=1.0.0,<2.0.0)"
 ]
 
 

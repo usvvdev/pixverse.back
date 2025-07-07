@@ -5,6 +5,7 @@ from .upload_image import (
     save_upload_file,
     upload_chatgpt_file,
     b64_json_to_image,
+    convert_heic_to_jpg,
 )
 
 from .auto_docs import auto_docs
@@ -30,4 +31,5 @@ __all__: list[str] = [
     "oauth2_scheme",
     "update_account_token",
     "format_error_with_request",
+    "convert_heic_to_jpg",
 ]

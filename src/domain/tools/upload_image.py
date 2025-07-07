@@ -12,6 +12,8 @@ from io import BytesIO
 
 from PIL import Image
 
+from pillow_heif import register_heif_opener
+
 from oss2 import StsAuth, Bucket
 
 from fastapi import UploadFile, HTTPException
@@ -42,6 +44,23 @@ async def upload_file(
         f"upload/{filename}",
         image_bytes,
     )
+
+
+async def convert_heic_to_jpg(
+    image_bytes: bytes,
+) -> tuple[bytes, str]:
+    register_heif_opener()
+
+    image = Image.open(
+        BytesIO(
+            image_bytes,
+        )
+    ).convert("RGB")
+
+    buffer = BytesIO()
+
+    image.save(buffer, format="JPEG")
+    return buffer.getvalue(), ".jpg"
 
 
 def save_upload_file(
