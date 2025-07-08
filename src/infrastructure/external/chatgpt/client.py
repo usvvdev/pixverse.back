@@ -152,6 +152,11 @@ class ChatGPTClient:
 
         last_error = None
 
+        files = await upload_chatgpt_file(
+            body,
+            image,
+        )
+
         for attempt in range(max_attempts):
             token = conf.chatgpt_token
             try:
@@ -159,10 +164,6 @@ class ChatGPTClient:
                 async def call(
                     token: str,
                 ) -> ChatGPTResponse | ChatGPTErrorResponse:
-                    files = await upload_chatgpt_file(
-                        body,
-                        image,
-                    )
                     return await self._core.post(
                         token=token,
                         endpoint=ChatGPTEndpoint.PHOTO,
@@ -204,6 +205,18 @@ class ChatGPTClient:
 
         last_error = None
 
+        template: Template | None = await templates_database.fetch_template(
+            "id",
+            body.id,
+        )
+        if template is None:
+            raise PixverseError(status_code=500070)
+
+        files = await upload_chatgpt_file(
+            template,
+            image,
+        )
+
         for attempt in range(max_attempts):
             token = conf.chatgpt_token
 
@@ -212,17 +225,6 @@ class ChatGPTClient:
                 async def call(
                     token: str,
                 ) -> ChatGPTResponse | ChatGPTErrorResponse:
-                    template: Template | None = await templates_database.fetch_template(
-                        "id",
-                        body.id,
-                    )
-                    if template is None:
-                        raise PixverseError(status_code=500070)
-
-                    files = await upload_chatgpt_file(
-                        template,
-                        image,
-                    )
                     return await self._core.post(
                         token=token,
                         endpoint=ChatGPTEndpoint.PHOTO,
@@ -278,14 +280,15 @@ class ChatGPTClient:
             else await templates_database.fetch_template("id", body.id, body.box_name)
         )
 
+        files = await upload_chatgpt_file(
+            data,
+            image,
+        )
+
         for attempt in range(max_attempts):
             token = conf.chatgpt_token
 
             try:
-                files = await upload_chatgpt_file(
-                    data,
-                    image,
-                )
 
                 async def call(
                     token: str,

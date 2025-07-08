@@ -25,6 +25,7 @@ from ..constants import (
     BUCKET_NAME,
     ALLOWED_MIME_TYPES,
     UPLOAD_DIR,
+    HEIF_EXTENSIONS,
 )
 
 
@@ -51,6 +52,9 @@ async def convert_heic_to_jpg(
 ) -> tuple[bytes, str]:
     register_heif_opener()
 
+    if not image_bytes:
+        raise ValueError("Файл слишком мал или пуст — возможно, он нечитабелен.")
+
     image = Image.open(
         BytesIO(
             image_bytes,
@@ -60,7 +64,25 @@ async def convert_heic_to_jpg(
     buffer = BytesIO()
 
     image.save(buffer, format="JPEG")
-    return buffer.getvalue(), ".jpg"
+    return buffer.getvalue(), ".jpg", "image/jpeg"
+
+
+async def convert_image_to_rgb_jpeg(
+    image_bytes: bytes,
+) -> tuple[bytes, str, str]:
+    image = Image.open(
+        BytesIO(
+            image_bytes,
+        ),
+    )
+
+    if image.mode != "RGB":
+        image = image.convert("RGB")
+
+    buffer = BytesIO()
+    image.save(buffer, format="JPEG")
+
+    return buffer.getvalue(), ".jpg", "image/jpeg"
 
 
 def save_upload_file(
@@ -91,9 +113,29 @@ async def upload_chatgpt_file(
     body: Any,
     image: UploadFile,
 ) -> dict[str, Any]:
+    ext = str(os.path.splitext(image.filename)[-1]).lower()
+
+    image_bytes = await image.read()
+
+    content_type = image.content_type
+
+    filename = image.filename
+
+    if ext in HEIF_EXTENSIONS:
+        image_bytes, ext, content_type = await convert_heic_to_jpg(
+            image_bytes,
+        )
+        filename = f"{uuid.uuid4().hex}{ext}"
+
+    image_bytes, ext, content_type = await convert_image_to_rgb_jpeg(
+        image_bytes,
+    )
+
+    filename = f"{uuid.uuid4().hex}{ext}"
+
     return IFile(
         model=(None, "gpt-image-1"),
-        image=(image.filename, await image.read(), image.content_type),
+        image=(filename, image_bytes, content_type),
         prompt=(None, body.prompt),
     ).dict
 

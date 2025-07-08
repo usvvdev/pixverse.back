@@ -73,7 +73,6 @@ class CaloriesCore(HttpClient):
                 *args,
                 **kwargs,
             )
-            print(response)
             if not response.get("error"):
                 return ChatGPTCaloriesResponse(**response)
             return ChatGPTErrorResponse(**response)

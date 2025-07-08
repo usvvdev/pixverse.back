@@ -73,7 +73,6 @@ class ChatGPTCore(HttpClient):
                 *args,
                 **kwargs,
             )
-            print(response)
             if not response.get("error"):
                 return ChatGPTResponse(**response)
             return ChatGPTErrorResponse(**response)

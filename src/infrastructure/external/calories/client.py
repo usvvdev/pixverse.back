@@ -1,5 +1,7 @@
 # coding utf-8
 
+import os
+
 from fastapi import UploadFile
 
 from asyncio import sleep
@@ -22,6 +24,10 @@ from ....interface.schemas.external import (
     ChatGPTCalories,
     ChatGPTError,
 )
+
+from ....domain.constants import HEIF_EXTENSIONS
+
+from ....domain.tools import convert_heic_to_jpg
 
 from ....domain.errors import CaloriesError
 
@@ -74,6 +80,16 @@ class CaloriesClient:
 
         last_error = None
 
+        ext = str(os.path.splitext(image.filename)[-1]).lower()
+        image_bytes = await image.read()
+
+        if ext in HEIF_EXTENSIONS:
+            image_bytes, ext, _ = await convert_heic_to_jpg(
+                image_bytes,
+            )
+
+        image_base64 = b64encode(image_bytes).decode("utf-8")
+
         for attempt in range(max_attempts):
             token = conf.chatgpt_token
             try:
@@ -81,12 +97,11 @@ class CaloriesClient:
                 async def call(
                     token: str,
                 ) -> ChatGPTCaloriesResponse | ChatGPTErrorResponse:
-                    image_bytes = b64encode(await image.read()).decode("utf-8")
                     return await self._core.post(
                         token=token,
                         endpoint=ChatGPTEndpoint.CHAT,
                         body=CaloriesBody.create_image(
-                            image_url=f"data:image/jpeg;base64,{image_bytes}"
+                            image_url=f"data:image/jpeg;base64,{image_base64}"
                         ),
                     )
 

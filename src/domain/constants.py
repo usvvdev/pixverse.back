@@ -112,6 +112,8 @@ ERROR_TRANSLATIONS = {
     "Service unavailable": "Сервис временно недоступен",
     "Something went wrong. If this issue persists please contact us through our help center at help.openai.com.": "Произошла ошибка. Если проблема сохраняется, обратитесь в службу поддержки: help.openai.com.",
     "Rate limit reached for": "Достигнут лимит запросов для данного ресурса",
+    "Invalid image file or mode for image 1, please check your image file.": "Недопустимый файл изображения или режим для модели 1, пожалуйста, проверьте ваш файл",
+    "Invalid base64 image_url.": "Недопустимая кодировка файла",
 }
 
 TABLE_PATTERN = r"(?<!^)([A-Z][a-z])"

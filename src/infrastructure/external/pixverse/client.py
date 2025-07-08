@@ -496,7 +496,9 @@ class PixVerseClient:
         ext = str(os.path.splitext(image.filename)[-1]).lower()
 
         if ext in HEIF_EXTENSIONS:
-            image_bytes, ext = await convert_heic_to_jpg(image_bytes)
+            image_bytes, ext, _ = await convert_heic_to_jpg(
+                image_bytes,
+            )
 
         filename = f"{uuid4()}{ext}"
 
@@ -711,7 +713,9 @@ class PixVerseClient:
         ext = str(os.path.splitext(image.filename)[-1]).lower()
 
         if ext in HEIF_EXTENSIONS:
-            image_bytes, ext = await convert_heic_to_jpg(image_bytes)
+            image_bytes, ext, _ = await convert_heic_to_jpg(
+                image_bytes,
+            )
 
         filename = f"{uuid4()}{ext}"
 
