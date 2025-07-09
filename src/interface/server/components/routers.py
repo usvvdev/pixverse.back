@@ -18,6 +18,7 @@ from ....infrastructure.api.routes.v1 import (
     photo_generator_application_router,
     user_data_router,
     calories_router,
+    application_router,
 )
 
 
@@ -104,6 +105,7 @@ class DashboardRouter(AppRouting):
                 pixverse_template_router,
                 pixverse_application_router,
                 user_data_router,
+                application_router,
             ],
         )
 

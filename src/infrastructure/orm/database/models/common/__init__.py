@@ -6,8 +6,11 @@ from .one_to_many import (
     PhotoGeneratorApplicationTemplates,
 )
 
+from .application import Applications
+
 __all__: list[str] = [
     "PixverseApplicationStyles",
     "PixverseApplicationTemplates",
     "PhotoGeneratorApplicationTemplates",
+    "Applications",
 ]

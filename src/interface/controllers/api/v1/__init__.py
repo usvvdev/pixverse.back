@@ -19,6 +19,8 @@ from .chatgpt import (
 
 from .calories import CaloriesController
 
+from .common import ApplicationController
+
 __all__: list[str] = [
     "AuthUserController",
     "PixVerseController",
@@ -31,4 +33,5 @@ __all__: list[str] = [
     "PhotoGeneratorApplicationController",
     "PhotoGeneratorTemplateController",
     "CaloriesController",
+    "ApplicationController",
 ]
