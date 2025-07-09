@@ -19,6 +19,11 @@ class Applications(ITable):
         primary_key=True,
         autoincrement=1,
     )
+    name: str = Column(
+        String,
+        nullable=False,
+        primary_key=True,
+    )
     application_id: str = Column(
         String,
         nullable=False,

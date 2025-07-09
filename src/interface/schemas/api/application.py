@@ -79,6 +79,10 @@ class Application(PixverseApplication):
 
 
 class IStoreApplication(ISchema):
+    name: Annotated[
+        str,
+        Field(...),
+    ]
     region: Annotated[
         str,
         Field(...),
