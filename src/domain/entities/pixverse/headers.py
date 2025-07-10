@@ -25,7 +25,7 @@ class IHeaders(ISchema):
 
     trace_id: Annotated[
         str,
-        Field(default_factory=lambda: str(uuid4()), alias="Ai-trace-id"),
+        Field(default_factory=lambda: str(uuid4()), alias="Ai-Trace-Id"),
     ]
     """Уникальный идентификатор цепочки запросов (trace ID).
     
@@ -40,7 +40,7 @@ class IHeaders(ISchema):
     """
 
 
-class ITokenHeaders(ISchema):
+class ITokenHeaders(IHeaders):
     token: Annotated[
         str | None,
         Field(default=None, alias="Token"),

@@ -24,6 +24,7 @@ PIXVERSE_ERROR = {
         status.HTTP_400_BAD_REQUEST,
         "There aren't active accounts, try the request later",
     ),
+    400033: (status.HTTP_400_BAD_REQUEST, "Invalid traceId"),
     10001: (status.HTTP_401_UNAUTHORIZED, "Token is invalid"),
     10003: (status.HTTP_403_FORBIDDEN, "Token not provided"),
     10005: (status.HTTP_409_CONFLICT, "Retry the request later"),
