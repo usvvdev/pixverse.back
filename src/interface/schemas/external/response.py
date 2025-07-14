@@ -2,6 +2,8 @@
 
 from typing import Annotated, Any
 
+from os import getenv
+
 from json import loads
 
 from pydantic import (
@@ -17,6 +19,8 @@ from ....domain.entities.core import (
     IConfEnv,
 )
 
+
+app_service: str = f"/{getenv('APP_SERVICE', 'default')}"
 
 conf: IConfEnv = app_conf()
 
@@ -366,8 +370,7 @@ class ChatGPTResp(ISchema):
         cls,
         value: str,
     ) -> str:
-        return (
-            "".join((conf.domain_url, value.replace("uploads/", "/static/")))
-            if value is not None
-            else value
-        )
+        if value is None:
+            return value
+        relative_path = value.removeprefix("uploads/")
+        return f"{conf.domain_url}{app_service}{conf.api_prefix}/media/{relative_path}"

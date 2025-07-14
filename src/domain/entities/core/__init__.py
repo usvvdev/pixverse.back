@@ -16,6 +16,8 @@ from .table import ITable
 
 from .task import ITask
 
+from .media import IMediaFile
+
 __all__: list[str] = [
     "ISchema",
     "IConfEnv",
@@ -25,4 +27,5 @@ __all__: list[str] = [
     "IRepository",
     "ITable",
     "ITask",
+    "IMediaFile",
 ]

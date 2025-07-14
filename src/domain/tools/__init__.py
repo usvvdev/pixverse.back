@@ -20,6 +20,8 @@ from .account import update_account_token
 
 from .error import format_error_with_request
 
+from .media import stream_media
+
 __all__: list[str] = [
     "upload_file",
     "auto_docs",
@@ -32,4 +34,5 @@ __all__: list[str] = [
     "update_account_token",
     "format_error_with_request",
     "convert_heic_to_jpg",
+    "stream_media",
 ]

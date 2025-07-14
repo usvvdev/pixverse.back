@@ -19,7 +19,7 @@ from .chatgpt import (
 
 from .calories import calories_router
 
-from .common import application_router
+from .common import application_router, media_router
 
 __all__: list[str] = [
     "auth_user_router",
@@ -34,4 +34,5 @@ __all__: list[str] = [
     "photo_generator_template_router",
     "calories_router",
     "application_router",
+    "media_router",
 ]

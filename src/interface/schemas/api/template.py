@@ -2,6 +2,8 @@
 
 from typing import Annotated
 
+from os import getenv
+
 from pydantic import (
     Field,
     field_validator,
@@ -16,6 +18,7 @@ from ....domain.entities.core import (
 
 from ....infrastructure.orm.database.models import PixverseTemplates
 
+app_service: str = f"/{getenv('APP_SERVICE', 'default')}"
 
 conf: IConfEnv = app_conf()
 
@@ -68,29 +71,16 @@ class Template(ChangeTemplate):
         Field(default=None),
     ]
 
-    @field_validator("preview_small", mode="after")
+    @field_validator("preview_small", "preview_large", mode="after")
     @classmethod
-    def create_preview_small_url(
+    def create_preview_url(
         cls,
         value: str,
     ) -> str:
-        return (
-            "".join((conf.domain_url, value.replace("uploads/", "/static/")))
-            if value is not None
-            else value
-        )
-
-    @field_validator("preview_large", mode="after")
-    @classmethod
-    def create_preview_large_url(
-        cls,
-        value: str,
-    ) -> str:
-        return (
-            "".join((conf.domain_url, value.replace("uploads/", "/static/")))
-            if value is not None
-            else value
-        )
+        if value is None:
+            return value
+        relative_path = value.removeprefix("uploads/")
+        return f"{conf.domain_url}{app_service}{conf.api_prefix}/media/{relative_path}"
 
     @classmethod
     def create(

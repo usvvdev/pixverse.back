@@ -19,6 +19,7 @@ from ....infrastructure.api.routes.v1 import (
     user_data_router,
     calories_router,
     application_router,
+    media_router,
 )
 
 
@@ -45,6 +46,7 @@ class PixVerseRouter(AppRouting):
                 pixverse_style_router,
                 pixverse_template_router,
                 pixverse_application_router,
+                media_router,
             ],
         )
 
@@ -71,6 +73,7 @@ class ChatGPTRouter(AppRouting):
                 chatgpt_router,
                 photo_generator_template_router,
                 photo_generator_application_router,
+                media_router,
             ],
         )
 
@@ -106,6 +109,7 @@ class DashboardRouter(AppRouting):
                 pixverse_application_router,
                 user_data_router,
                 application_router,
+                media_router,
             ],
         )
 
@@ -119,5 +123,5 @@ class CaloriesRouter(AppRouting):
         super().__init__(
             app,
             config,
-            routers=[calories_router],
+            routers=[calories_router, media_router],
         )

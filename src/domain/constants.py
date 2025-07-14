@@ -180,3 +180,5 @@ The `"total"` object must contain:
 ⚠️ If no ingredients are found, return this exact object:
 {"items":[],"total":{"title":"Unknown","kilocalories_per100g":0.0,"proteins_per100g":0.0,"fats_per100g":0.0,"carbohydrates_per100g":0.0,"fiber_per100g":0.0}}
 """
+
+CHUNK_SIZE = 1024 * 1024
