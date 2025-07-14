@@ -10,8 +10,6 @@ from ......domain.entities.chatgpt import (
 
 from ......infrastructure.external.chatgpt import ChatGPTClient
 
-from ......domain.constants import BODY_TOYBOX_PROMT
-
 
 class ChatGPTController:
     def __init__(

@@ -127,9 +127,9 @@ async def upload_chatgpt_file(
         )
         filename = f"{uuid.uuid4().hex}{ext}"
 
-    image_bytes, ext, content_type = await convert_image_to_rgb_jpeg(
-        image_bytes,
-    )
+    # image_bytes, ext, content_type = await convert_image_to_rgb_jpeg(
+    #     image_bytes,
+    # )
 
     filename = f"{uuid.uuid4().hex}{ext}"
 
