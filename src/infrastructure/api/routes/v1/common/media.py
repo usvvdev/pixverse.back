@@ -19,7 +19,7 @@ media_router = APIRouter(tags=["Media"])
 
 @media_router.get(
     "/media/{full_path:path}",
-    # include_in_schema=False,
+    include_in_schema=False,
 )
 async def get_media(
     full_path: str,
