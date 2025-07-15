@@ -115,6 +115,7 @@ ERROR_TRANSLATIONS = {
     "Rate limit reached for": "Достигнут лимит запросов для данного ресурса",
     "Invalid image file or mode for image 1, please check your image file.": "Недопустимый файл изображения или режим для модели 1, пожалуйста, проверьте ваш файл",
     "Invalid base64 image_url.": "Недопустимая кодировка файла",
+    "Billing hard limit has been reached.": "Достигнут лимит по выставленному счету",
 }
 
 TABLE_PATTERN = r"(?<!^)([A-Z][a-z])"
