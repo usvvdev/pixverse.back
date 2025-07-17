@@ -2,9 +2,10 @@
 
 from instagrapi import Client
 
-from instagrapi.exceptions import ClientError, ChallengeRequired
-
-import instaloader
+from instagrapi.exceptions import (
+    ClientError,
+    ChallengeRequired,
+)
 
 from redis import Redis
 
