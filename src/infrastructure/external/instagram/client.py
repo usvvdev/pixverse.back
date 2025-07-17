@@ -45,7 +45,7 @@ class InstagramClient:
                 client.login(body.username, body.password)
             client.login(
                 **body.model_dump(
-                    exclude={"userId", "appId"},
+                    exclude={"user_id", "app_id"},
                 )
             )
         except InstagramError.exceptions as err:
