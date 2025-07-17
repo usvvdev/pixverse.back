@@ -189,7 +189,7 @@ class InstagramClient:
 
         if client is not None:
             try:
-                subs = client.user_followers(
+                subs = client.user_following(
                     client.user_id
                     if not search_user
                     else client.user_info_by_username(search_user).pk
