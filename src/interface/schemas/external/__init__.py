@@ -21,6 +21,8 @@ from .body import (
     UserToken,
     AccountInfo,
     UserStatistics,
+    InstagramAuthUser,
+    IInstagramUser,
 )
 
 from .response import (
@@ -39,6 +41,12 @@ from .response import (
     ChatGPTError,
     ChatGPTCaloriesResponse,
     ChatGPTCalories,
+    InstagramSessionResponse,
+    InstagramAuthResponse,
+    InstagramUser,
+    InstagramUserStatistics,
+    InstagramUserResponse,
+    InstagramPost,
 )
 
 __all__ = [
@@ -75,4 +83,13 @@ __all__ = [
     "ChatGPTCalories",
     "AccountInfo",
     "UserStatistics",
+    "InstagramResponse",
+    "InstagramSessionResponse",
+    "InstagramAuthResponse",
+    "InstagramAuthUser",
+    "InstagramUser",
+    "InstagramUserStatistics",
+    "InstagramUserResponse",
+    "InstagramPost",
+    "IInstagramUser",
 ]

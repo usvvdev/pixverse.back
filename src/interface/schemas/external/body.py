@@ -231,3 +231,33 @@ class UserStatistics(ISchema):
         list[AccountInfo],
         Field(...),
     ]
+
+
+class IInstagramUser(ISchema):
+    user_id: Annotated[
+        str,
+        Field(..., alias="userId"),
+    ]
+    app_id: Annotated[
+        str,
+        Field(..., alias="appId"),
+    ]
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class InstagramAuthUser(IInstagramUser):
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+    password: Annotated[
+        str,
+        Field(...),
+    ]
+    verification_code: Annotated[
+        str | None,
+        Field(default=None),
+    ]

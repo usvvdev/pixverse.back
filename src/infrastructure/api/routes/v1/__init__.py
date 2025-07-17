@@ -21,6 +21,8 @@ from .calories import calories_router
 
 from .common import application_router, media_router
 
+from .instagram import instagram_router
+
 __all__: list[str] = [
     "auth_user_router",
     "pixverse_router",
@@ -35,4 +37,5 @@ __all__: list[str] = [
     "calories_router",
     "application_router",
     "media_router",
+    "instagram_router",
 ]

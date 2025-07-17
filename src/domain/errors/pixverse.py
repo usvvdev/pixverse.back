@@ -1,8 +1,8 @@
 # coding utf-8
 
-from ...domain.entities.core import IError
+from ..entities.core import IError
 
-from ...domain.constants import PIXVERSE_ERROR
+from ..constants import PIXVERSE_ERROR
 
 
 class PixverseError(IError):

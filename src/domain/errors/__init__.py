@@ -12,6 +12,8 @@ from .chatgpt import PhotoGeneratorError
 
 from .account import AccountError
 
+from .instagram import InstagramError
+
 __all__: list[str] = [
     "PixverseError",
     "EngineError",
@@ -19,4 +21,5 @@ __all__: list[str] = [
     "CaloriesError",
     "PhotoGeneratorError",
     "AccountError",
+    "InstagramError",
 ]

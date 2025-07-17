@@ -21,6 +21,8 @@ from .calories import CaloriesView
 
 from .common import ApplicationView
 
+from .instagram import InstagramView
+
 __all__: list[str] = [
     "PixVerseView",
     "PixverseAccountView",
@@ -35,4 +37,5 @@ __all__: list[str] = [
     "PhotoGeneratorApplicationView",
     "CaloriesView",
     "ApplicationView",
+    "InstagramView",
 ]

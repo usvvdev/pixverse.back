@@ -21,6 +21,8 @@ from .calories import CaloriesViewFactory
 
 from .common import ApplicationViewFactory
 
+from .instagram import InstagramViewFactory
+
 __all__: list[str] = [
     "PixVerseViewFactory",
     "PixverseAccountViewFactory",
@@ -34,4 +36,5 @@ __all__: list[str] = [
     "PhotoGeneratorTemplateViewFactory",
     "CaloriesViewFactory",
     "ApplicationViewFactory",
+    "InstagramViewFactory",
 ]

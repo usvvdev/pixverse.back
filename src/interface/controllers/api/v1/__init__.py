@@ -21,6 +21,8 @@ from .calories import CaloriesController
 
 from .common import ApplicationController
 
+from .instagram import InstagramController
+
 __all__: list[str] = [
     "AuthUserController",
     "PixVerseController",
@@ -34,4 +36,5 @@ __all__: list[str] = [
     "PhotoGeneratorTemplateController",
     "CaloriesController",
     "ApplicationController",
+    "InstagramController",
 ]

@@ -52,6 +52,14 @@ services:
       - APP_SERVICE=calories
     entrypoint: ["sh", "./scripts/start_api.sh"]
 
+  instagram:
+    <<: *service-template
+    ports:
+      - 8006:${APP_PORT}
+    environment:
+      - APP_SERVICE=instagram
+    entrypoint: ["sh", "./scripts/start_api.sh"]
+
   pixverse-account-worker:
     <<: *service-template
     environment:

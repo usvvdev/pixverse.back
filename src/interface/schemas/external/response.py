@@ -6,10 +6,20 @@ from os import getenv
 
 from json import loads
 
+from pendulum import now
+
 from pydantic import (
     Field,
     field_validator,
     computed_field,
+    HttpUrl,
+)
+
+from instagrapi import Client
+
+from instagrapi.types import (
+    User,
+    Media,
 )
 
 from ....domain.conf import app_conf
@@ -374,3 +384,181 @@ class ChatGPTResp(ISchema):
             return value
         relative_path = value.removeprefix("uploads/")
         return f"{conf.domain_url}{app_service}{conf.api_prefix}/media/{relative_path}"
+
+
+class IInstagramResponse(ISchema):
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+    datetime: Annotated[
+        str,
+        Field(default_factory=lambda: str(now())),
+    ]
+    status: Annotated[
+        str,
+        Field(default="success"),
+    ]
+    detail: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class InstagramSessionResponse(IInstagramResponse):
+    detail: Annotated[
+        str,
+        Field(default="Session has been loaded"),
+    ]
+
+
+class InstagramAuthResponse(IInstagramResponse):
+    detail: Annotated[
+        str,
+        Field(default="Succesfull authorization and session has been saved"),
+    ]
+
+
+class InstagramUserStatistics(ISchema):
+    follower_count: Annotated[
+        int,
+        Field(..., alias="followers"),
+    ]
+    following_count: Annotated[
+        int,
+        Field(..., alias="subscribtions"),
+    ]
+    media_count: Annotated[
+        int,
+        Field(..., alias="publications"),
+    ]
+    likes_count: Annotated[
+        int,
+        Field(..., alias="likes"),
+    ]
+    comments_count: Annotated[
+        int,
+        Field(..., alias="comments"),
+    ]
+    # mutual: Annotated[
+    #     int,
+    #     Field(...),
+    # ]
+    # not_following_you: Annotated[
+    #     int,
+    #     Field(...),
+    # ]
+    # not_followed_by_you: Annotated[
+    #     int,
+    #     Field(...),
+    # ]
+
+    @classmethod
+    def from_data(
+        cls,
+        user: User,
+        client: Client,
+        medias: list[Media],
+    ) -> "InstagramUserStatistics":
+        # following = set(
+        #     client.user_following(user.pk).keys(),
+        # )
+        # followers = set(
+        #     client.user_followers(user.pk).keys(),
+        # )
+        return cls(
+            **user.model_dump(),
+            likes_count=sum(m.like_count for m in medias),
+            comments_count=sum(m.comment_count for m in medias),
+            # mutual=len(following & followers),
+            # not_following_you=len(following - followers),
+            # not_followed_by_you=len(followers - following),
+        )
+
+
+class InstagramPost(ISchema):
+    id: Annotated[
+        str,
+        Field(...),
+    ]
+    view_count: Annotated[
+        int,
+        Field(..., alias="views"),
+    ]
+    like_count: Annotated[
+        int,
+        Field(..., alias="likes"),
+    ]
+    comment_count: Annotated[
+        int,
+        Field(..., alias="comments"),
+    ]
+    thumbnail_url: Annotated[
+        HttpUrl | None,
+        Field(default=None),
+    ]
+
+    @classmethod
+    def from_medias(
+        cls,
+        medias: list[Media],
+    ) -> list["InstagramPost"]:
+        return list(
+            map(
+                lambda m: cls(
+                    **m.model_dump(),
+                ),
+                medias,
+            )
+        )
+
+
+class InstagramUser(ISchema):
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+    full_name: Annotated[
+        str,
+        Field(...),
+    ]
+    biography: Annotated[
+        str | None,
+        Field(default=None),
+    ]
+    profile_pic_url: Annotated[
+        HttpUrl,
+        Field(...),
+    ]
+    is_private: Annotated[
+        bool,
+        Field(...),
+    ]
+    is_verified: Annotated[
+        bool,
+        Field(...),
+    ]
+
+    @classmethod
+    def from_user(
+        cls,
+        user: User,
+    ) -> "InstagramUser":
+        return cls(
+            **user.model_dump(),
+        )
+
+
+class InstagramUserResponse(ISchema):
+    user: Annotated[
+        InstagramUser,
+        Field(...),
+    ]
+    statistics: Annotated[
+        InstagramUserStatistics,
+        Field(...),
+    ]
+    posts: Annotated[
+        list[InstagramPost],
+        Field(...),
+    ]

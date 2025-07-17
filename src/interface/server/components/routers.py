@@ -20,6 +20,7 @@ from ....infrastructure.api.routes.v1 import (
     calories_router,
     application_router,
     media_router,
+    instagram_router,
 )
 
 
@@ -123,5 +124,23 @@ class CaloriesRouter(AppRouting):
         super().__init__(
             app,
             config,
-            routers=[calories_router, media_router],
+            routers=[
+                calories_router,
+                media_router,
+            ],
+        )
+
+
+class InstagramRouter(AppRouting):
+    def __init__(
+        self,
+        app: FastAPI,
+        config: IConfEnv,
+    ) -> None:
+        super().__init__(
+            app,
+            config,
+            routers=[
+                instagram_router,
+            ],
         )

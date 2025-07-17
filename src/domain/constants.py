@@ -4,6 +4,12 @@ from fastapi import status
 
 from passlib.context import CryptContext
 
+from instagrapi.exceptions import (
+    TwoFactorRequired,
+    ChallengeRequired,
+    BadPassword,
+)
+
 """
 Базовые ссылки на ресурс (Платформа и API)
 """
@@ -59,6 +65,23 @@ PIXVERSE_ERROR = {
     500201: (status.HTTP_500_INTERNAL_SERVER_ERROR, "Authentication user error"),
     99999: (status.HTTP_500_INTERNAL_SERVER_ERROR, "Unknown error"),
 }
+
+INSTAGRAM_ERROR = {
+    TwoFactorRequired: (
+        status.HTTP_401_UNAUTHORIZED,
+        "2FA required. Resend the code via the verification_code field",
+    ),
+    ChallengeRequired: (
+        status.HTTP_401_UNAUTHORIZED,
+        "Instagram requires challenge verification (via app or email).",
+    ),
+    BadPassword: (
+        status.HTTP_401_UNAUTHORIZED,
+        "User password is incorrect. Retry your request.",
+    ),
+}
+
+INSTAGRAM_SESSION = "instagram:session:{username}"
 
 ERROR_TRANSLATIONS = {
     # pixverse errors
