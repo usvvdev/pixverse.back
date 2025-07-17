@@ -142,5 +142,6 @@ class InstagramRouter(AppRouting):
             config,
             routers=[
                 instagram_router,
+                media_router,
             ],
         )

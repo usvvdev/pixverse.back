@@ -9,20 +9,26 @@ from .....external.instagram import (
     InstagramClient,
 )
 
+from ......domain.conf import app_conf
+
+from ......domain.entities.core import IConfEnv
+
 from ......interface.controllers.api.v1 import InstagramController
 
 from .....api.views.v1 import InstagramView
 
 
-redis = Redis(host="localhost", port=6379, db=0, decode_responses=True)
-
-
 class InstagramClientFactory:
     @staticmethod
-    def get() -> InstagramClient:
+    def get(
+        conf: IConfEnv = Depends(app_conf),
+    ) -> InstagramClient:
         return InstagramClient(
             InstagramCore(
-                redis,
+                Redis.from_url(
+                    conf.redis_dsn_url,
+                    decode_responses=True,
+                ),
             ),
         )
 
