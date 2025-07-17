@@ -2,6 +2,8 @@
 
 from instagrapi import Client
 
+from fastapi import HTTPException
+
 from instagrapi.types import (
     User,
     Media,
@@ -40,6 +42,20 @@ class InstagramClient:
             )
 
         client = Client()
+
+        def code_handler(
+            username: str,
+            choice,
+        ) -> str:
+            if not body.verification_code:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Verification code required. Provide it in 'verification_code'.",
+                )
+            return body.verification_code
+
+        client.challenge_code_handler = code_handler
+
         try:
             if not body.verification_code:
                 client.login(body.username, body.password)
