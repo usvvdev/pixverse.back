@@ -44,8 +44,8 @@ class InstagramCore:
             self._client.get_timeline_feed()
             return self._client
         except InstagramError.exceptions as err:
-            # if isinstance(err, ChallengeRequired):
-            #     self._client.challenge_resolve(self._client.last_json)
+            if isinstance(err, ChallengeRequired):
+                return None
             raise InstagramError.from_exception(err)
 
     def save_user_session(
