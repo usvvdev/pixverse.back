@@ -4,6 +4,11 @@ from instagrapi import Client
 
 from fastapi import HTTPException
 
+from fastapi_pagination import (
+    Page,
+    paginate,
+)
+
 from instagrapi.types import (
     User,
     Media,
@@ -22,6 +27,7 @@ from ....interface.schemas.external import (
     InstagramSessionResponse,
     InstagramAuthResponse,
     InstagramUserStatistics,
+    InstagramFollower,
 )
 
 
@@ -98,18 +104,106 @@ class InstagramClient:
             except InstagramError.exceptions as err:
                 raise InstagramError.from_exception(err)
 
-        user: User = client.user_info_by_username(
-            body.username if search_user is None else search_user
-        )
+        if client is not None:
+            try:
+                user: User = client.user_info_by_username(
+                    body.username if search_user is None else search_user
+                )
+            except InstagramError.exceptions as err:
+                raise InstagramError.from_exception(err)
 
-        medias: list[Media] = client.user_medias(user.pk, amount=20)
+            medias: list[Media] = client.user_medias(user.pk, amount=20)
 
-        return InstagramUserResponse(
-            user=InstagramUser.from_user(user),
-            statistics=InstagramUserStatistics.from_data(
-                user,
-                client,
-                medias,
-            ),
-            posts=InstagramPost.from_medias(medias),
-        )
+            return InstagramUserResponse(
+                user=InstagramUser.from_user(user),
+                statistics=InstagramUserStatistics.from_data(
+                    user,
+                    client,
+                    medias,
+                ),
+                posts=InstagramPost.from_medias(medias),
+            )
+
+    async def fetch_subscribers(
+        self,
+        body: IInstagramUser,
+        search_user: str | None = None,
+    ) -> Page[InstagramFollower]:
+        try:
+
+            async def call(
+                usernmame: str,
+            ) -> Client | None:
+                return self._core.fetch_user_session(
+                    username=usernmame,
+                )
+
+            client: Client | None = await call(body.username)
+        except Exception:
+            try:
+                client = await call(body.username)
+            except InstagramError.exceptions as err:
+                raise InstagramError.from_exception(err)
+
+        if client is not None:
+            try:
+                subs = client.user_followers(
+                    client.user_id
+                    if not search_user
+                    else client.user_info_by_username(search_user).pk
+                )
+            except InstagramError.exceptions as err:
+                raise InstagramError.from_exception(err)
+
+            items = list(
+                map(
+                    lambda sub: InstagramFollower(
+                        **sub.model_dump(),
+                    ),
+                    subs.values(),
+                ),
+            )
+
+            return paginate(items)
+
+    async def fetch_subsribtions(
+        self,
+        body: IInstagramUser,
+        search_user: str | None = None,
+    ) -> Page[InstagramFollower]:
+        try:
+
+            async def call(
+                usernmame: str,
+            ) -> Client | None:
+                return self._core.fetch_user_session(
+                    username=usernmame,
+                )
+
+            client: Client | None = await call(body.username)
+        except Exception:
+            try:
+                client = await call(body.username)
+            except InstagramError.exceptions as err:
+                raise InstagramError.from_exception(err)
+
+        if client is not None:
+            try:
+                subs = client.user_followers(
+                    client.user_id
+                    if not search_user
+                    else client.user_info_by_username(search_user).pk
+                )
+            except InstagramError.exceptions as err:
+                raise InstagramError.from_exception(err)
+
+            items = list(
+                map(
+                    lambda sub: InstagramFollower(
+                        **sub.model_dump(),
+                    ),
+                    subs.values(),
+                ),
+            )
+
+            return paginate(items)

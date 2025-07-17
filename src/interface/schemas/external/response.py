@@ -562,3 +562,18 @@ class InstagramUserResponse(ISchema):
         list[InstagramPost],
         Field(...),
     ]
+
+
+class InstagramFollower(ISchema):
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+    full_name: Annotated[
+        str,
+        Field(...),
+    ]
+    profile_pic_url: Annotated[
+        HttpUrl | None,
+        Field(default=None),
+    ]

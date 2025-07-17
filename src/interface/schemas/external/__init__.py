@@ -47,6 +47,7 @@ from .response import (
     InstagramUserStatistics,
     InstagramUserResponse,
     InstagramPost,
+    InstagramFollower,
 )
 
 __all__ = [
@@ -92,4 +93,5 @@ __all__ = [
     "InstagramUserResponse",
     "InstagramPost",
     "IInstagramUser",
+    "InstagramFollower",
 ]

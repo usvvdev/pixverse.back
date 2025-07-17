@@ -1,5 +1,7 @@
 # coding utf-8
 
+from fastapi_pagination import Page
+
 from ......interface.controllers.api.v1 import InstagramController
 
 from ......interface.schemas.external import (
@@ -8,6 +10,7 @@ from ......interface.schemas.external import (
     InstagramAuthResponse,
     InstagramSessionResponse,
     InstagramUserResponse,
+    InstagramFollower,
 )
 
 
@@ -32,6 +35,26 @@ class InstagramView:
         search_user: str | None,
     ) -> InstagramUserResponse:
         return await self._controller.fetch_user_statistics(
+            body,
+            search_user,
+        )
+
+    async def fetch_subscribers(
+        self,
+        body: IInstagramUser,
+        search_user: str | None = None,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.fetch_subscribers(
+            body,
+            search_user,
+        )
+
+    async def fetch_subsribtions(
+        self,
+        body: IInstagramUser,
+        search_user: str | None = None,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.fetch_subsribtions(
             body,
             search_user,
         )

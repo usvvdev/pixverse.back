@@ -249,10 +249,6 @@ class IInstagramUser(ISchema):
 
 
 class InstagramAuthUser(IInstagramUser):
-    username: Annotated[
-        str,
-        Field(...),
-    ]
     password: Annotated[
         str,
         Field(...),

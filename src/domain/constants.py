@@ -8,6 +8,9 @@ from instagrapi.exceptions import (
     TwoFactorRequired,
     ChallengeRequired,
     BadPassword,
+    UserNotFound,
+    PleaseWaitFewMinutes,
+    LoginRequired,
 )
 
 """
@@ -78,6 +81,18 @@ INSTAGRAM_ERROR = {
     BadPassword: (
         status.HTTP_401_UNAUTHORIZED,
         "User password is incorrect. Retry your request.",
+    ),
+    UserNotFound: (
+        status.HTTP_404_NOT_FOUND,
+        "User not found. Retry your request with another username.",
+    ),
+    PleaseWaitFewMinutes: (
+        status.HTTP_429_TOO_MANY_REQUESTS,
+        "Please wait a few minutes before you try again.",
+    ),
+    LoginRequired: (
+        status.HTTP_401_UNAUTHORIZED,
+        "Please retry your request again.",
     ),
 }
 

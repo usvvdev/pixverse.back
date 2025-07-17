@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi.staticfiles import StaticFiles
 
+from fastapi_pagination import add_pagination
+
 from src.domain.conf import app_conf
 
 from src.domain.entities.core import IConfEnv
@@ -37,6 +39,8 @@ def main() -> FastAPI:
         allow_methods=["*"],
     )
     app_router.create()
+
+    add_pagination(app)
 
     return app
 

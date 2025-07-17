@@ -5,6 +5,7 @@ from instagrapi import Client
 from instagrapi.exceptions import (
     ClientError,
     ChallengeRequired,
+    LoginRequired,
 )
 
 from redis import Redis
@@ -46,6 +47,12 @@ class InstagramCore:
         except InstagramError.exceptions as err:
             if isinstance(err, ChallengeRequired):
                 return None
+            elif isinstance(err, LoginRequired):
+                self._redis.delete(
+                    INSTAGRAM_SESSION.format(
+                        username=username,
+                    )
+                )
             raise InstagramError.from_exception(err)
 
     def save_user_session(
