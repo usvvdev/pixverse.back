@@ -43,7 +43,11 @@ class InstagramClient:
         try:
             if not body.verification_code:
                 client.login(body.username, body.password)
-            client.login(**body.dict)
+            client.login(
+                **body.model_dump(
+                    exclude={"userId", "appId"},
+                )
+            )
         except InstagramError.exceptions as err:
             raise InstagramError.from_exception(err)
 
