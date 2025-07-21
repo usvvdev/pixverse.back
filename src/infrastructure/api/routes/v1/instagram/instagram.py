@@ -21,6 +21,7 @@ from ......interface.schemas.external import (
     InstagramSessionResponse,
     InstagramUserResponse,
     InstagramFollower,
+    InstagramPost,
 )
 
 from .....factroies.api.v1 import InstagramViewFactory
@@ -95,7 +96,7 @@ async def fetch_non_reciprocal_subsribtions(
 async def fetch_publications(
     body: IInstagramUser,
     view: InstagramView = Depends(InstagramViewFactory.create),
-) -> Page[InstagramFollower]:
+) -> Page[InstagramPost]:
     return await view.fetch_publications(
         body,
     )

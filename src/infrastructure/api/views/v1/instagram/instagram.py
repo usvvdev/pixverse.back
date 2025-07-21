@@ -13,6 +13,7 @@ from ......interface.schemas.external import (
     InstagramSessionResponse,
     InstagramUserResponse,
     InstagramFollower,
+    InstagramPost,
 )
 
 
@@ -66,7 +67,7 @@ class InstagramView:
     async def fetch_publications(
         self,
         body: IInstagramUser,
-    ) -> Page[InstagramFollower]:
+    ) -> Page[InstagramPost]:
         return await self._controller.fetch_publications(
             body,
         )

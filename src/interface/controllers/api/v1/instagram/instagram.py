@@ -9,6 +9,7 @@ from .....schemas.external import (
     InstagramSessionResponse,
     InstagramUserResponse,
     InstagramFollower,
+    InstagramPost,
 )
 
 from ......domain.typing.enums import InstagramRelationType
@@ -66,7 +67,7 @@ class InstagramController:
     async def fetch_publications(
         self,
         body: IInstagramUser,
-    ) -> Page[InstagramFollower]:
+    ) -> Page[InstagramPost]:
         return await self._client.fetch_publications(
             body,
         )
