@@ -2,7 +2,7 @@
 
 from collections import defaultdict
 
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 from ...models import (
     UserData,
@@ -51,7 +51,11 @@ class UserDataRepository(DatabaseRepository):
             )
         return await self.add_record(body)
 
-    async def fetch_all(self) -> list[UserStatistics]:
+    async def fetch_all(
+        self,
+        user_id: str | None = None,
+        app_id: str | None = None,
+    ) -> list[UserStatistics]:
         stmt = (
             select(
                 UserData.id,
@@ -73,17 +77,26 @@ class UserDataRepository(DatabaseRepository):
             )
         )
 
+        filters = []
+        if user_id is not None:
+            filters.append(UserData.user_id == user_id)
+        if app_id is not None:
+            filters.append(UserData.app_id == app_id)
+
+        if filters:
+            stmt = stmt.where(and_(*filters))
+
         async with self._engine.get_session() as session:
             rows = (await session.execute(stmt)).all()
 
+        # группировка и формирование результата (как было)
         grouped = defaultdict(lambda: {"generation_ids": set(), "accounts": {}})
         output = []
 
         for row in rows:
             uid = row.id
-            grouped[uid]["generation_ids"].add(
-                row.generation_id
-            ) if row.generation_id else None
+            if row.generation_id:
+                grouped[uid]["generation_ids"].add(row.generation_id)
             if row.account_id:
                 grouped[uid]["accounts"][row.account_id] = row.username
 

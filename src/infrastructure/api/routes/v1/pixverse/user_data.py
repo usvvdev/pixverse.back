@@ -3,6 +3,7 @@
 from fastapi import (
     APIRouter,
     Depends,
+    Query,
 )
 
 from ....views.v1 import UserDataView
@@ -30,8 +31,13 @@ user_data_router = APIRouter(tags=["User Data"])
 )
 async def fetch_user_data(
     view: UserDataView = Depends(UserDataViewFactory.create),
+    user_id: str | None = Query(None),
+    app_id: str | None = Query(None),
 ) -> list[UserStatistics]:
-    return await view.fetch_user_data()
+    return await view.fetch_user_data(
+        user_id,
+        app_id,
+    )
 
 
 @user_data_router.get(

@@ -19,8 +19,13 @@ class UserDataController:
 
     async def fetch_user_data(
         self,
+        user_id: str | None,
+        app_id: str | None,
     ) -> list[UserStatistics]:
-        return await self._repository.fetch_all()
+        return await self._repository.fetch_all(
+            user_id,
+            app_id,
+        )
 
     async def fetch_user_filters(
         self,
