@@ -3,6 +3,7 @@
 from fastapi import (
     APIRouter,
     Depends,
+    Query,
 )
 
 from fastapi_pagination import Page
@@ -10,6 +11,8 @@ from fastapi_pagination import Page
 from ....views.v1 import InstagramView
 
 from ......domain.tools import auto_docs
+
+from ......domain.typing.enums import InstagramRelationType
 
 from ......interface.schemas.external import (
     IInstagramUser,
@@ -53,28 +56,16 @@ async def fetch_user_statistics(
 
 
 @instagram_router.post(
-    "/users/subscribers",
+    "/users",
 )
-async def fetch_subscribers(
+async def fetch_users(
     body: IInstagramUser,
-    search_user: str | None = None,
+    type: InstagramRelationType = Query(InstagramRelationType.FOLLOWERS),
+    search_user: str | None = Query(None),
     view: InstagramView = Depends(InstagramViewFactory.create),
 ) -> Page[InstagramFollower]:
-    return await view.fetch_subscribers(
+    return await view.fetch_users(
         body,
-        search_user,
-    )
-
-
-@instagram_router.post(
-    "/users/subscribtions",
-)
-async def fetch_subsribtions(
-    body: IInstagramUser,
-    search_user: str | None = None,
-    view: InstagramView = Depends(InstagramViewFactory.create),
-) -> Page[InstagramFollower]:
-    return await view.fetch_subsribtions(
-        body,
+        type,
         search_user,
     )

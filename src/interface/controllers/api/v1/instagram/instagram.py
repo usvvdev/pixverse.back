@@ -11,6 +11,8 @@ from .....schemas.external import (
     InstagramFollower,
 )
 
+from ......domain.typing.enums import InstagramRelationType
+
 from ......infrastructure.external.instagram import InstagramClient
 
 
@@ -39,22 +41,14 @@ class InstagramController:
             search_user,
         )
 
-    async def fetch_subscribers(
+    async def fetch_users(
         self,
         body: IInstagramUser,
+        type: InstagramRelationType,
         search_user: str | None = None,
     ) -> Page[InstagramFollower]:
-        return await self._client.fetch_subscribers(
+        return await self._client.fetch_users(
             body,
-            search_user,
-        )
-
-    async def fetch_subsribtions(
-        self,
-        body: IInstagramUser,
-        search_user: str | None = None,
-    ) -> Page[InstagramFollower]:
-        return await self._client.fetch_subsribtions(
-            body,
+            type,
             search_user,
         )

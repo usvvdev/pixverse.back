@@ -32,3 +32,7 @@ class UserGenerations(ITable):
         Integer,
         nullable=False,
     )
+    app_name: str = Column(
+        Integer,
+        nullable=False,
+    )

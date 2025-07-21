@@ -95,7 +95,7 @@ async def text_to_video(
         },
         "image": {
             "type": "bytes",
-            "description": "Фотография для обработки",
+            "description": "Фотография для обработки. Максимальный размер 4000х4000.",
         },
     },
 )
@@ -130,11 +130,11 @@ async def image_to_video(
         },
         "templateId": {
             "type": "integer",
-            "description": "Уникальный идентификатор стиля",
+            "description": "Уникальный идентификатор стиля c платформы Pixverse (поле в базе template_id).",
         },
         "video": {
             "type": "bytes",
-            "description": "Видео-фрагмент для обработки",
+            "description": "Видео-фрагмент для обработки. Максимальный размер 1920х1920.",
         },
     },
 )
@@ -169,11 +169,11 @@ async def restyle_video(
         },
         "templateId": {
             "type": "integer",
-            "description": "Уникальный идентификатор стиля",
+            "description": "Уникальный идентификатор стиля c платформы Pixverse (поле в базе template_id).",
         },
         "images": {
             "type": "bytes",
-            "description": "Фотография для обработки",
+            "description": "Фотография для обработки. Максимальный размер 4000х4000.",
         },
     },
 )

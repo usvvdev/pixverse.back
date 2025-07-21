@@ -12,11 +12,14 @@ from fastapi_pagination import (
 from instagrapi.types import (
     User,
     Media,
+    UserShort,
 )
 
 from .core import InstagramCore
 
 from ....domain.errors import InstagramError
+
+from ....domain.typing.enums import InstagramRelationType
 
 from ....interface.schemas.external import (
     IInstagramUser,
@@ -124,86 +127,67 @@ class InstagramClient:
                 posts=InstagramPost.from_medias(medias),
             )
 
-    async def fetch_subscribers(
+    async def fetch_users(
         self,
         body: IInstagramUser,
+        type: InstagramRelationType,
         search_user: str | None = None,
     ) -> Page[InstagramFollower]:
+        async def call(username: str) -> Client | None:
+            return self._core.fetch_user_session(username=username)
+
         try:
-
-            async def call(
-                usernmame: str,
-            ) -> Client | None:
-                return self._core.fetch_user_session(
-                    username=usernmame,
-                )
-
-            client: Client | None = await call(body.username)
+            client = await call(body.username)
         except Exception:
             try:
                 client = await call(body.username)
             except InstagramError.exceptions as err:
                 raise InstagramError.from_exception(err)
 
-        if client is not None:
-            try:
-                subs = client.user_followers(
-                    client.user_id
-                    if not search_user
-                    else client.user_info_by_username(search_user).pk
-                )
-            except InstagramError.exceptions as err:
-                raise InstagramError.from_exception(err)
-
-            items = list(
-                map(
-                    lambda sub: InstagramFollower(
-                        **sub.model_dump(),
-                    ),
-                    subs.values(),
-                ),
-            )
-
-            return paginate(items)
-
-    async def fetch_subsribtions(
-        self,
-        body: IInstagramUser,
-        search_user: str | None = None,
-    ) -> Page[InstagramFollower]:
+        if client is None:
+            return paginate([])
         try:
-
-            async def call(
-                usernmame: str,
-            ) -> Client | None:
-                return self._core.fetch_user_session(
-                    username=usernmame,
-                )
-
-            client: Client | None = await call(body.username)
-        except Exception:
-            try:
-                client = await call(body.username)
-            except InstagramError.exceptions as err:
-                raise InstagramError.from_exception(err)
-
-        if client is not None:
-            try:
-                subs = client.user_following(
-                    client.user_id
-                    if not search_user
-                    else client.user_info_by_username(search_user).pk
-                )
-            except InstagramError.exceptions as err:
-                raise InstagramError.from_exception(err)
-
-            items = list(
-                map(
-                    lambda sub: InstagramFollower(
-                        **sub.model_dump(),
-                    ),
-                    subs.values(),
-                ),
+            user_id = (
+                client.user_id
+                if not search_user
+                else client.user_info_by_username(search_user).pk
             )
 
-            return paginate(items)
+            followers = lambda: client.user_followers(user_id)
+            following = lambda: client.user_following(user_id)
+
+            def secret_fans():
+                f = followers()
+                g = following()
+                return {pk: f[pk] for pk in set(f) - set(g)}
+
+            def non_reciprocal():
+                f = followers()
+                g = following()
+                return {pk: g[pk] for pk in set(g) - set(f)}
+
+            fetch_map: dict[InstagramRelationType, ...] = {
+                InstagramRelationType.FOLLOWERS: followers,
+                InstagramRelationType.FOLLOWING: following,
+                InstagramRelationType.SECRET_FANS: secret_fans,
+                InstagramRelationType.NON_RECIPROCAL: non_reciprocal,
+            }
+
+            if type not in fetch_map:
+                raise ValueError(f"Unsupported type: {type}")
+
+            subs: dict[str, UserShort] = fetch_map[type]()
+
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)
+
+        items: list[InstagramFollower] = list(
+            map(
+                lambda sub: InstagramFollower(
+                    **sub.model_dump(),
+                ),
+                subs.values(),
+            )
+        )
+
+        return paginate(items)

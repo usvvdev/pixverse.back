@@ -4,13 +4,12 @@ from typing import Annotated
 
 from uuid import uuid4
 
-from pydantic import Field, field_validator
+from pydantic import (
+    Field,
+    field_validator,
+)
 
 from ....domain.entities.core import ISchema
-
-from ....domain.entities.pixverse import IBody
-
-from ....domain.constants import PIXVERSE_MEDIA_URL
 
 
 class UploadIMG(ISchema):
@@ -160,6 +159,10 @@ class GenerationData(ISchema):
         Field(...),
     ]
     app_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_name: Annotated[
         str,
         Field(...),
     ]

@@ -4,6 +4,8 @@ from fastapi_pagination import Page
 
 from ......interface.controllers.api.v1 import InstagramController
 
+from ......domain.typing.enums import InstagramRelationType
+
 from ......interface.schemas.external import (
     IInstagramUser,
     InstagramAuthUser,
@@ -39,22 +41,14 @@ class InstagramView:
             search_user,
         )
 
-    async def fetch_subscribers(
+    async def fetch_users(
         self,
         body: IInstagramUser,
+        type: InstagramRelationType,
         search_user: str | None = None,
     ) -> Page[InstagramFollower]:
-        return await self._controller.fetch_subscribers(
+        return await self._controller.fetch_users(
             body,
-            search_user,
-        )
-
-    async def fetch_subsribtions(
-        self,
-        body: IInstagramUser,
-        search_user: str | None = None,
-    ) -> Page[InstagramFollower]:
-        return await self._controller.fetch_subsribtions(
-            body,
+            type,
             search_user,
         )

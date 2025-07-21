@@ -18,6 +18,8 @@ from .token import (
     TokenExpiry,
 )
 
+from .instagram import InstagramRelationType
+
 __all__: list[str] = [
     "ConfEnv",
     "RequestMethod",
@@ -30,4 +32,5 @@ __all__: list[str] = [
     "TokenTitle",
     "TokenType",
     "TokenExpiry",
+    "InstagramRelationType",
 ]
