@@ -23,6 +23,7 @@ from .body import (
     UserStatistics,
     InstagramAuthUser,
     IInstagramUser,
+    UserFilters,
 )
 
 from .response import (
@@ -94,4 +95,5 @@ __all__ = [
     "InstagramPost",
     "IInstagramUser",
     "InstagramFollower",
+    "UserFilters",
 ]

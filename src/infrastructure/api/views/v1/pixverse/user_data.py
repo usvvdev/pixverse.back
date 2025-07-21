@@ -2,7 +2,10 @@
 
 from ......interface.controllers.api.v1 import UserDataController
 
-from ......interface.schemas.external import UserStatistics
+from ......interface.schemas.external import (
+    UserStatistics,
+    UserFilters,
+)
 
 
 class UserDataView:
@@ -16,3 +19,8 @@ class UserDataView:
         self,
     ) -> list[UserStatistics]:
         return await self._controller.fetch_user_data()
+
+    async def fetch_user_filters(
+        self,
+    ) -> UserFilters:
+        return await self._controller.fetch_user_filters()

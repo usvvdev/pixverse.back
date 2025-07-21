@@ -29,3 +29,17 @@ async def fetch_user_data(
     view: UserDataView = Depends(UserDataViewFactory.create),
 ) -> list[UserStatistics]:
     return await view.fetch_user_data()
+
+
+@user_data_router.get(
+    "/statistics/filters",
+)
+@auto_docs(
+    "api/v1/statistics/filters",
+    "GET",
+    description="Роутер для получения фильтров для стастистики по пользователям.",
+)
+async def fetch_user_filters(
+    view: UserDataView = Depends(UserDataViewFactory.create),
+) -> list[UserStatistics]:
+    return await view.fetch_user_filters()

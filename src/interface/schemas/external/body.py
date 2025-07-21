@@ -236,6 +236,17 @@ class UserStatistics(ISchema):
     ]
 
 
+class UserFilters(ISchema):
+    user_ids: Annotated[
+        list[str],
+        Field(...),
+    ]
+    app_ids: Annotated[
+        list[str],
+        Field(...),
+    ]
+
+
 class IInstagramUser(ISchema):
     user_id: Annotated[
         str,
