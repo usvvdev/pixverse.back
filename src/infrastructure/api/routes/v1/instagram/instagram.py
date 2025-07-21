@@ -42,30 +42,60 @@ async def user_auth(
 
 
 @instagram_router.post(
-    "/users/statistics",
+    "/statistics",
 )
-async def fetch_user_statistics(
+async def fetch_statistics(
     body: IInstagramUser,
-    search_user: str | None = None,
     view: InstagramView = Depends(InstagramViewFactory.create),
 ) -> InstagramUserResponse:
-    return await view.fetch_user_statistics(
+    return await view.fetch_statistics(
         body,
-        search_user,
     )
 
 
 @instagram_router.post(
-    "/users",
+    "/subscribers",
 )
-async def fetch_users(
+async def fetch_subsribers(
     body: IInstagramUser,
-    type: InstagramRelationType = Query(InstagramRelationType.FOLLOWERS),
-    search_user: str | None = Query(None),
     view: InstagramView = Depends(InstagramViewFactory.create),
 ) -> Page[InstagramFollower]:
-    return await view.fetch_users(
+    return await view.fetch_subsribers(
         body,
-        type,
-        search_user,
+    )
+
+
+@instagram_router.post(
+    "/subscribtions",
+)
+async def fetch_subsribtions(
+    body: IInstagramUser,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> Page[InstagramFollower]:
+    return await view.fetch_subsribtions(
+        body,
+    )
+
+
+@instagram_router.post(
+    "/non-reciprocal-subscribers",
+)
+async def fetch_non_reciprocal_subsribtions(
+    body: IInstagramUser,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> Page[InstagramFollower]:
+    return await view.fetch_non_reciprocal_subsribtions(
+        body,
+    )
+
+
+@instagram_router.post(
+    "/publications",
+)
+async def fetch_publications(
+    body: IInstagramUser,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> Page[InstagramFollower]:
+    return await view.fetch_publications(
+        body,
     )

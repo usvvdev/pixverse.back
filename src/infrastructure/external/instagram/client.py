@@ -1,13 +1,20 @@
 # coding utf-8
 
+from typing import Callable
+
 from instagrapi import Client
 
-from fastapi import HTTPException
+from instagrapi.exceptions import (
+    TwoFactorRequired,
+    LoginRequired,
+)
 
 from fastapi_pagination import (
     Page,
     paginate,
 )
+
+from fastapi.concurrency import run_in_threadpool
 
 from instagrapi.types import (
     User,
@@ -41,6 +48,61 @@ class InstagramClient:
     ) -> None:
         self._core = core
 
+    @staticmethod
+    def __handle_code(
+        body: InstagramAuthUser,
+    ) -> str:
+        if not body.verification_code:
+            raise InstagramError.from_exception(
+                TwoFactorRequired,
+            )
+        return body.verification_code
+
+    async def __auth_user_session(
+        self,
+        body: IInstagramUser,
+    ) -> Client:
+        try:
+            client = self._core.fetch_user_session(
+                body.username,
+            )
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)
+
+        if client is not None:
+            return client
+
+        raise InstagramError.from_exception(
+            LoginRequired,
+        )
+
+    def __fetch_user(
+        self,
+        body: IInstagramUser,
+        client: Client,
+    ) -> User:
+        try:
+            return client.user_info_by_username(
+                body.search_user if body.search_user is not None else body.username
+            )
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)
+
+    async def __fetch_users(
+        self,
+        subs: dict[str, UserShort],
+    ) -> Page[InstagramFollower]:
+        items: list[InstagramFollower] = list(
+            map(
+                lambda sub: InstagramFollower(
+                    **sub.model_dump(),
+                ),
+                subs.values(),
+            )
+        )
+
+        return paginate(items)
+
     async def user_auth(
         self,
         body: InstagramAuthUser,
@@ -52,27 +114,17 @@ class InstagramClient:
 
         client = Client()
 
-        def code_handler(
-            username: str,
-            choice,
-        ) -> str:
-            if not body.verification_code:
-                raise HTTPException(
-                    status_code=401,
-                    detail="Verification code required. Provide it in 'verification_code'.",
-                )
-            return body.verification_code
-
-        client.challenge_code_handler = code_handler
+        client.challenge_code_handler = self.__handle_code(body)
 
         try:
             if not body.verification_code:
                 client.login(body.username, body.password)
-            client.login(
-                **body.model_dump(
-                    exclude={"user_id", "app_id"},
+            else:
+                client.login(
+                    **body.model_dump(
+                        exclude=body.exclude_fields(),
+                    )
                 )
-            )
         except InstagramError.exceptions as err:
             raise InstagramError.from_exception(err)
 
@@ -82,111 +134,130 @@ class InstagramClient:
             username=body.username,
         )
 
-    async def fetch_user_statistics(
+    async def fetch_statistics(
         self,
         body: IInstagramUser,
-        search_user: str | None = None,
     ) -> InstagramUserResponse:
-        # max_attempts = 10
+        client: Client | None = await self.__auth_user_session(body)
 
-        # for attempt in range(max_attempts):
+        user: User = self.__fetch_user(
+            body,
+            client,
+        )
+
+        medias: list[Media] = client.user_medias(user.pk, amount=20)
+
+        return InstagramUserResponse(
+            user=InstagramUser.from_user(user),
+            statistics=InstagramUserStatistics.from_data(
+                user,
+                client,
+                medias,
+            ),
+            posts=InstagramPost.from_medias(medias),
+        )
+
+    async def fetch_subsribers(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        client: Client | None = await self.__auth_user_session(body)
+
+        user: User = self.__fetch_user(
+            body,
+            client,
+        )
+
+        try:
+            subs: dict[str, UserShort] = client.user_followers(
+                user.pk,
+            )
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)
+
+        return await self.__fetch_users(subs)
+
+    async def fetch_subsribtions(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        client: Client | None = await self.__auth_user_session(body)
+
+        user: User = self.__fetch_user(
+            body,
+            client,
+        )
+
+        try:
+            subs: dict[str, UserShort] = client.user_following(
+                user.pk,
+            )
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)
+
+        return await self.__fetch_users(subs)
+
+    async def fetch_non_reciprocal_subsribtions(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        client: Client | None = await self.__auth_user_session(body)
+
+        user: User = self.__fetch_user(
+            body,
+            client,
+        )
+
         try:
 
             async def call(
-                usernmame: str,
-            ) -> Client | None:
-                return self._core.fetch_user_session(
-                    username=usernmame,
+                client: Client,
+                user_id: str,
+            ) -> dict[str, ...]:
+                followers: dict[str, UserShort] = await run_in_threadpool(
+                    client.user_followers, user_id
                 )
 
-            client = await call(body.username)
-        except Exception:
-            # if attempt == max_attempts - 1:
-            try:
-                client = await call(body.username)
-            except InstagramError.exceptions as err:
-                raise InstagramError.from_exception(err)
-
-        if client is not None:
-            try:
-                user: User = client.user_info_by_username(
-                    body.username if search_user is None else search_user
+                following: dict[str, UserShort] = await run_in_threadpool(
+                    client.user_following, user_id
                 )
-            except InstagramError.exceptions as err:
-                raise InstagramError.from_exception(err)
 
-            medias: list[Media] = client.user_medias(user.pk, amount=20)
+                return {
+                    str(pk): user
+                    for pk, user in followers.items()
+                    if pk not in following
+                }
 
-            return InstagramUserResponse(
-                user=InstagramUser.from_user(user),
-                statistics=InstagramUserStatistics.from_data(
-                    user,
-                    client,
-                    medias,
-                ),
-                posts=InstagramPost.from_medias(medias),
+            subs: dict[str, UserShort] = await call(
+                client,
+                user.pk,
             )
-
-    async def fetch_users(
-        self,
-        body: IInstagramUser,
-        type: InstagramRelationType,
-        search_user: str | None = None,
-    ) -> Page[InstagramFollower]:
-        async def call(username: str) -> Client | None:
-            return self._core.fetch_user_session(username=username)
-
-        try:
-            client = await call(body.username)
-        except Exception:
-            try:
-                client = await call(body.username)
-            except InstagramError.exceptions as err:
-                raise InstagramError.from_exception(err)
-
-        if client is None:
-            return paginate([])
-        try:
-            user_id = (
-                client.user_id
-                if not search_user
-                else client.user_info_by_username(search_user).pk
-            )
-
-            followers = lambda: client.user_followers(user_id)
-            following = lambda: client.user_following(user_id)
-
-            def secret_fans():
-                f = followers()
-                g = following()
-                return {pk: f[pk] for pk in set(f) - set(g)}
-
-            def non_reciprocal():
-                f = followers()
-                g = following()
-                return {pk: g[pk] for pk in set(g) - set(f)}
-
-            fetch_map: dict[InstagramRelationType, ...] = {
-                InstagramRelationType.FOLLOWERS: followers,
-                InstagramRelationType.FOLLOWING: following,
-                InstagramRelationType.SECRET_FANS: secret_fans,
-                InstagramRelationType.NON_RECIPROCAL: non_reciprocal,
-            }
-
-            if type not in fetch_map:
-                raise ValueError(f"Unsupported type: {type}")
-
-            subs: dict[str, UserShort] = fetch_map[type]()
 
         except InstagramError.exceptions as err:
             raise InstagramError.from_exception(err)
 
-        items: list[InstagramFollower] = list(
+        return await self.__fetch_users(subs)
+
+    async def fetch_publications(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramPost]:
+        client: Client | None = await self.__auth_user_session(body)
+
+        user: User = self.__fetch_user(
+            body,
+            client,
+        )
+
+        try:
+            medias: list[Media] = client.user_medias(user.pk)
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)
+
+        items: list[InstagramPost] = list(
             map(
-                lambda sub: InstagramFollower(
-                    **sub.model_dump(),
-                ),
-                subs.values(),
+                lambda media: InstagramPost(**media.model_dump()),
+                medias,
             )
         )
 

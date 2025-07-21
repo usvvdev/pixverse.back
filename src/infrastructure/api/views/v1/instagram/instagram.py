@@ -31,24 +31,42 @@ class InstagramView:
             body,
         )
 
-    async def fetch_user_statistics(
+    async def fetch_statistics(
         self,
         body: IInstagramUser,
-        search_user: str | None,
     ) -> InstagramUserResponse:
-        return await self._controller.fetch_user_statistics(
+        return await self._controller.fetch_statistics(
             body,
-            search_user,
         )
 
-    async def fetch_users(
+    async def fetch_subsribers(
         self,
         body: IInstagramUser,
-        type: InstagramRelationType,
-        search_user: str | None = None,
     ) -> Page[InstagramFollower]:
-        return await self._controller.fetch_users(
+        return await self._controller.fetch_subsribers(
             body,
-            type,
-            search_user,
+        )
+
+    async def fetch_subsribtions(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.fetch_subsribtions(
+            body,
+        )
+
+    async def fetch_non_reciprocal_subsribtions(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.fetch_non_reciprocal_subsribtions(
+            body,
+        )
+
+    async def fetch_publications(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.fetch_publications(
+            body,
         )

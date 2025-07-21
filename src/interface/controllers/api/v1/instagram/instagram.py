@@ -31,24 +31,42 @@ class InstagramController:
             body,
         )
 
-    async def fetch_user_statistics(
+    async def fetch_statistics(
         self,
         body: IInstagramUser,
-        search_user: str | None,
     ) -> InstagramUserResponse:
-        return await self._client.fetch_user_statistics(
+        return await self._client.fetch_statistics(
             body,
-            search_user,
         )
 
-    async def fetch_users(
+    async def fetch_subsribers(
         self,
         body: IInstagramUser,
-        type: InstagramRelationType,
-        search_user: str | None = None,
     ) -> Page[InstagramFollower]:
-        return await self._client.fetch_users(
+        return await self._client.fetch_subsribers(
             body,
-            type,
-            search_user,
+        )
+
+    async def fetch_subsribtions(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        return await self._client.fetch_subsribtions(
+            body,
+        )
+
+    async def fetch_non_reciprocal_subsribtions(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        return await self._client.fetch_non_reciprocal_subsribtions(
+            body,
+        )
+
+    async def fetch_publications(
+        self,
+        body: IInstagramUser,
+    ) -> Page[InstagramFollower]:
+        return await self._client.fetch_publications(
+            body,
         )

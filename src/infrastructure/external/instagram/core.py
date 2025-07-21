@@ -26,45 +26,40 @@ class InstagramCore:
         client: Client | None = None,
     ) -> None:
         self._redis = redis
-        self._client: Client = client or Client()
+        self._client = client or Client()
 
     def fetch_user_session(
         self,
         username: str,
     ) -> Client | None:
-        user_session = self._redis.get(
-            INSTAGRAM_SESSION.format(
-                username=username,
-            )
+        key = INSTAGRAM_SESSION.format(
+            username=username,
         )
-        if not user_session:
-            return None
+        session = self._redis.get(key)
 
-        self._client.set_settings(loads(user_session))
-        try:
-            self._client.get_timeline_feed()
-            return self._client
-        except InstagramError.exceptions as err:
-            if isinstance(err, ChallengeRequired):
-                return None
-            elif isinstance(err, LoginRequired):
-                self._redis.delete(
-                    INSTAGRAM_SESSION.format(
-                        username=username,
-                    )
-                )
-            raise InstagramError.from_exception(err)
+        if session is not None:
+            self._client.set_settings(loads(session))
+            try:
+                self._client.get_timeline_feed()
+                return self._client
+            except InstagramError.exceptions as err:
+                if isinstance(err, LoginRequired):
+                    self._redis.delete(key)
+                raise InstagramError.from_exception(err)
+
+        return None
 
     def save_user_session(
         self,
         username: str,
         client: Client,
     ) -> None:
-        user_settings: dict[str] = client.get_settings()
-        return self._redis.set(
-            INSTAGRAM_SESSION.format(
-                username=username,
-            ),
-            dumps(user_settings),
+        key = INSTAGRAM_SESSION.format(
+            username=username,
+        )
+        session_data = dumps(client.get_settings())
+        self._redis.set(
+            key,
+            session_data,
             ex=int(duration(days=30).total_seconds()),
         )

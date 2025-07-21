@@ -249,6 +249,10 @@ class IInstagramUser(ISchema):
         str,
         Field(...),
     ]
+    search_user: Annotated[
+        str | None,
+        Field(default=None),
+    ]
 
 
 class InstagramAuthUser(IInstagramUser):
@@ -260,3 +264,11 @@ class InstagramAuthUser(IInstagramUser):
         str | None,
         Field(default=None),
     ]
+
+    @classmethod
+    def exclude_fields(cls) -> set[str]:
+        return {
+            "user_id",
+            "app_id",
+            "search_user",
+        }

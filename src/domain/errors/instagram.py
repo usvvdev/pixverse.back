@@ -27,7 +27,8 @@ class InstagramError(IError):
         cls,
         exc: Exception,
     ) -> "InstagramError":
-        status_code, detail = INSTAGRAM_ERROR.get(type(exc), (400, str(exc)))
+        exc_type = exc if isinstance(exc, type) else type(exc)
+        status_code, detail = INSTAGRAM_ERROR.get(exc_type, (400, str(exc)))
         return cls(
             status_code=status_code,
             detail=detail,

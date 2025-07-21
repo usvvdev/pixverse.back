@@ -72,7 +72,7 @@ PIXVERSE_ERROR = {
 INSTAGRAM_ERROR = {
     TwoFactorRequired: (
         status.HTTP_401_UNAUTHORIZED,
-        "2FA required. Resend the code via the verification_code field",
+        "2FA required. Resend the code via the verification_code field.",
     ),
     ChallengeRequired: (
         status.HTTP_401_UNAUTHORIZED,
@@ -92,7 +92,7 @@ INSTAGRAM_ERROR = {
     ),
     LoginRequired: (
         status.HTTP_401_UNAUTHORIZED,
-        "Please retry your request again.",
+        "Session not found. Please retry your request again.",
     ),
 }
 
