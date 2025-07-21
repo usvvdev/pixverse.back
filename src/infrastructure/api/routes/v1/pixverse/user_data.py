@@ -7,11 +7,14 @@ from fastapi import (
 
 from ....views.v1 import UserDataView
 
-from ......domain.tools import auto_docs
+from ......domain.tools import auto_docs, validate_token
 
 from .....factroies.api.v1 import UserDataViewFactory
 
-from ......interface.schemas.external import UserStatistics
+from ......interface.schemas.external import (
+    UserStatistics,
+    UserFilters,
+)
 
 
 user_data_router = APIRouter(tags=["User Data"])
@@ -41,5 +44,5 @@ async def fetch_user_data(
 )
 async def fetch_user_filters(
     view: UserDataView = Depends(UserDataViewFactory.create),
-) -> list[UserStatistics]:
+) -> UserFilters:
     return await view.fetch_user_filters()
