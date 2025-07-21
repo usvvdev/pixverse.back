@@ -27,6 +27,6 @@ class UserDataController:
     ) -> UserFilters:
         data: list[UserStatistics] = await self._repository.fetch_all()
         return UserFilters(
-            user_ids=[item.user_id for item in data],
-            app_ids=[item.app_id for item in data],
+            user_ids=list({item.user_id for item in data}),
+            app_ids=list({item.app_id for item in data}),
         )
