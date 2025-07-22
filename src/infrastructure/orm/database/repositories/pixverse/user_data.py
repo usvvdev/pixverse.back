@@ -117,7 +117,7 @@ class UserDataRepository(DatabaseRepository):
                     app_id=row.app_id,
                     balance=row.balance,
                     app_id_usage=row.app_id_usage,
-                    generation_ids=sorted(grouped[uid]["generations"]),
+                    generation_ids=sorted(map(str, grouped[uid]["generations"])),
                     accounts=[
                         AccountInfo(id=aid, username=uname)
                         for aid, uname in grouped[uid]["accounts"].items()
