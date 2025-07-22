@@ -440,18 +440,18 @@ class InstagramUserStatistics(ISchema):
         int,
         Field(..., alias="comments"),
     ]
-    # mutual: Annotated[
-    #     int,
-    #     Field(...),
-    # ]
-    # not_following_you: Annotated[
-    #     int,
-    #     Field(...),
-    # ]
-    # not_followed_by_you: Annotated[
-    #     int,
-    #     Field(...),
-    # ]
+    mutual: Annotated[
+        int,
+        Field(...),
+    ]
+    not_following_you: Annotated[
+        int,
+        Field(...),
+    ]
+    not_followed_by_you: Annotated[
+        int,
+        Field(...),
+    ]
 
     @classmethod
     def from_data(
@@ -460,19 +460,19 @@ class InstagramUserStatistics(ISchema):
         client: Client,
         medias: list[Media],
     ) -> "InstagramUserStatistics":
-        # following = set(
-        #     client.user_following(user.pk).keys(),
-        # )
-        # followers = set(
-        #     client.user_followers(user.pk).keys(),
-        # )
+        following = set(
+            client.user_following(user.pk).keys(),
+        )
+        followers = set(
+            client.user_followers(user.pk).keys(),
+        )
         return cls(
             **user.model_dump(),
             likes_count=sum(m.like_count for m in medias),
             comments_count=sum(m.comment_count for m in medias),
-            # mutual=len(following & followers),
-            # not_following_you=len(following - followers),
-            # not_followed_by_you=len(followers - following),
+            mutual=len(following & followers),
+            not_following_you=len(following - followers),
+            not_followed_by_you=len(followers - following),
         )
 
 

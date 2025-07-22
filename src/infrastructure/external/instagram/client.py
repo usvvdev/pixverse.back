@@ -1,6 +1,8 @@
 # coding utf-8
 
-from typing import Callable
+from time import sleep
+
+from random import uniform
 
 from instagrapi import Client
 
@@ -52,29 +54,44 @@ class InstagramClient:
     def __handle_code(
         body: InstagramAuthUser,
     ) -> str:
-        if not body.verification_code:
-            raise InstagramError.from_exception(
-                TwoFactorRequired,
-            )
-        return body.verification_code
+        def handler(
+            username: str,
+            choice: int,
+        ) -> str:
+            if not body.verification_code:
+                raise InstagramError.from_exception(TwoFactorRequired)
+            return body.verification_code
+
+        return handler
+
+    @staticmethod
+    def __generate_settings() -> dict:
+        return Client().get_settings()
+
+    def __create_new_client(
+        self,
+        proxy: str | None = None,
+    ) -> Client:
+        client = Client()
+        if proxy:
+            client.set_proxy(proxy)
+        client.set_settings(self.__generate_settings())
+        return client
 
     async def __auth_user_session(
         self,
         body: IInstagramUser,
     ) -> Client:
         try:
-            client = self._core.fetch_user_session(
+            client: Client | None = self._core.fetch_user_session(
                 body.username,
             )
+            if client:
+                return client
         except InstagramError.exceptions as err:
             raise InstagramError.from_exception(err)
 
-        if client is not None:
-            return client
-
-        raise InstagramError.from_exception(
-            LoginRequired,
-        )
+        raise InstagramError.from_exception(LoginRequired)
 
     def __fetch_user(
         self,
@@ -82,6 +99,7 @@ class InstagramClient:
         client: Client,
     ) -> User:
         try:
+            sleep(uniform(0.5, 1.5))
             return client.user_info_by_username(
                 body.search_user if body.search_user is not None else body.username
             )
@@ -112,24 +130,27 @@ class InstagramClient:
                 username=body.username,
             )
 
-        client = Client()
-
-        client.challenge_code_handler = self.__handle_code(body)
+        client: Client = self.__create_new_client(
+            body.username,
+        )
+        client.challenge_code_handler = self.__handle_code(
+            body.verification_code,
+        )
 
         try:
-            if not body.verification_code:
-                client.login(body.username, body.password)
-            else:
+            if body.verification_code:
                 client.login(
-                    **body.model_dump(
-                        exclude=body.exclude_fields(),
-                    )
+                    **body.model_dump(exclude=body.exclude_fields()),
                 )
+            else:
+                client.login(body.username, body.password)
         except InstagramError.exceptions as err:
             raise InstagramError.from_exception(err)
 
-        self._core.save_user_session(body.username, client)
-
+        self._core.save_user_session(
+            body.username,
+            client,
+        )
         return InstagramAuthResponse(
             username=body.username,
         )
