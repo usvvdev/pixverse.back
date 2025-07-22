@@ -36,7 +36,7 @@ class UserGenerations(ITable):
         String,
         nullable=False,
     )
-    video_url: str = Column(
+    generation_url: str = Column(
         String,
         nullable=True,
     )

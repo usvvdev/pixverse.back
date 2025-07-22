@@ -166,6 +166,10 @@ class GenerationData(ISchema):
         str,
         Field(...),
     ]
+    generation_url: Annotated[
+        str | None,
+        Field(default=None),
+    ]
 
 
 class UsrData(ISchema):

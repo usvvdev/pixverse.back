@@ -1,5 +1,7 @@
 # coding utf-8
 
+import os
+
 from fastapi import UploadFile
 
 from asyncio import sleep
@@ -15,7 +17,11 @@ from ....domain.errors import (
 
 from ....domain.entities.core import IConfEnv
 
-from ...orm.database.repositories import PhotoGeneratorTemplateRepository
+from ...orm.database.repositories import (
+    PhotoGeneratorTemplateRepository,
+    UserGenerationRepository,
+    UserDataRepository,
+)
 
 from ...orm.database.models import PhotoGeneratorTemplates
 
@@ -42,6 +48,8 @@ from ....interface.schemas.external import (
     ChatGPTResp,
     ChatGPTErrorResponse,
     ChatGPTError,
+    GenerationData,
+    UsrData,
 )
 
 from ....domain.constants import BODY_TOYBOX_PROMT
@@ -51,6 +59,14 @@ conf: IConfEnv = app_conf()
 
 
 templates_database = PhotoGeneratorTemplateRepository(
+    engine=IDatabase(conf),
+)
+
+user_generations_database = UserGenerationRepository(
+    engine=IDatabase(conf),
+)
+
+user_data_database = UserDataRepository(
     engine=IDatabase(conf),
 )
 
@@ -75,11 +91,27 @@ class ChatGPTClient:
 
     async def __handle_success(
         self,
+        user_data: IBody | TB2PBody | T2PBody,
         data: ChatGPTResponse,
     ) -> ChatGPTResp:
-        return ChatGPTResp(
+        video_data = ChatGPTResp(
             url=b64_json_to_image(data.data[0].b64_json),
         )
+        await user_generations_database.add_record(
+            GenerationData(
+                user_id=user_data.user_id,
+                app_id=user_data.app_id,
+                app_name=os.getenv("APP_SERVICE").lower(),
+                generation_url=video_data.url,
+            )
+        )
+        await user_data_database.create_or_update_user_data(
+            UsrData(
+                user_id=user_data.user_id,
+                app_id=user_data.app_id,
+            )
+        )
+        return video_data
 
     async def __handle_failure(
         self,
