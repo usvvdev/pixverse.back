@@ -152,7 +152,10 @@ class ChatGPTClient:
                 data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
 
                 if not isinstance(data, ChatGPTErrorResponse):
-                    return await self.__handle_success(data)
+                    return await self.__handle_success(
+                        body,
+                        data,
+                    )
 
                 last_error = data.error
 
@@ -163,6 +166,7 @@ class ChatGPTClient:
 
                         if not data.error:
                             return await self.__handle_success(
+                                body,
                                 data,
                             )
 
@@ -205,7 +209,10 @@ class ChatGPTClient:
                 data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
 
                 if not isinstance(data, ChatGPTErrorResponse):
-                    return await self.__handle_success(data)
+                    return await self.__handle_success(
+                        body,
+                        data,
+                    )
 
                 last_error = data.error
 
@@ -216,6 +223,7 @@ class ChatGPTClient:
 
                         if not data.error:
                             return await self.__handle_success(
+                                body,
                                 data,
                             )
 
@@ -266,7 +274,10 @@ class ChatGPTClient:
                 data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
 
                 if not isinstance(data, ChatGPTErrorResponse):
-                    return await self.__handle_success(data)
+                    return await self.__handle_success(
+                        body,
+                        data,
+                    )
 
                 last_error = data.error
 
@@ -277,6 +288,7 @@ class ChatGPTClient:
 
                         if not data.error:
                             return await self.__handle_success(
+                                body,
                                 data,
                             )
 
@@ -334,7 +346,10 @@ class ChatGPTClient:
                 data: ChatGPTResponse | ChatGPTErrorResponse = await call(token)
 
                 if not isinstance(data, ChatGPTErrorResponse):
-                    return await self.__handle_success(data)
+                    return await self.__handle_success(
+                        body,
+                        data,
+                    )
 
                 last_error = data.error
 
@@ -345,6 +360,7 @@ class ChatGPTClient:
 
                         if not data.error:
                             return await self.__handle_success(
+                                body,
                                 data,
                             )
 
