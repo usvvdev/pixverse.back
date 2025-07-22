@@ -17,7 +17,7 @@ class UserGenerations(ITable):
     )
     generation_id: int = Column(
         Integer,
-        nullable=False,
+        nullable=True,
         unique=True,
     )
     account_id: int = Column(
@@ -33,6 +33,10 @@ class UserGenerations(ITable):
         nullable=False,
     )
     app_name: str = Column(
-        Integer,
+        String,
         nullable=False,
+    )
+    video_url: str = Column(
+        String,
+        nullable=True,
     )
