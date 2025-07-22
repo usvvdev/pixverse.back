@@ -231,7 +231,7 @@ class UserStatistics(ISchema):
         Field(...),
     ]
     generation_ids: Annotated[
-        list[int],
+        list[int | str],
         Field(...),
     ]
     accounts: Annotated[
