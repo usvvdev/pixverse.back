@@ -147,12 +147,12 @@ class GenerationData(ISchema):
         Field(default_factory=lambda: str(uuid4())),
     ]
     generation_id: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     account_id: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     user_id: Annotated[
         str,
