@@ -19,10 +19,12 @@ class UserDataView:
         self,
         user_id: str | None,
         app_id: str | None,
+        app_name: str | None,
     ) -> list[UserStatistics]:
         return await self._controller.fetch_user_data(
             user_id,
             app_id,
+            app_name,
         )
 
     async def fetch_user_filters(

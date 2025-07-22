@@ -33,10 +33,13 @@ async def fetch_user_data(
     view: UserDataView = Depends(UserDataViewFactory.create),
     user_id: str | None = Query(None),
     app_id: str | None = Query(None),
+    app_name: str | None = Query(None),
+    _: str = Depends(validate_token),
 ) -> list[UserStatistics]:
     return await view.fetch_user_data(
         user_id,
         app_id,
+        app_name,
     )
 
 
@@ -50,5 +53,6 @@ async def fetch_user_data(
 )
 async def fetch_user_filters(
     view: UserDataView = Depends(UserDataViewFactory.create),
+    _: str = Depends(validate_token),
 ) -> UserFilters:
     return await view.fetch_user_filters()

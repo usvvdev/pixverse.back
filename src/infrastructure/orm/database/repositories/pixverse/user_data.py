@@ -55,6 +55,7 @@ class UserDataRepository(DatabaseRepository):
         self,
         user_id: str | None = None,
         app_id: str | None = None,
+        app_name: str | None = None,
     ) -> list[UserStatistics]:
         stmt = (
             select(
@@ -82,6 +83,8 @@ class UserDataRepository(DatabaseRepository):
             filters.append(UserData.user_id == user_id)
         if app_id is not None:
             filters.append(UserData.app_id == app_id)
+        if app_name is not None:
+            filters.append(UserGenerations.app_name == app_name)
 
         if filters:
             stmt = stmt.where(and_(*filters))
