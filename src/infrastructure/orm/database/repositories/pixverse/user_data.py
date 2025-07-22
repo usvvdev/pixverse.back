@@ -65,6 +65,7 @@ class UserDataRepository(DatabaseRepository):
                 UserData.balance,
                 UserData.app_id_usage,
                 UserGenerations.generation_id,
+                UserGenerations.generation_url,
                 PixverseAccounts.id.label("account_id"),
                 PixverseAccounts.username,
             )
@@ -74,7 +75,8 @@ class UserDataRepository(DatabaseRepository):
                 & (UserData.app_id == UserGenerations.app_id),
             )
             .outerjoin(
-                PixverseAccounts, UserGenerations.account_id == PixverseAccounts.id
+                PixverseAccounts,
+                UserGenerations.account_id == PixverseAccounts.id,
             )
         )
 
@@ -92,14 +94,15 @@ class UserDataRepository(DatabaseRepository):
         async with self._engine.get_session() as session:
             rows = (await session.execute(stmt)).all()
 
-        # группировка и формирование результата (как было)
-        grouped = defaultdict(lambda: {"generation_ids": set(), "accounts": {}})
+        grouped = defaultdict(lambda: {"generations": set(), "accounts": {}})
         output = []
 
         for row in rows:
             uid = row.id
-            if row.generation_id:
-                grouped[uid]["generation_ids"].add(row.generation_id)
+            # Добавляем либо generation_id, либо generation_url
+            generation_value = row.generation_id or row.generation_url
+            if generation_value:
+                grouped[uid]["generations"].add(generation_value)
             if row.account_id:
                 grouped[uid]["accounts"][row.account_id] = row.username
 
@@ -114,7 +117,7 @@ class UserDataRepository(DatabaseRepository):
                     app_id=row.app_id,
                     balance=row.balance,
                     app_id_usage=row.app_id_usage,
-                    generation_ids=sorted(grouped[uid]["generation_ids"]),
+                    generation_ids=sorted(grouped[uid]["generations"]),
                     accounts=[
                         AccountInfo(id=aid, username=uname)
                         for aid, uname in grouped[uid]["accounts"].items()
