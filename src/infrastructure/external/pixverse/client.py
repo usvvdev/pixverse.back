@@ -258,7 +258,7 @@ class PixVerseClient:
                 account_id=account_id,
                 user_id=body.user_id,
                 app_id=body.app_id,
-                app_name=os.getenv("APP_SERVICE").lower(),
+                app_name=os.getenv("APP_SERVICE", "pixverse").lower(),
             )
         )
         await user_data_database.create_or_update_user_data(

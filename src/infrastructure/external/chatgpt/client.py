@@ -101,7 +101,7 @@ class ChatGPTClient:
             GenerationData(
                 user_id=user_data.user_id,
                 app_id=user_data.app_id,
-                app_name=os.getenv("APP_SERVICE").lower(),
+                app_name=os.getenv("APP_SERVICE", "chatgpt").lower(),
                 generation_url=video_data.url,
             )
         )

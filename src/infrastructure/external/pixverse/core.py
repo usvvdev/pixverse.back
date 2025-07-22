@@ -69,6 +69,7 @@ class PixverseCore(HttpClient):
                 *args,
                 **kwargs,
             )
+            print(response)
             return Response(**response)
         except HTTPError as err:
             if err.response is not None:
