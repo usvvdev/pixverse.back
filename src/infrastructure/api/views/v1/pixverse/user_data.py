@@ -29,5 +29,8 @@ class UserDataView:
 
     async def fetch_user_filters(
         self,
+        app_name: str | None,
     ) -> UserFilters:
-        return await self._controller.fetch_user_filters()
+        return await self._controller.fetch_user_filters(
+            app_name,
+        )

@@ -31,8 +31,11 @@ class UserDataController:
 
     async def fetch_user_filters(
         self,
+        app_name: str | None,
     ) -> UserFilters:
-        data: list[UserStatistics] = await self._repository.fetch_all()
+        data: list[UserStatistics] = await self._repository.fetch_all(
+            app_name=app_name,
+        )
         return UserFilters(
             user_ids=list({item.user_id for item in data}),
             app_ids=list({item.app_id for item in data}),

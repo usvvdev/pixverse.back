@@ -52,7 +52,10 @@ async def fetch_user_data(
     description="Роутер для получения фильтров для стастистики по пользователям.",
 )
 async def fetch_user_filters(
+    app_name: str | None = Query(None),
     view: UserDataView = Depends(UserDataViewFactory.create),
     _: str = Depends(validate_token),
 ) -> UserFilters:
-    return await view.fetch_user_filters()
+    return await view.fetch_user_filters(
+        app_name,
+    )
