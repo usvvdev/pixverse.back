@@ -52,11 +52,11 @@ class UserWebhook(ISchema):
         Field(...),
     ]
     total_spent: Annotated[
-        int,
+        float | int,
         Field(...),
     ]
     payments_count: Annotated[
-        int,
+        float | int,
         Field(...),
     ]
 
