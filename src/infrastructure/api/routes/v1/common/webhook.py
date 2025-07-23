@@ -4,6 +4,8 @@ from fastapi import APIRouter, Request
 
 from fastapi.responses import JSONResponse
 
+from ......domain.entities.core import IWebhook
+
 
 webhook_router = APIRouter(
     tags=["Webhooks"],
@@ -27,5 +29,9 @@ async def apphud_webhook(
     # await add_tokens_to_user(user_id)
 
     return JSONResponse(
-        content={"status": payload},
+        content={
+            "status": IWebhook(
+                **payload,
+            ).dict
+        },
     )

@@ -18,6 +18,8 @@ from .task import ITask
 
 from .media import IMediaFile
 
+from .webhook import IWebhook
+
 __all__: list[str] = [
     "ISchema",
     "IConfEnv",
@@ -28,4 +30,5 @@ __all__: list[str] = [
     "ITable",
     "ITask",
     "IMediaFile",
+    "IWebhook",
 ]
