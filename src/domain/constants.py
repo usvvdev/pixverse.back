@@ -119,6 +119,7 @@ ERROR_TRANSLATIONS = {
     "Image upload failed": "Ошибка загрузки изображения",
     "Invalid image path": "Недопустимый путь к изображению",
     "All credits used. Upgrade or top up.": "Кредиты израсходованы. Пополните баланс или обновите тариф",
+    "All Credits have been used up. Please upgrade your membership or purchase credits.": "Кредиты израсходованы. Пополните баланс или обновите тариф",
     "Concurrent limit reached": "Превышен лимит одновременных запросов",
     "Content moderation failure": "Ошибка модерации контента",
     "Monthly limit reached": "Превышен месячный лимит",
