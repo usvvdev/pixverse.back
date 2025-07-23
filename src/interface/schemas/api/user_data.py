@@ -22,8 +22,20 @@ class IUserData(ISchema):
     ]
 
 
-class UserData(IUserData):
+class UserData(ISchema):
     id: Annotated[
+        int,
+        Field(...),
+    ]
+    user_id: Annotated[
+        str,
+        Field(...),
+    ]
+    app_id: Annotated[
+        str,
+        Field(...),
+    ]
+    balance: Annotated[
         int,
         Field(...),
     ]
