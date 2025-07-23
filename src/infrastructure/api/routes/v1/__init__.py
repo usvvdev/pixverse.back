@@ -19,7 +19,11 @@ from .chatgpt import (
 
 from .calories import calories_router
 
-from .common import application_router, media_router
+from .common import (
+    application_router,
+    media_router,
+    webhook_router,
+)
 
 from .instagram import instagram_router
 
@@ -38,4 +42,5 @@ __all__: list[str] = [
     "application_router",
     "media_router",
     "instagram_router",
+    "webhook_router",
 ]

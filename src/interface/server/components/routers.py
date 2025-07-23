@@ -21,6 +21,7 @@ from ....infrastructure.api.routes.v1 import (
     application_router,
     media_router,
     instagram_router,
+    webhook_router,
 )
 
 
@@ -48,6 +49,7 @@ class PixVerseRouter(AppRouting):
                 pixverse_template_router,
                 pixverse_application_router,
                 media_router,
+                webhook_router,
             ],
         )
 
