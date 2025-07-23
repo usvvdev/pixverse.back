@@ -181,6 +181,10 @@ class UsrData(ISchema):
         str,
         Field(...),
     ]
+    balance: Annotated[
+        int,
+        Field(default=0),
+    ]
     app_id_usage: Annotated[
         int,
         Field(default=1),

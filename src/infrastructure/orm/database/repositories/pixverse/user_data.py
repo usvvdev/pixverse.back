@@ -46,6 +46,7 @@ class UserDataRepository(DatabaseRepository):
                 data=UsrData(
                     user_id=body.user_id,
                     app_id=body.app_id,
+                    balance=body.balance,
                     app_id_usage=int(1 + user_data.app_id_usage),
                 ),
             )

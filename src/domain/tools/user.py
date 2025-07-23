@@ -2,12 +2,16 @@
 
 from typing import Any
 
+from domain.entities.core.base import ISchema
+
 from ..conf import app_conf
 
 from ..entities.core import (
     IConfEnv,
-    IUserData,
+    IWebhook,
 )
+
+from ...interface.schemas.external import UsrData
 
 from ..repositories import IDatabase
 
@@ -24,20 +28,14 @@ user_repository = UserDataRepository(
 
 
 async def add_user_tokens(
-    user_id: Any,
-    app_id: str,
-):
-    user = await user_repository.fetch_with_filters(
-        user_id=user_id,
-        app_id=app_id,
-    )
-    data = IUserData(
-        user_id=user_id,
-        app_id=app_id,
+    data: IWebhook,
+) -> ISchema:
+    body = UsrData(
+        user_id=data.user.user_id,
+        app_id=data.app.bundle_id,
         balance=100,
     )
-    if user is not None:
-        return await user_repository.update_record(
-            user.id,
-            data,
-        )
+
+    return await user_repository.create_or_update_user_data(
+        body,
+    )
