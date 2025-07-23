@@ -29,7 +29,7 @@ class EventWebhook(ISchema):
         Field(...),
     ]
     created_at: Annotated[
-        datetime,
+        str,
         Field(...),
     ]
     properties: Annotated[
@@ -44,7 +44,7 @@ class EventWebhook(ISchema):
 
 class UserWebhook(ISchema):
     created_at: Annotated[
-        datetime,
+        str,
         Field(...),
     ]
     user_id: Annotated[
