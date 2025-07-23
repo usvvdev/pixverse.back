@@ -4,16 +4,15 @@ from typing import Any
 
 from ..conf import app_conf
 
-from ..entities.core import IConfEnv
+from ..entities.core import (
+    IConfEnv,
+    IUserData,
+)
 
 from ..repositories import IDatabase
 
 from ...infrastructure.orm.database.repositories import (
     UserDataRepository,
-)
-
-from ...interface.schemas.api import (
-    IUserData,
 )
 
 conf: IConfEnv = app_conf()

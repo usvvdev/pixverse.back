@@ -20,6 +20,8 @@ from .media import IMediaFile
 
 from .webhook import IWebhook
 
+from .user import IUserData
+
 __all__: list[str] = [
     "ISchema",
     "IConfEnv",
@@ -31,4 +33,5 @@ __all__: list[str] = [
     "ITask",
     "IMediaFile",
     "IWebhook",
+    "IUserData",
 ]

@@ -4,14 +4,10 @@ from typing import Annotated
 
 from pydantic import Field
 
-from ....domain.entities.core import ISchema
+from .base import ISchema
 
 
-class UserData(ISchema):
-    id: Annotated[
-        int,
-        Field(...),
-    ]
+class IUserData(ISchema):
     user_id: Annotated[
         str,
         Field(...),
@@ -21,10 +17,6 @@ class UserData(ISchema):
         Field(...),
     ]
     balance: Annotated[
-        int,
-        Field(...),
-    ]
-    app_id_usage: Annotated[
         int,
         Field(...),
     ]
