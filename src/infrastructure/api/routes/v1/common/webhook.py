@@ -23,7 +23,7 @@ webhook_router = APIRouter(
 async def apphud_webhook(
     request: Request,
 ) -> IWebhook:
-    if request is not None:
+    if request is None:
         raise HTTPException(
             status_code=400,
             detail="Error handling webhook.",
