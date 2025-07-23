@@ -7,11 +7,7 @@ from pydantic import Field
 from ....domain.entities.core import ISchema
 
 
-class UserData(ISchema):
-    id: Annotated[
-        int,
-        Field(...),
-    ]
+class IUserData(ISchema):
     user_id: Annotated[
         str,
         Field(...),
@@ -21,6 +17,13 @@ class UserData(ISchema):
         Field(...),
     ]
     balance: Annotated[
+        int,
+        Field(...),
+    ]
+
+
+class UserData(IUserData):
+    id: Annotated[
         int,
         Field(...),
     ]

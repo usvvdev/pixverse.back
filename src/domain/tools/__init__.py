@@ -22,6 +22,8 @@ from .error import format_error_with_request
 
 from .media import stream_media
 
+from .user import add_user_tokens
+
 __all__: list[str] = [
     "upload_file",
     "auto_docs",
@@ -35,4 +37,5 @@ __all__: list[str] = [
     "format_error_with_request",
     "convert_heic_to_jpg",
     "stream_media",
+    "add_user_tokens",
 ]

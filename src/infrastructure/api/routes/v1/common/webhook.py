@@ -1,8 +1,12 @@
 # coding utf-8
 
-from fastapi import APIRouter, Request
+from fastapi import (
+    APIRouter,
+    Request,
+    HTTPException,
+)
 
-from fastapi.responses import JSONResponse
+from ......domain.tools import add_user_tokens
 
 from ......domain.entities.core import IWebhook
 
@@ -18,20 +22,21 @@ webhook_router = APIRouter(
 )
 async def apphud_webhook(
     request: Request,
-) -> JSONResponse:
+) -> IWebhook:
+    if request is not None:
+        raise HTTPException(
+            status_code=400,
+            detail="Error handling webhook.",
+        )
+
     payload = await request.json()
 
-    # event = payload.get("event")
-    # user_id = payload.get("user", {}).get("user_id")
+    data = IWebhook(**payload)
 
-    # if event == "subscription_started":
-    # ✅ Начисление токенов
-    # await add_tokens_to_user(user_id)
+    if data.event.name == "subscription_started":
+        await add_user_tokens(
+            data.user.user_id,
+            data.app.bundle_id,
+        )
 
-    return JSONResponse(
-        content={
-            "status": IWebhook(
-                **payload,
-            ).dict
-        },
-    )
+    return data
