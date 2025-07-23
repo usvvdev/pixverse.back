@@ -1,14 +1,11 @@
 # coding utf-8
 
-from typing import Any
-
-from domain.entities.core.base import ISchema
-
 from ..conf import app_conf
 
 from ..entities.core import (
     IConfEnv,
     IWebhook,
+    ISchema,
 )
 
 from ...interface.schemas.external import UsrData
