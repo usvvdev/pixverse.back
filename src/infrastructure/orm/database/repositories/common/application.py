@@ -49,5 +49,4 @@ class ApplicationRepository(DatabaseRepository):
             many=False,
             related=related,
             models=(Applications, Products),
-            model_filter=lambda v: v.is_active,
         )
