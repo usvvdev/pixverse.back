@@ -57,10 +57,17 @@ async def add_user_tokens(
     if matched_product is None:
         return None
 
-    user_data = UsrData(
+    user = await user_repository.fetch_with_filters(
         user_id=data.user.user_id,
         app_id=data.app.bundle_id,
-        balance=matched_product.tokens_amount,
+    )
+
+    user_data = UsrData(
+        user_id=user.user_id,
+        app_id=user.app_id,
+        balance=int(
+            user.balance + matched_product.tokens_amount,
+        ),
     )
 
     return await user_repository.create_or_update_user_data(
