@@ -39,6 +39,8 @@ async def add_user_tokens(
             application_id=data.app.bundle_id
         )
 
+        print(application_data)
+
         if application_data is None:
             return None
 
