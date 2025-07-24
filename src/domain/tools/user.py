@@ -34,6 +34,7 @@ application_repository = ApplicationRepository(
 async def add_user_tokens(
     data: IWebhook,
 ) -> ISchema:
+    print(data)
     try:
         application_data: Any | None = await application_repository.fetch_with_filters(
             application_id=data.app.bundle_id
