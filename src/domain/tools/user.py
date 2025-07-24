@@ -43,6 +43,8 @@ async def add_user_tokens(
             ["products"],
         )
 
+        print(application_data.__dict__)
+
         if application_data is None:
             return None
 
