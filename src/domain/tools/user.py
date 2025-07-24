@@ -39,8 +39,6 @@ async def add_user_tokens(
             application_id=data.app.bundle_id
         )
 
-        print(application_data)
-
         if application_data is None:
             return None
 
@@ -52,6 +50,8 @@ async def add_user_tokens(
             ),
             None,
         )
+
+        print(matched_product)
 
         if matched_product is None:
             return None
