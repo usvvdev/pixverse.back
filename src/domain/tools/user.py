@@ -4,13 +4,19 @@ from typing import Any
 
 from ..conf import app_conf
 
+from fastapi import Depends
+
 from ..entities.core import (
     IConfEnv,
     IWebhook,
     ISchema,
 )
 
+from ..errors import PixverseError
+
 from ...interface.schemas.external import UsrData
+
+from ...interface.schemas.external.body import IPixverseBody
 
 from ..repositories import IDatabase
 
@@ -72,4 +78,28 @@ async def add_user_tokens(
 
     return await user_repository.create_or_update_user_data(
         user_data,
+    )
+
+
+async def fetch_user_tokens(
+    data: IPixverseBody = Depends(),
+):
+    user = await user_repository.fetch_with_filters(
+        user_id=data.user_id,
+        app_id=data.app_id,
+    )
+    if user.balance == 0:
+        raise PixverseError(402)
+
+    body = UsrData(
+        user_id=user.id,
+        app_id=user.app_id,
+        balance=int(
+            user.balance + 10,
+        ),
+    )
+
+    return await user_repository.update_record(
+        user.id,
+        body,
     )

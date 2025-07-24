@@ -10,7 +10,10 @@ from fastapi import (
 
 from ....views.v1 import PixVerseView
 
-from ......domain.tools import auto_docs
+from ......domain.tools import (
+    auto_docs,
+    fetch_user_tokens,
+)
 
 from ......interface.schemas.external import (
     T2VBody,
@@ -54,6 +57,7 @@ pixverse_router = APIRouter(tags=["Pixverse"])
 async def text_to_video(
     body: T2VBody = Depends(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
+    # _: None = Depends(fetch_user_tokens),
 ) -> Resp:
     """
     Генерирует видео на основе текстового запроса.

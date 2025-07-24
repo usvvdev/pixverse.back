@@ -22,7 +22,7 @@ from .error import format_error_with_request
 
 from .media import stream_media
 
-from .user import add_user_tokens
+from .user import add_user_tokens, fetch_user_tokens
 
 __all__: list[str] = [
     "upload_file",
@@ -38,4 +38,5 @@ __all__: list[str] = [
     "convert_heic_to_jpg",
     "stream_media",
     "add_user_tokens",
+    "fetch_user_tokens",
 ]
