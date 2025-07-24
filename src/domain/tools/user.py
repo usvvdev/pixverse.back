@@ -35,11 +35,13 @@ async def add_user_tokens(
     data: IWebhook,
 ) -> ISchema:
     try:
-        application_data: Any | None = await application_repository.fetch_with_filters(
-            application_id=data.app.bundle_id
+        application_data: (
+            Any | None
+        ) = await application_repository.fetch_application_by_bundle_id(
+            "application_id",
+            data.app.bundle_id,
+            ["products"],
         )
-
-        print(application_data.__dict__)
 
         if application_data is None:
             return None

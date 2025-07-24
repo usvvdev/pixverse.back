@@ -1,6 +1,6 @@
 # coding utf-8
 
-from ...models import Applications
+from ...models import Applications, Products
 
 from ......domain.repositories import (
     IDatabase,
@@ -35,4 +35,19 @@ class ApplicationRepository(DatabaseRepository):
             field_name,
             value,
             many=False,
+        )
+
+    async def fetch_application_by_bundle_id(
+        self,
+        field_name: str,
+        value: str,
+        related: list[str],
+    ) -> Applications | None:
+        return await self.fetch_one_to_many(
+            field_name,
+            value,
+            many=False,
+            related=related,
+            models=(Applications, Products),
+            model_filter=lambda v: v.is_active,
         )
