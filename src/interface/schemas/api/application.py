@@ -113,6 +113,10 @@ class IStoreApplication(ISchema):
         str,
         Field(...),
     ]
+    products: Annotated[
+        list[Product] | None,
+        Field(default=None),
+    ]
 
 
 class ChangeStoreApplication(IStoreApplication):
@@ -134,8 +138,4 @@ class StoreApplication(AddStoreApplication):
     id: Annotated[
         int,
         Field(...),
-    ]
-    products: Annotated[
-        list[Product] | None,
-        Field(default=None),
     ]
