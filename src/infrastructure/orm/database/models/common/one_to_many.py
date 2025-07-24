@@ -66,3 +66,21 @@ PhotoGeneratorApplicationTemplates = Table(
         primary_key=True,
     ),
 )
+
+
+ApplicationProducts = Table(
+    "application_products",
+    ITable.metadata,
+    Column(
+        "application_id",
+        Integer,
+        ForeignKey("applications.id"),
+        primary_key=True,
+    ),
+    Column(
+        "product_id",
+        Integer,
+        ForeignKey("products.id"),
+        primary_key=True,
+    ),
+)

@@ -19,7 +19,9 @@ class ApplicationController:
     async def fetch_applications(
         self,
     ) -> list[StoreApplication]:
-        return await self._repository.fetch_all()
+        return await self._repository.fetch_all(
+            ["products"],
+        )
 
     async def fetch_application(
         self,

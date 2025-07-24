@@ -27,7 +27,7 @@ application_router = APIRouter(tags=["Appstore Applications"])
     "/store_applications",
 )
 async def fetch_applications(
-    _: str = Depends(validate_token),
+    # _: str = Depends(validate_token),
     view: ApplicationView = Depends(
         ApplicationViewFactory.create,
     ),

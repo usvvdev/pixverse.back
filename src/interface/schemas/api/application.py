@@ -10,6 +10,8 @@ from .template import Template
 
 from .style import Style
 
+from .product import Product
+
 from ....domain.entities.core import ISchema
 
 
@@ -132,4 +134,8 @@ class StoreApplication(AddStoreApplication):
     id: Annotated[
         int,
         Field(...),
+    ]
+    products: Annotated[
+        list[Product] | None,
+        Field(default=None),
     ]

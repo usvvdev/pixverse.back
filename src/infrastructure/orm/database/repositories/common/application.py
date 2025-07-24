@@ -18,6 +18,14 @@ class ApplicationRepository(DatabaseRepository):
             Applications,
         )
 
+    async def fetch_all(
+        self,
+        related: list[str],
+    ) -> Applications:
+        return await self.fetch_one_to_many(
+            related=related,
+        )
+
     async def fetch_application(
         self,
         field_name: str,

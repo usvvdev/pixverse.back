@@ -7,7 +7,11 @@ from sqlalchemy import (
     DateTime,
 )
 
+from sqlalchemy.orm import relationship
+
 from datetime import datetime
+
+from .one_to_many import ApplicationProducts
 
 from ......domain.entities.core import ITable
 
@@ -61,4 +65,10 @@ class Applications(ITable):
     technology: str = Column(
         String,
         nullable=True,
+    )
+
+    products = relationship(
+        "Products",
+        secondary=ApplicationProducts,
+        back_populates="applications",
     )
