@@ -17,7 +17,10 @@ from .chatgpt import (
     PhotoGeneratorApplicationRepository,
 )
 
-from .common import ApplicationRepository
+from .common import (
+    ApplicationRepository,
+    ProductRepository,
+)
 
 __all__: list[str] = [
     "PixverseAccountRepository",
@@ -31,4 +34,5 @@ __all__: list[str] = [
     "UserGenerationRepository",
     "PixverseAccountsTokensRepository",
     "ApplicationRepository",
+    "ProductRepository",
 ]

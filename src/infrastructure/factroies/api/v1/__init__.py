@@ -19,7 +19,10 @@ from .chatgpt import (
 
 from .calories import CaloriesViewFactory
 
-from .common import ApplicationViewFactory
+from .common import (
+    ApplicationViewFactory,
+    ProductViewFactory,
+)
 
 from .instagram import InstagramViewFactory
 
@@ -37,4 +40,5 @@ __all__: list[str] = [
     "CaloriesViewFactory",
     "ApplicationViewFactory",
     "InstagramViewFactory",
+    "ProductViewFactory",
 ]

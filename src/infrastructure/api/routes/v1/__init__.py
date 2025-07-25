@@ -23,6 +23,7 @@ from .common import (
     application_router,
     media_router,
     webhook_router,
+    product_router,
 )
 
 from .instagram import instagram_router
@@ -43,4 +44,5 @@ __all__: list[str] = [
     "media_router",
     "instagram_router",
     "webhook_router",
+    "product_router",
 ]

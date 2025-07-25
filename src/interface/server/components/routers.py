@@ -22,6 +22,7 @@ from ....infrastructure.api.routes.v1 import (
     media_router,
     instagram_router,
     webhook_router,
+    product_router,
 )
 
 
@@ -113,6 +114,7 @@ class DashboardRouter(AppRouting):
                 user_data_router,
                 application_router,
                 media_router,
+                product_router,
             ],
         )
 

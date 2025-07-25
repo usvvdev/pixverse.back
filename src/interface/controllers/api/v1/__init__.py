@@ -19,7 +19,10 @@ from .chatgpt import (
 
 from .calories import CaloriesController
 
-from .common import ApplicationController
+from .common import (
+    ApplicationController,
+    ProductController,
+)
 
 from .instagram import InstagramController
 
@@ -37,4 +40,5 @@ __all__: list[str] = [
     "CaloriesController",
     "ApplicationController",
     "InstagramController",
+    "ProductController",
 ]

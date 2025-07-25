@@ -35,6 +35,11 @@ from .application import (
     AddStoreApplication,
 )
 
+from .product import (
+    Product,
+    IProduct,
+)
+
 from .user_data import UserData
 
 __all__: list[str] = [
@@ -59,4 +64,6 @@ __all__: list[str] = [
     "StoreApplication",
     "ChangeStoreApplication",
     "AddStoreApplication",
+    "Product",
+    "IProduct",
 ]
