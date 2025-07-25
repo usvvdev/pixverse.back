@@ -117,6 +117,10 @@ class IStoreApplication(ISchema):
         list[Product] | None,
         Field(default=None),
     ]
+    webhook_url: Annotated[
+        str | None,
+        Field(default=None),
+    ]
 
 
 class ChangeStoreApplication(IStoreApplication):

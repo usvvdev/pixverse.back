@@ -66,6 +66,10 @@ class Applications(ITable):
         String,
         nullable=True,
     )
+    webhook_url: str = Column(
+        String,
+        nullable=True,
+    )
 
     products = relationship(
         "Products",
