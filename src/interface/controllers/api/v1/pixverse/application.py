@@ -49,11 +49,22 @@ class PixverseApplicationController:
         self,
         app_id: str,
     ) -> Application | None:
-        return await self._repository.fetch_application(
+        application = await self._repository.fetch_application(
             "app_id",
             app_id,
             ["templates", "styles"],
         )
+
+        desired_order = ["Trending", "Transofrmation", "Popular", "Funny"]
+
+        category_priority = {name: i for i, name in enumerate(desired_order)}
+
+        if application.templates:
+            application.templates.sort(
+                key=lambda t: category_priority.get(t.category, len(desired_order))
+            )
+
+        return application
 
     async def add_application(
         self,
