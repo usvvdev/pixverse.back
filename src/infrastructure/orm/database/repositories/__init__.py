@@ -20,6 +20,7 @@ from .chatgpt import (
 from .common import (
     ApplicationRepository,
     ProductRepository,
+    WebhookRepository,
 )
 
 __all__: list[str] = [
@@ -35,4 +36,5 @@ __all__: list[str] = [
     "PixverseAccountsTokensRepository",
     "ApplicationRepository",
     "ProductRepository",
+    "WebhookRepository",
 ]

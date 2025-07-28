@@ -11,6 +11,8 @@ from .application import Applications
 
 from .product import Products
 
+from .webhook import Webhooks
+
 __all__: list[str] = [
     "PixverseApplicationStyles",
     "PixverseApplicationTemplates",
@@ -18,4 +20,5 @@ __all__: list[str] = [
     "ApplicationProducts",
     "Applications",
     "Products",
+    "Webhooks",
 ]

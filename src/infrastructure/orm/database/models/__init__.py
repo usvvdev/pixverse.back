@@ -8,6 +8,7 @@ from .common import (
     PhotoGeneratorApplicationTemplates,
     Applications,
     Products,
+    Webhooks,
 )
 
 from .pixverse import (
@@ -41,4 +42,5 @@ __all__: list[str] = [
     "PhotoGeneratorApplicationTemplates",
     "Applications",
     "Products",
+    "Webhooks",
 ]
