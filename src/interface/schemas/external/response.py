@@ -577,3 +577,56 @@ class InstagramFollower(ISchema):
         HttpUrl | None,
         Field(default=None),
     ]
+
+
+class ChatGPTCosmetic(ISchema):
+    title: Annotated[
+        str,
+        Field(...),
+    ]
+    description: Annotated[
+        str,
+        Field(...),
+    ]
+    purpose: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class ChatGPTCosmeticMessage(ISchema):
+    content: Annotated[
+        list[ChatGPTCosmetic],
+        Field(...),
+    ]
+
+    @field_validator("content", mode="before")
+    @classmethod
+    def validate_content(
+        cls,
+        value,
+    ) -> Any:
+        return loads(value)
+
+
+class ChatGPTCosmeticChoice(ISchema):
+    index: Annotated[
+        int,
+        Field(...),
+    ]
+    message: Annotated[
+        ChatGPTCosmeticMessage,
+        Field(...),
+    ]
+
+
+class ChatGPTCosmeticResponse(ISchema):
+    choices: Annotated[
+        list[ChatGPTCosmeticChoice],
+        Field(...),
+    ]
+
+    def fetch_data(
+        self,
+    ) -> list[ChatGPTCosmetic]:
+        return self.choices[0].message.content

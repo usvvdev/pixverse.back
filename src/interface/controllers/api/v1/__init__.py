@@ -26,6 +26,8 @@ from .common import (
 
 from .instagram import InstagramController
 
+from .cosmetic import CosmeticController
+
 __all__: list[str] = [
     "AuthUserController",
     "PixVerseController",
@@ -41,4 +43,5 @@ __all__: list[str] = [
     "ApplicationController",
     "InstagramController",
     "ProductController",
+    "CosmeticController",
 ]

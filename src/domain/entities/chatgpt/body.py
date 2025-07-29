@@ -9,7 +9,10 @@ from pydantic import Field
 
 from ..core import ISchema
 
-from ...constants import BODY_CALORIES_SYSTEM_PROMPT
+from ...constants import (
+    BODY_CALORIES_SYSTEM_PROMPT,
+    BODY_COSMETIC_PRODUCT_SYSTEM_PROMPT,
+)
 
 
 class IBody(ISchema):
@@ -210,6 +213,79 @@ class CaloriesBody(ISchema):
                     role="user",
                     content=[
                         ITextContent(text="Analyze the food in this image."),
+                        IImageContent(image_url=IImageUrl(url=image_url)),
+                    ],
+                ),
+            ],
+        )
+
+
+class CosmeticBody(ISchema):
+    model: Annotated[
+        str,
+        Field(default="gpt-4o"),
+    ]
+    temperature: Annotated[
+        int,
+        Field(default=0),
+    ]
+    top_p: Annotated[
+        int,
+        Field(default=1),
+    ]
+    frequency_penalty: Annotated[
+        int,
+        Field(default=0),
+    ]
+    presence_penalty: Annotated[
+        int,
+        Field(default=0),
+    ]
+    messages: list[IMessage]
+
+    @classmethod
+    def create_text(cls, description: str) -> "CosmeticBody":
+        return cls(
+            model="gpt-4o",
+            temperature=0,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            messages=[
+                IMessage(
+                    role="system",
+                    content=[ITextContent(text=BODY_COSMETIC_PRODUCT_SYSTEM_PROMPT)],
+                ),
+                IMessage(
+                    role="user",
+                    content=[
+                        ITextContent(
+                            text=f"Analyze the following cosmetic products: {description}"
+                        )
+                    ],
+                ),
+            ],
+        )
+
+    @classmethod
+    def create_image(cls, image_url: str) -> "CosmeticBody":
+        return cls(
+            model="gpt-4o",
+            temperature=0,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            messages=[
+                IMessage(
+                    role="system",
+                    content=[ITextContent(text=BODY_COSMETIC_PRODUCT_SYSTEM_PROMPT)],
+                ),
+                IMessage(
+                    role="user",
+                    content=[
+                        ITextContent(
+                            text="Analyze the cosmetic products in this image."
+                        ),
                         IImageContent(image_url=IImageUrl(url=image_url)),
                     ],
                 ),

@@ -6,6 +6,7 @@ from .body import (
     PhotoBody,
     TB2PBody,
     CaloriesBody,
+    CosmeticBody,
     IMessage,
     ITextContent,
     IImageContent,
@@ -29,4 +30,5 @@ __all__: list[str] = [
     "IImageContent",
     "T2CBody",
     "I2CBody",
+    "CosmeticBody",
 ]

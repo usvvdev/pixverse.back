@@ -49,6 +49,8 @@ from .response import (
     InstagramUserResponse,
     InstagramPost,
     InstagramFollower,
+    ChatGPTCosmeticResponse,
+    ChatGPTCosmetic,
 )
 
 __all__ = [
@@ -96,4 +98,6 @@ __all__ = [
     "IInstagramUser",
     "InstagramFollower",
     "UserFilters",
+    "ChatGPTCosmeticResponse",
+    "ChatGPTCosmetic",
 ]

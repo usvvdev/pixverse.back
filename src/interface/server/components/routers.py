@@ -23,6 +23,7 @@ from ....infrastructure.api.routes.v1 import (
     instagram_router,
     webhook_router,
     product_router,
+    cosmetic_router,
 )
 
 
@@ -146,6 +147,22 @@ class InstagramRouter(AppRouting):
             config,
             routers=[
                 instagram_router,
+                media_router,
+            ],
+        )
+
+
+class CosmeticRouter(AppRouting):
+    def __init__(
+        self,
+        app: FastAPI,
+        config: IConfEnv,
+    ) -> None:
+        super().__init__(
+            app,
+            config,
+            routers=[
+                cosmetic_router,
                 media_router,
             ],
         )

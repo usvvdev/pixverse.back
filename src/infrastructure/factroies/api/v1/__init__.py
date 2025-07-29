@@ -26,6 +26,8 @@ from .common import (
 
 from .instagram import InstagramViewFactory
 
+from .cosmetic import CosmeticViewFactory
+
 __all__: list[str] = [
     "PixVerseViewFactory",
     "PixverseAccountViewFactory",
@@ -41,4 +43,5 @@ __all__: list[str] = [
     "ApplicationViewFactory",
     "InstagramViewFactory",
     "ProductViewFactory",
+    "CosmeticViewFactory",
 ]

@@ -28,6 +28,8 @@ from .common import (
 
 from .instagram import instagram_router
 
+from .cosmetic import cosmetic_router
+
 __all__: list[str] = [
     "auth_user_router",
     "pixverse_router",
@@ -45,4 +47,5 @@ __all__: list[str] = [
     "instagram_router",
     "webhook_router",
     "product_router",
+    "cosmetic_router",
 ]

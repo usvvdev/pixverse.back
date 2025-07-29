@@ -60,6 +60,14 @@ services:
       - APP_SERVICE=instagram
     entrypoint: ["sh", "./scripts/start_api.sh"]
 
+  cosmetic:
+    <<: *service-template
+    ports:
+      - 8006:${APP_PORT}
+    environment:
+      - APP_SERVICE=cosmetic
+    entrypoint: ["sh", "./scripts/start_api.sh"]
+
   pixverse-account-worker:
     <<: *service-template
     environment:
