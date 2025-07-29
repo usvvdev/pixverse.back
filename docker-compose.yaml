@@ -63,7 +63,7 @@ services:
   cosmetic:
     <<: *service-template
     ports:
-      - 8006:${APP_PORT}
+      - 8007:${APP_PORT}
     environment:
       - APP_SERVICE=cosmetic
     entrypoint: ["sh", "./scripts/start_api.sh"]
