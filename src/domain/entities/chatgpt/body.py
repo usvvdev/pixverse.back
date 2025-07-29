@@ -284,7 +284,7 @@ class CosmeticBody(ISchema):
                     role="user",
                     content=[
                         ITextContent(
-                            text="Analyze the cosmetic products in this image."
+                            text="Please identify and list all visible cosmetic products in this photo. Include brand names, product types, and packaging characteristics if possible."
                         ),
                         IImageContent(image_url=IImageUrl(url=image_url)),
                     ],
