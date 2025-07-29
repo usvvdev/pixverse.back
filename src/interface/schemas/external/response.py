@@ -604,9 +604,16 @@ class ChatGPTCosmeticMessage(ISchema):
     @classmethod
     def validate_content(
         cls,
-        value,
+        value: str | Any,
     ) -> Any:
-        return loads(value)
+        if isinstance(value, str):
+            value = value.strip()
+            if value.startswith("```json"):
+                value = value.removeprefix("```json").strip()
+            if value.endswith("```"):
+                value = value.removesuffix("```").strip()
+            return loads(value)
+        return value
 
 
 class ChatGPTCosmeticChoice(ISchema):
