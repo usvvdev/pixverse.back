@@ -625,6 +625,10 @@ class ChatGPTCosmeticResponse(ISchema):
         list[ChatGPTCosmeticChoice],
         Field(...),
     ]
+    error: Annotated[
+        Any | None,
+        Field(default=None),
+    ]
 
     def fetch_data(
         self,
