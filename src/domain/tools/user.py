@@ -69,10 +69,10 @@ async def add_user_tokens(
     )
 
     user_data = UsrData(
-        user_id=user.user_id,
-        app_id=user.app_id,
+        user_id=user.user_id if user is not None else data.user.user_id,
+        app_id=user.app_id if user is not None else data.app.bundle_id,
         balance=int(
-            user.balance + matched_product.tokens_amount,
+            user.balance if user is not None else 0 + matched_product.tokens_amount,
         ),
     )
 
