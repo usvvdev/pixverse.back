@@ -12,7 +12,12 @@ from .style import Style
 
 from .product import Product
 
-from ....domain.entities.core import ISchema
+from ....domain.entities.core import ISchema, IConfEnv
+
+from ....domain.conf import app_conf
+
+
+conf: IConfEnv = app_conf()
 
 
 class IApplication(ISchema):
@@ -143,3 +148,11 @@ class StoreApplication(AddStoreApplication):
         int,
         Field(...),
     ]
+
+    @field_validator("webhook_url", mode="after")
+    @classmethod
+    def validate_webhook_url(
+        cls,
+        value: str,
+    ):
+        return f"{conf.domain_url}/pixverse/api/v1/webhooks/{value}"

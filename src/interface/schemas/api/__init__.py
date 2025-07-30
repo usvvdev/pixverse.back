@@ -40,6 +40,8 @@ from .product import (
     IProduct,
 )
 
+from .webhook import Webhook
+
 from .user_data import UserData
 
 __all__: list[str] = [
@@ -66,4 +68,5 @@ __all__: list[str] = [
     "AddStoreApplication",
     "Product",
     "IProduct",
+    "Webhook",
 ]
