@@ -57,6 +57,9 @@ class InstagramCore:
         key = INSTAGRAM_SESSION.format(
             username=username,
         )
+        if self._redis.get(key):
+            self._redis.delete(key)
+
         session_data = dumps(client.get_settings())
         self._redis.set(
             key,
