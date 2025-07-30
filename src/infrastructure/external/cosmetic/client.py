@@ -107,55 +107,6 @@ class CosmeticClient:
 
                 data: ChatGPTCosmeticResponse | ChatGPTErrorResponse = await call(token)
 
-                print(data)
-
-                if not isinstance(data, ChatGPTErrorResponse):
-                    return data.fetch_data()
-
-                last_error = data.error
-
-            except Exception:
-                if attempt == max_attempts - 1:
-                    try:
-                        data = await call(token)
-
-                        if not data.error:
-                            return data.fetch_data()
-
-                    except Exception as final_err:
-                        raise final_err
-                    return await self.__handle_failure(last_error)
-                await sleep(1)
-        return await self.__handle_failure(
-            last_error,
-            extra={"Токен авторизации": token},
-        )
-
-    async def text_to_cosmetic(
-        self,
-        description: str,
-    ) -> list[ChatGPTCosmetic]:
-        max_attempts = 10
-
-        last_error = None
-
-        for attempt in range(max_attempts):
-            token = conf.chatgpt_token
-            try:
-
-                async def call(
-                    token: str,
-                ) -> ChatGPTCosmeticResponse | ChatGPTErrorResponse:
-                    return await self._core.post(
-                        token=token,
-                        endpoint=ChatGPTEndpoint.CHAT,
-                        body=CosmeticBody.create_text(
-                            description=description,
-                        ),
-                    )
-
-                data: ChatGPTCosmeticResponse | ChatGPTErrorResponse = await call(token)
-
                 if not isinstance(data, ChatGPTErrorResponse):
                     return data.fetch_data()
 

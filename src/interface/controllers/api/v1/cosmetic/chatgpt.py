@@ -14,14 +14,6 @@ class CosmeticController:
     ) -> None:
         self._client = client
 
-    async def text_to_cosmetic(
-        self,
-        description: str,
-    ) -> list[ChatGPTCosmetic]:
-        return await self._client.text_to_cosmetic(
-            description,
-        )
-
     async def photo_to_cosmetic(
         self,
         image: UploadFile,

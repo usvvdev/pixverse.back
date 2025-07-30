@@ -25,37 +25,6 @@ cosmetic_router = APIRouter(tags=["Calories"])
 
 
 @cosmetic_router.post(
-    "/text2cosmetic",
-)
-@auto_docs(
-    "api/v1/text2cosmetic",
-    "POST",
-    params={
-        "userId": {
-            "type": "string",
-            "description": "Уникальный идентификатор пользователя",
-        },
-        "appId": {
-            "type": "string",
-            "description": "Уникальный идентификатор приложения",
-        },
-        "name": {
-            "type": "string",
-            "description": "Описание названия косметики",
-        },
-    },
-    description="Роутер для получения описания косметки по тексту",
-)
-async def text_to_cosmetic(
-    body: T2CBody = Depends(),
-    view: CosmeticView = Depends(CosmeticViewFactory.create),
-) -> list[ChatGPTCosmetic]:
-    return await view.text_to_cosmetic(
-        body.description,
-    )
-
-
-@cosmetic_router.post(
     "/photo2cosmetic",
 )
 @auto_docs(
