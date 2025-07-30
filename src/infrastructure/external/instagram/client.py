@@ -73,8 +73,9 @@ class InstagramClient:
         proxy: str | None = None,
     ) -> Client:
         client = Client()
+        proxy = "https://k0XRJ4:A1GET@196.17.251.251:8000"
         if proxy:
-            client.set_proxy(dsn="https://k0XRJ4:A1GET@196.17.251.251:8000")
+            client.set_proxy(proxy)
         client.set_settings(self.__generate_settings())
         return client
 
