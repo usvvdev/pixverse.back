@@ -11,6 +11,7 @@ from instagrapi.exceptions import (
     UserNotFound,
     PleaseWaitFewMinutes,
     LoginRequired,
+    UnknownError,
 )
 
 """
@@ -97,6 +98,10 @@ INSTAGRAM_ERROR = {
     LoginRequired: (
         status.HTTP_401_UNAUTHORIZED,
         "Session not found. Please retry your request again.",
+    ),
+    UnknownError: (
+        status.HTTP_400_BAD_REQUEST,
+        "Please check the security code and try again.",
     ),
 }
 
