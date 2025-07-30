@@ -131,7 +131,7 @@ class InstagramClient:
             )
 
         client: Client = self.__create_new_client(
-            "http://k0XRJ4:A1GETc@196.17.251.251:8000",
+            proxy="http://k0XRJ4:A1GETc@196.17.251.251:8000",
         )
         client.challenge_code_handler = self.__handle_code(
             body.verification_code,
