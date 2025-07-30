@@ -125,8 +125,6 @@ class InstagramClient:
         self,
         body: InstagramAuthUser,
     ) -> InstagramSessionResponse | InstagramAuthResponse:
-        print(body)
-
         if _ := self._core.fetch_user_session(body.username):
             return InstagramSessionResponse(
                 username=body.username,
@@ -136,7 +134,7 @@ class InstagramClient:
             proxy="http://k0XRJ4:A1GETc@196.17.251.251:8000",
         )
         client.challenge_code_handler = self.__handle_code(
-            body.verification_code,
+            body,
         )
 
         try:
