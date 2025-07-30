@@ -125,6 +125,8 @@ class InstagramClient:
         self,
         body: InstagramAuthUser,
     ) -> InstagramSessionResponse | InstagramAuthResponse:
+        print(body)
+
         if _ := self._core.fetch_user_session(body.username):
             return InstagramSessionResponse(
                 username=body.username,
