@@ -632,7 +632,7 @@ class InstagramFollower(ISchema):
         Field(default=None),
     ]
     profile_picture: Annotated[
-        str,
+        HttpUrl,
         Field(...),
     ]
     created_at: Annotated[
