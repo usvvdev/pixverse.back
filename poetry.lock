@@ -1303,6 +1303,24 @@ requests = "2.32.4"
 test = ["Pillow (==11.3.0)", "bandit (==1.8.6)", "flake8 (==7.3.0)", "isort (==6.0.1)", "markdown-include (==0.8.1)", "mike (==2.1.3)", "mkdocs-material (==9.6.15)", "mkdocs-minify-html-plugin (>=0.3.1)", "mkdocstrings (==0.29.1)", "pytest (>=8.4.0,<8.5.0)", "pytest-xdist (==3.8.0)"]
 
 [[package]]
+name = "instaloader"
+version = "4.14.2"
+description = "Download pictures (or videos) along with their captions and other metadata from Instagram."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "instaloader-4.14.2-py3-none-any.whl", hash = "sha256:e8c72410405fcbfd16c6e0034a10bccce634d91d59b1b0664b7de813be9d27fd"},
+    {file = "instaloader-4.14.2.tar.gz", hash = "sha256:e9205098e6ec494cdfe2aef6c56805084cef4008a06d4d78504301f42f8e4d33"},
+]
+
+[package.dependencies]
+requests = ">=2.25"
+
+[package.extras]
+browser-cookie3 = ["browser_cookie3 (>=0.19.1)"]
+
+[[package]]
 name = "jmespath"
 version = "0.10.0"
 description = "JSON Matching Expressions"
@@ -3293,4 +3311,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "f7064dc44993d3bacdc7e8be75d4a67301aca91dc4a483b0badf66d38bb382f3"
+content-hash = "35d674bffa217b8d153de84cda08914ca8535881cdce7abcc008c1c19665642b"
