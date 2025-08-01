@@ -166,6 +166,24 @@ class InstagramCore:
                     )
                 )
 
+            for follower in followers:
+                await user_relations_repository.add_record(
+                    InstagramFollower.from_instaloader_profile(
+                        follower,
+                        user_id,
+                        relation_type="follower",
+                    )
+                )
+
+            for followee in followees:
+                await user_relations_repository.add_record(
+                    InstagramFollower.from_instaloader_profile(
+                        followee,
+                        user_id,
+                        relation_type="following",
+                    )
+                )
+
             # 2. not_following_back
             for username in not_following_back:
                 user = follower_map[username]
