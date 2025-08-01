@@ -49,7 +49,7 @@ class InstagramController:
         body: IInstagramUser,
         uuid: str,
         id: int,
-    ) -> InstagramUserResponse:
+    ) -> InstagramPost:
         return await self._client.fetch_publication(
             body,
             uuid,
@@ -60,8 +60,18 @@ class InstagramController:
         self,
         body: IInstagramUser,
         uuid: str,
-    ) -> InstagramUserResponse:
+    ) -> Page[InstagramFollower]:
         return await self._client.fetch_subscribers(
+            body,
+            uuid,
+        )
+
+    async def fetch_subscribtions(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> Page[InstagramFollower]:
+        return await self._client.fetch_subscribtions(
             body,
             uuid,
         )

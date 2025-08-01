@@ -33,7 +33,7 @@ class InstagramUserRelations(ITable):
         index=True,
     )
     relation_type: str = Column(
-        Enum(InstagramRelationType),
+        String,
         nullable=False,
     )
     related_username: str = Column(

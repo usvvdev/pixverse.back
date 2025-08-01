@@ -49,7 +49,7 @@ class InstagramView:
         body: IInstagramUser,
         uuid: str,
         id: int,
-    ) -> InstagramUserResponse:
+    ) -> InstagramPost:
         return await self._controller.fetch_publication(
             body,
             uuid,
@@ -60,27 +60,21 @@ class InstagramView:
         self,
         body: IInstagramUser,
         uuid: str,
-    ) -> InstagramUserResponse:
+    ) -> Page[InstagramFollower]:
         return await self._controller.fetch_subscribers(
             body,
             uuid,
         )
 
-    # async def fetch_subsribers(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     return await self._controller.fetch_subsribers(
-    #         body,
-    #     )
-
-    # async def fetch_subsribtions(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     return await self._controller.fetch_subsribtions(
-    #         body,
-    #     )
+    async def fetch_subscribtions(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.fetch_subscribtions(
+            body,
+            uuid,
+        )
 
     # async def fetch_non_reciprocal_subsribtions(
     #     self,

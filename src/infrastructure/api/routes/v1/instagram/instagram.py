@@ -6,6 +6,8 @@ from fastapi import (
     Query,
 )
 
+from typing import Any
+
 from fastapi_pagination import Page
 
 from ....views.v1 import InstagramView
@@ -82,8 +84,22 @@ async def fetch_subscribers(
     body: IInstagramUser,
     uuid: str,
     view: InstagramView = Depends(InstagramViewFactory.create),
-) -> IInstagramPost:
+) -> Page[InstagramFollower]:
     return await view.fetch_subscribers(
+        body,
+        uuid,
+    )
+
+
+@instagram_router.post(
+    "/users/{uuid}/subscribtions",
+)
+async def fetch_subscribtions(
+    body: IInstagramUser,
+    uuid: str,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> Page[InstagramFollower]:
+    return await view.fetch_subscribtions(
         body,
         uuid,
     )

@@ -144,14 +144,51 @@ class InstagramClient:
         self,
         body: IInstagramUser,
         uuid: str,
-    ) -> IInstagramPost:
+    ) -> Page[InstagramFollower]:
         user_session = await session_repository.fetch_uuid(
             uuid,
         )
-        return await user_relations_repository.fetch_with_filters(
-            relation_type="FOLLOWER",
+        subscribers = await user_relations_repository.fetch_with_filters(
+            relation_type="follower",
             user_id=user_session.user_id,
+            many=True,
         )
+
+        items: list[InstagramFollower] = list(
+            map(
+                lambda subscriber: InstagramFollower.model_validate(
+                    subscriber,
+                ),
+                subscribers,
+            )
+        )
+
+        return paginate(items)
+
+    async def fetch_subscribtions(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> Page[InstagramFollower]:
+        user_session = await session_repository.fetch_uuid(
+            uuid,
+        )
+        subcribtions = await user_relations_repository.fetch_with_filters(
+            relation_type="following",
+            user_id=user_session.user_id,
+            many=True,
+        )
+
+        items: list[InstagramFollower] = list(
+            map(
+                lambda subscribtion: InstagramFollower.model_validate(
+                    subscribtion,
+                ),
+                subcribtions,
+            )
+        )
+
+        return paginate(items)
 
     #     session = await self.__auth_user_session(body.session_id)
 
