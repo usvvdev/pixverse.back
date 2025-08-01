@@ -43,6 +43,7 @@ from ...orm.database.repositories import (
     InstagramUserRepository,
     InstagramSessionRepository,
     InstagramUserPostsRepository,
+    InstagramUserRelationsRepository,
 )
 
 
@@ -60,6 +61,11 @@ session_repository = InstagramSessionRepository(
 
 
 user_posts_repository = InstagramUserPostsRepository(
+    IDatabase(conf),
+)
+
+
+user_relations_repository = InstagramUserRelationsRepository(
     IDatabase(conf),
 )
 
@@ -131,6 +137,19 @@ class InstagramClient:
         )
         return await user_posts_repository.fetch_with_filters(
             id=id,
+            user_id=user_session.user_id,
+        )
+
+    async def fetch_subscribers(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> IInstagramPost:
+        user_session = await session_repository.fetch_uuid(
+            uuid,
+        )
+        return await user_relations_repository.fetch_with_filters(
+            relation_type="follower",
             user_id=user_session.user_id,
         )
 

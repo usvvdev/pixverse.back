@@ -56,6 +56,16 @@ class InstagramView:
             id,
         )
 
+    async def fetch_subscribers(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> InstagramUserResponse:
+        return await self._controller.fetch_subscribers(
+            body,
+            uuid,
+        )
+
     # async def fetch_subsribers(
     #     self,
     #     body: IInstagramUser,

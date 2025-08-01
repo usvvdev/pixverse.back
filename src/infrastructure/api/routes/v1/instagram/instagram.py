@@ -75,6 +75,20 @@ async def fetch_publication(
     )
 
 
+@instagram_router.post(
+    "/users/{uuid}/subscribers/",
+)
+async def fetch_subscribers(
+    body: IInstagramUser,
+    uuid: str,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> IInstagramPost:
+    return await view.fetch_subscribers(
+        body,
+        uuid,
+    )
+
+
 # @instagram_router.post(
 #     "/subscribers",
 # )
