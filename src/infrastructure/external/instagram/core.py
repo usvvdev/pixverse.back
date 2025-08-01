@@ -198,6 +198,7 @@ class InstagramCore:
         profile: Profile | None = await self.__validate_profile(
             session_data,
         )
+        client = await self.__set_client(session_data)
         if profile is not None:
             user_data = IUser.from_instaloader_profile(
                 profile,
@@ -239,7 +240,7 @@ class InstagramCore:
                 async for post in self.__iterate_posts(posts, user.id):
                     await user_posts_repository.add_record(post)
 
-            await self.__add_user_relations(profile, user.id)
+            await self.__add_user_relations(client, user.id)
 
             return AddSession(
                 **session_data.dict,
