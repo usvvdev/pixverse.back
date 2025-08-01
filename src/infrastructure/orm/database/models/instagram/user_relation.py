@@ -48,6 +48,10 @@ class InstagramUserRelations(ITable):
         String(64),
         nullable=True,
     )
+    profile_picture: str = Column(
+        String(1024),
+        nullable=False,
+    )
     created_at: str = Column(
         DateTime,
         nullable=False,
