@@ -26,6 +26,7 @@ from random import uniform
 from instagrapi.types import (
     User,
     Media,
+    UserShort,
 )
 
 from ....domain.conf import app_conf
@@ -642,17 +643,17 @@ class InstagramFollower(ISchema):
     @classmethod
     def from_instaloader_profile(
         cls,
-        profile: Profile,
+        user: UserShort,
         user_id: int,
         relation_type: str,
     ) -> "InstagramFollower":
         return cls(
             user_id=user_id,
             relation_type=relation_type,
-            related_user_id=str(profile.userid),
-            related_username=profile.username,
-            related_full_name=profile.full_name or None,
-            profile_picture=profile.profile_pic_url,
+            related_user_id=str(user.pk),  # pk = Instagram internal ID
+            related_username=user.username,
+            related_full_name=user.full_name or None,
+            profile_picture=user.profile_pic_url,
         )
 
 

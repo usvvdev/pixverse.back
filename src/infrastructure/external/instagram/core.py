@@ -9,6 +9,12 @@ from instaloader.instaloader import (
     InstaloaderException,
 )
 
+from instagrapi import Client
+
+from instagrapi.types import UserShort
+
+from instagrapi.exceptions import ClientLoginRequired, ClientError
+
 from sqlalchemy.exc import DuplicateColumnError
 
 from ....domain.errors import InstagramError
@@ -90,6 +96,17 @@ class InstagramCore:
             raise err
         return loader
 
+    async def __set_client(
+        self,
+        session_data: ISession,
+    ) -> Instaloader:
+        client = Client()
+        try:
+            client.login_by_sessionid(session_data.sessionid)
+        except ClientLoginRequired as err:
+            raise err
+        return client
+
     async def __validate_profile(
         self,
         session_data: ISession,
@@ -116,13 +133,15 @@ class InstagramCore:
 
     async def __add_user_relations(
         self,
-        profile: Profile,
+        client: Client,
         user_id: int,
     ) -> None:
-        print(profile._context.is_logged_in)
         try:
-            followers = list(profile.get_followers())
-            followees = list(profile.get_followees())
+            user_info = client.user_info_by_username(client.username)
+            user_pk = user_info.pk
+
+            followers: list[UserShort] = client.user_followers(user_pk).values()
+            followees: list[UserShort] = client.user_following(user_pk).values()
 
             follower_usernames = {f.username for f in followers}
             followee_usernames = {f.username for f in followees}
@@ -130,7 +149,7 @@ class InstagramCore:
             # 1. follower
             for follower in followers:
                 await user_relations_repository.add_record(
-                    InstagramFollower.from_instaloader_profile(
+                    InstagramFollower.from_instagrapi_user(
                         follower,
                         user_id,
                         relation_type="follower",
@@ -140,7 +159,7 @@ class InstagramCore:
             # 2. following
             for followee in followees:
                 await user_relations_repository.add_record(
-                    InstagramFollower.from_instaloader_profile(
+                    InstagramFollower.from_instagrapi_user(
                         followee,
                         user_id,
                         relation_type="following",
@@ -151,7 +170,7 @@ class InstagramCore:
             for follower in followers:
                 if follower.username not in followee_usernames:
                     await user_relations_repository.add_record(
-                        InstagramFollower.from_instaloader_profile(
+                        InstagramFollower.from_instagrapi_user(
                             follower,
                             user_id,
                             relation_type="not_following_back",
@@ -162,14 +181,14 @@ class InstagramCore:
             for followee in followees:
                 if followee.username not in follower_usernames:
                     await user_relations_repository.add_record(
-                        InstagramFollower.from_instaloader_profile(
+                        InstagramFollower.from_instagrapi_user(
                             followee,
                             user_id,
                             relation_type="not_followed_by",
                         )
                     )
 
-        except InstaloaderException as err:
+        except ClientError as err:
             raise InstagramError.from_exception(err)
 
     async def __add_user(
