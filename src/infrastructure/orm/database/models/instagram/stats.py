@@ -50,6 +50,21 @@ class InstagramUserStats(ITable):
         default=0,
         nullable=True,
     )
+    mutual_subscriptions_count: int = Column(
+        Integer,
+        default=0,
+        nullable=True,
+    )
+    non_reciprocal_following_count: int = Column(
+        Integer,
+        default=0,
+        nullable=True,
+    )
+    non_reciprocal_followers_count: int = Column(
+        Integer,
+        default=0,
+        nullable=True,
+    )
     created_at: datetime = Column(
         DateTime,
         nullable=False,

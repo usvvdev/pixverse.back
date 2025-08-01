@@ -55,14 +55,15 @@ class PixverseApplicationController:
             ["templates", "styles", "categories"],
         )
 
-        categories = [category.title for category in application.categories]
+        if application.categories is not None:
+            categories = [category.title for category in application.categories]
 
-        category_priority = {name: i for i, name in enumerate(categories)}
+            category_priority = {name: i for i, name in enumerate(categories)}
 
-        if application.templates:
-            application.templates.sort(
-                key=lambda t: category_priority.get(t.category, len(categories))
-            )
+            if application.templates:
+                application.templates.sort(
+                    key=lambda t: category_priority.get(t.category, len(categories))
+                )
 
         return application
 

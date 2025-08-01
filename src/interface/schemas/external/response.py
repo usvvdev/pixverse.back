@@ -447,6 +447,18 @@ class InstagramUserStatistics(ISchema):
         int,
         Field(...),
     ]
+    mutual_subscriptions_count: Annotated[
+        int,
+        Field(...),
+    ]
+    non_reciprocal_following_count: Annotated[
+        int,
+        Field(...),
+    ]
+    non_reciprocal_followers_count: Annotated[
+        int,
+        Field(...),
+    ]
     created_at: Annotated[
         datetime,
         Field(default_factory=lambda: now()),
@@ -457,6 +469,9 @@ class InstagramUserStatistics(ISchema):
         cls,
         profile: Profile,
         user_id: int,
+        mutual_count: int = 0,
+        not_following_back_count: int = 0,
+        not_followed_by_count: int = 0,
         max_posts: int = 10,
     ) -> "InstagramUserStatistics":
         posts = profile.get_posts()
@@ -476,6 +491,9 @@ class InstagramUserStatistics(ISchema):
             comments_count=comments_count,
             followers_count=profile.followers,
             following_count=profile.followees,
+            mutual_subscriptions_count=mutual_count,
+            non_reciprocal_following_count=not_followed_by_count,
+            non_reciprocal_followers_count=not_following_back_count,
         )
 
 

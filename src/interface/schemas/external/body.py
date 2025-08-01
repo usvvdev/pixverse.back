@@ -1,6 +1,6 @@
 # coding utf-8
 
-from typing import Annotated
+from typing import Annotated, NamedTuple
 
 from uuid import uuid4
 
@@ -283,3 +283,23 @@ class InstagramAuthUser(IInstagramUser):
             "app_id",
             "search_user",
         }
+
+
+class UserRelationStats(NamedTuple):
+    follower_usernames: set[str]
+    followee_usernames: set[str]
+    mutual_usernames: set[str]
+    not_following_back: set[str]
+    not_followed_by: set[str]
+
+    @property
+    def mutual_count(self) -> int:
+        return len(self.mutual_usernames)
+
+    @property
+    def not_following_back_count(self) -> int:
+        return len(self.not_following_back)
+
+    @property
+    def not_followed_by_count(self) -> int:
+        return len(self.not_followed_by)

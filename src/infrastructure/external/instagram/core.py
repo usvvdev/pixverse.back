@@ -32,6 +32,7 @@ from ....interface.schemas.external import (
     InstagramUserStatistics,
     InstagramPost,
     InstagramFollower,
+    UserRelationStats,
 )
 
 from requests.cookies import cookiejar_from_dict
@@ -131,6 +132,26 @@ class InstagramCore:
         for post in posts:
             yield InstagramPost.from_instaloader_post(post, user_id)
 
+    def __fetch_relation_stats(
+        self,
+        followers: list[UserShort],
+        followees: list[UserShort],
+    ) -> UserRelationStats:
+        follower_usernames = {f.username for f in followers}
+        followee_usernames = {f.username for f in followees}
+
+        mutual_usernames = follower_usernames & followee_usernames
+        not_following_back = follower_usernames - followee_usernames
+        not_followed_by = followee_usernames - follower_usernames
+
+        return UserRelationStats(
+            follower_usernames,
+            followee_usernames,
+            mutual_usernames,
+            not_following_back,
+            not_followed_by,
+        )
+
     async def __add_user_relations(
         self,
         client: Client,
@@ -140,21 +161,16 @@ class InstagramCore:
             user_info = client.user_info_by_username(client.username)
             user_pk = user_info.pk
 
-            followers: list[UserShort] = client.user_followers(user_pk).values()
-            followees: list[UserShort] = client.user_following(user_pk).values()
+            followers = client.user_followers(user_pk).values()
+            followees = client.user_following(user_pk).values()
 
             follower_map = {f.username: f for f in followers}
             followee_map = {f.username: f for f in followees}
 
-            follower_usernames = set(follower_map.keys())
-            followee_usernames = set(followee_map.keys())
-
-            mutual_usernames = follower_usernames & followee_usernames
-            not_following_back = follower_usernames - followee_usernames
-            not_followed_by = followee_usernames - follower_usernames
+            relation_stats = self.__fetch_relation_stats(followers, followees)
 
             # 1. mutual
-            for username in mutual_usernames:
+            for username in relation_stats.mutual_usernames:
                 user = followee_map[
                     username
                 ]  # или follower_map[username], они одинаковые
@@ -185,7 +201,7 @@ class InstagramCore:
                 )
 
             # 2. not_following_back
-            for username in not_following_back:
+            for username in relation_stats.not_following_back:
                 user = follower_map[username]
                 await user_relations_repository.add_record(
                     InstagramFollower.from_instaloader_profile(
@@ -196,7 +212,7 @@ class InstagramCore:
                 )
 
             # 3. not_followed_by
-            for username in not_followed_by:
+            for username in relation_stats.not_followed_by:
                 user = followee_map[username]
                 await user_relations_repository.add_record(
                     InstagramFollower.from_instaloader_profile(
@@ -236,9 +252,18 @@ class InstagramCore:
                 False,
             )
 
+            followers = client.user_followers(session_data.ds_user_id).values()
+
+            followees = client.user_following(session_data.ds_user_id).values()
+
+            relation_stats = self.__fetch_relation_stats(followers, followees)
+
             user_stats = InstagramUserStatistics.from_instaloader_profile(
                 profile,
                 user.id,
+                mutual_count=relation_stats.mutual_count,
+                not_following_back_count=relation_stats.not_following_back_count,
+                not_followed_by_count=relation_stats.not_followed_by_count,
             )
 
             if (
