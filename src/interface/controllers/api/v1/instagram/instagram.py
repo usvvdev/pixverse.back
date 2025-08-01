@@ -70,10 +70,12 @@ class InstagramController:
         self,
         body: IInstagramUser,
         uuid: str,
+        relation_type: str,
     ) -> Page[InstagramFollower]:
         return await self._client.fetch_subscribtions(
             body,
             uuid,
+            relation_type,
         )
 
     # async def fetch_subsribers(

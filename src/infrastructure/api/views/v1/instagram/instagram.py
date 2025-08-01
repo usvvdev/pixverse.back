@@ -70,10 +70,12 @@ class InstagramView:
         self,
         body: IInstagramUser,
         uuid: str,
+        relation_type: str,
     ) -> Page[InstagramFollower]:
         return await self._controller.fetch_subscribtions(
             body,
             uuid,
+            relation_type,
         )
 
     # async def fetch_non_reciprocal_subsribtions(

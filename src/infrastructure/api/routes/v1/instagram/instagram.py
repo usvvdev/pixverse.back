@@ -6,7 +6,7 @@ from fastapi import (
     Query,
 )
 
-from typing import Any
+from typing import Any, Literal
 
 from fastapi_pagination import Page
 
@@ -97,11 +97,13 @@ async def fetch_subscribers(
 async def fetch_subscribtions(
     body: IInstagramUser,
     uuid: str,
+    relation_type: Literal["mutual", "not_followed_by"] = "mutual",
     view: InstagramView = Depends(InstagramViewFactory.create),
 ) -> Page[InstagramFollower]:
     return await view.fetch_subscribtions(
         body,
         uuid,
+        relation_type,
     )
 
 

@@ -169,12 +169,13 @@ class InstagramClient:
         self,
         body: IInstagramUser,
         uuid: str,
+        relation_type: str = "mutual",
     ) -> Page[InstagramFollower]:
         user_session = await session_repository.fetch_uuid(
             uuid,
         )
         subcribtions = await user_relations_repository.fetch_with_filters(
-            relation_type="following",
+            relation_type=relation_type,
             user_id=user_session.user_id,
             many=True,
         )
