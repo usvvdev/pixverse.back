@@ -143,50 +143,50 @@ class InstagramCore:
             followers: list[UserShort] = client.user_followers(user_pk).values()
             followees: list[UserShort] = client.user_following(user_pk).values()
 
-            follower_usernames = {f.username for f in followers}
-            followee_usernames = {f.username for f in followees}
+            follower_map = {f.username: f for f in followers}
+            followee_map = {f.username: f for f in followees}
 
-            # 1. follower
-            for follower in followers:
+            follower_usernames = set(follower_map.keys())
+            followee_usernames = set(followee_map.keys())
+
+            mutual_usernames = follower_usernames & followee_usernames
+            not_following_back = follower_usernames - followee_usernames
+            not_followed_by = followee_usernames - follower_usernames
+
+            # 1. mutual
+            for username in mutual_usernames:
+                user = followee_map[
+                    username
+                ]  # или follower_map[username], они одинаковые
                 await user_relations_repository.add_record(
                     InstagramFollower.from_instaloader_profile(
-                        follower,
+                        user,
                         user_id,
-                        relation_type="follower",
+                        relation_type="mutual",
                     )
                 )
 
-            # 2. following
-            for followee in followees:
+            # 2. not_following_back
+            for username in not_following_back:
+                user = follower_map[username]
                 await user_relations_repository.add_record(
                     InstagramFollower.from_instaloader_profile(
-                        followee,
+                        user,
                         user_id,
-                        relation_type="following",
+                        relation_type="not_following_back",
                     )
                 )
 
-            # 3. not_following_back — ты не подписан в ответ
-            for follower in followers:
-                if follower.username not in followee_usernames:
-                    await user_relations_repository.add_record(
-                        InstagramFollower.from_instaloader_profile(
-                            follower,
-                            user_id,
-                            relation_type="not_following_back",
-                        )
+            # 3. not_followed_by
+            for username in not_followed_by:
+                user = followee_map[username]
+                await user_relations_repository.add_record(
+                    InstagramFollower.from_instaloader_profile(
+                        user,
+                        user_id,
+                        relation_type="not_followed_by",
                     )
-
-            # 4. not_followed_by — они не подписаны на тебя
-            for followee in followees:
-                if followee.username not in follower_usernames:
-                    await user_relations_repository.add_record(
-                        InstagramFollower.from_instaloader_profile(
-                            followee,
-                            user_id,
-                            relation_type="not_followed_by",
-                        )
-                    )
+                )
 
         except ClientError as err:
             raise InstagramError.from_exception(err)

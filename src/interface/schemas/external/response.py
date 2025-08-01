@@ -618,6 +618,7 @@ class InstagramFollower(ISchema):
         "not_followed_by",
         "secret_fan",
         "unfollower",
+        "mutual",
     ]
     related_user_id: Annotated[
         str | None,
