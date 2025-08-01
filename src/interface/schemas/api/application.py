@@ -12,6 +12,8 @@ from .style import Style
 
 from .product import Product
 
+from .category import Category
+
 from ....domain.entities.core import ISchema, IConfEnv
 
 from ....domain.conf import app_conf
@@ -57,7 +59,7 @@ class PixverseApplication(IApplication):
     def validate_styles(
         cls,
         value: list,
-    ) -> list[Style] | None:
+    ) -> list[Style | Category] | None:
         if len(value) > 0:
             return value
         return None

@@ -44,6 +44,15 @@ from .webhook import Webhook
 
 from .user_data import UserData
 
+from .category import Category
+
+from .instagram import (
+    Session,
+    AddSession,
+    IUser,
+    User,
+)
+
 __all__: list[str] = [
     "Account",
     "ChangeAccount",
@@ -69,4 +78,9 @@ __all__: list[str] = [
     "Product",
     "IProduct",
     "Webhook",
+    "Category",
+    "Session",
+    "AddSession",
+    "IUser",
+    "User",
 ]

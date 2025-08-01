@@ -264,14 +264,6 @@ class IInstagramUser(ISchema):
         str,
         Field(..., alias="appId"),
     ]
-    username: Annotated[
-        str,
-        Field(...),
-    ]
-    search_user: Annotated[
-        str | None,
-        Field(default=None),
-    ]
 
 
 class InstagramAuthUser(IInstagramUser):

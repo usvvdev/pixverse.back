@@ -11,6 +11,7 @@ from sqlalchemy.orm import relationship
 from ..common import (
     PixverseApplicationStyles,
     PixverseApplicationTemplates,
+    PixverseApplicationCatagories,
 )
 
 from ......domain.entities.core import ITable
@@ -38,5 +39,11 @@ class PixverseApplications(ITable):
     styles = relationship(
         "PixverseStyles",
         secondary=PixverseApplicationStyles,
+        back_populates="applications",
+    )
+
+    categories = relationship(
+        "PixverseCategories",
+        secondary=PixverseApplicationCatagories,
         back_populates="applications",
     )

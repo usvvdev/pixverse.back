@@ -43,7 +43,9 @@ class PhotoGeneratorApplicationRepository(DatabaseRepository):
             many=False,
             related=related,
             models=(PhotoGeneratorTemplates,),
-            model_filter=lambda v: v.is_active,
+            filters_by_model={
+                PhotoGeneratorTemplates: lambda v: v.is_active,
+            },
         )
 
     async def update_application(

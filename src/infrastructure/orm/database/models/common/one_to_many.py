@@ -67,6 +67,25 @@ PhotoGeneratorApplicationTemplates = Table(
     ),
 )
 
+PixverseApplicationCatagories = Table(
+    "pixverse_application_categories",
+    ITable.metadata,
+    Column(
+        "application_id",
+        Integer,
+        ForeignKey("pixverse_applications.id"),
+        primary_key=True,
+    ),
+    Column(
+        "category_id",
+        Integer,
+        ForeignKey(
+            "pixverse_categories.id",
+        ),
+        primary_key=True,
+    ),
+)
+
 
 ApplicationProducts = Table(
     "application_products",

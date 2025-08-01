@@ -34,8 +34,8 @@ class IToken(ISchema):
         Field(..., alias="sub"),
     ]
     exp: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     iat: Annotated[
         int,

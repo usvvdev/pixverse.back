@@ -25,10 +25,10 @@ class InstagramClientFactory:
     ) -> InstagramClient:
         return InstagramClient(
             InstagramCore(
-                Redis.from_url(
-                    conf.redis_dsn_url,
-                    decode_responses=True,
-                ),
+                # Redis.from_url(
+                #     conf.redis_dsn_url,
+                #     decode_responses=True,
+                # ),
             ),
         )
 

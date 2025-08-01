@@ -23,6 +23,14 @@ from .common import (
     WebhookRepository,
 )
 
+from .instagram import (
+    InstagramUserRepository,
+    InstagramSessionRepository,
+    InstagramUserStatsRepository,
+    InstagramUserPostsRepository,
+    InstagramUserRelationsRepository,
+)
+
 __all__: list[str] = [
     "PixverseAccountRepository",
     "PixverseTemplateRepository",
@@ -37,4 +45,9 @@ __all__: list[str] = [
     "ApplicationRepository",
     "ProductRepository",
     "WebhookRepository",
+    "InstagramUserRepository",
+    "InstagramSessionRepository",
+    "InstagramUserStatsRepository",
+    "InstagramUserPostsRepository",
+    "InstagramUserRelationsRepository",
 ]

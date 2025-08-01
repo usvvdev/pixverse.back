@@ -42,7 +42,7 @@ class PixverseApplicationController:
         self,
     ) -> list[Application]:
         return await self._repository.fetch_all(
-            ["templates", "styles"],
+            ["templates", "styles", "categories"],
         )
 
     async def fetch_application_by_app_id(
@@ -52,16 +52,16 @@ class PixverseApplicationController:
         application = await self._repository.fetch_application(
             "app_id",
             app_id,
-            ["templates", "styles"],
+            ["templates", "styles", "categories"],
         )
 
-        desired_order = ["Trending", "Transofrmation", "Popular", "Funny"]
+        categories = [category.title for category in application.categories]
 
-        category_priority = {name: i for i, name in enumerate(desired_order)}
+        category_priority = {name: i for i, name in enumerate(categories)}
 
         if application.templates:
             application.templates.sort(
-                key=lambda t: category_priority.get(t.category, len(desired_order))
+                key=lambda t: category_priority.get(t.category, len(categories))
             )
 
         return application

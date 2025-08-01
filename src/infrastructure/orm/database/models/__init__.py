@@ -19,11 +19,20 @@ from .pixverse import (
     UserGenerations,
     UserData,
     PixverseAccountsTokens,
+    PixverseCategories,
 )
 
 from .chatgpt import (
     PhotoGeneratorApplications,
     PhotoGeneratorTemplates,
+)
+
+from .instagram import (
+    InstagramSessions,
+    InstagramUserPosts,
+    InstagramUserRelations,
+    InstagramUsers,
+    InstagramUserStats,
 )
 
 __all__: list[str] = [
@@ -43,4 +52,10 @@ __all__: list[str] = [
     "Applications",
     "Products",
     "Webhooks",
+    "PixverseCategories",
+    "InstagramSessions",
+    "InstagramUserPosts",
+    "InstagramUserRelations",
+    "InstagramUsers",
+    "InstagramUserStats",
 ]

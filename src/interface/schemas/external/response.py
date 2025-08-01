@@ -1,6 +1,6 @@
 # coding utf-8
 
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from os import getenv
 
@@ -15,7 +15,13 @@ from pydantic import (
     HttpUrl,
 )
 
-from instagrapi import Client
+from datetime import datetime
+
+from instaloader import Profile, Post
+
+from time import sleep
+
+from random import uniform
 
 from instagrapi.types import (
     User,
@@ -387,11 +393,11 @@ class ChatGPTResp(ISchema):
 
 
 class IInstagramResponse(ISchema):
-    username: Annotated[
+    uuid: Annotated[
         str,
         Field(...),
     ]
-    datetime: Annotated[
+    timestamp: Annotated[
         str,
         Field(default_factory=lambda: str(now())),
     ]
@@ -420,96 +426,140 @@ class InstagramAuthResponse(IInstagramResponse):
 
 
 class InstagramUserStatistics(ISchema):
-    follower_count: Annotated[
+    user_id: Annotated[
         int,
-        Field(..., alias="followers"),
-    ]
-    following_count: Annotated[
-        int,
-        Field(..., alias="subscribtions"),
-    ]
-    media_count: Annotated[
-        int,
-        Field(..., alias="publications"),
+        Field(...),
     ]
     likes_count: Annotated[
         int,
-        Field(..., alias="likes"),
+        Field(...),
     ]
     comments_count: Annotated[
         int,
-        Field(..., alias="comments"),
+        Field(...),
     ]
-    mutual: Annotated[
+    followers_count: Annotated[
         int,
         Field(...),
     ]
-    not_following_you: Annotated[
+    following_count: Annotated[
         int,
         Field(...),
     ]
-    not_followed_by_you: Annotated[
-        int,
-        Field(...),
+    created_at: Annotated[
+        datetime,
+        Field(default_factory=lambda: now()),
     ]
 
     @classmethod
-    def from_data(
+    def from_instaloader_profile(
         cls,
-        user: User,
-        client: Client,
-        medias: list[Media],
+        profile: Profile,
+        user_id: int,
+        max_posts: int = 10,
     ) -> "InstagramUserStatistics":
-        following = set(
-            client.user_following(user.pk).keys(),
-        )
-        followers = set(
-            client.user_followers(user.pk).keys(),
-        )
+        posts = profile.get_posts()
+        likes_count = 0
+        comments_count = 0
+
+        for i, post in enumerate(posts):
+            if i >= max_posts:
+                break
+            likes_count += post.likes
+            comments_count += post.comments
+            sleep(uniform(0.4, 0.9))  # антибан
+
         return cls(
-            **user.model_dump(),
-            likes_count=sum(m.like_count for m in medias),
-            comments_count=sum(m.comment_count for m in medias),
-            mutual=len(following & followers),
-            not_following_you=len(following - followers),
-            not_followed_by_you=len(followers - following),
+            user_id=user_id,
+            likes_count=likes_count,
+            comments_count=comments_count,
+            followers_count=profile.followers,
+            following_count=profile.followees,
         )
 
 
-class InstagramPost(ISchema):
+class IInstagramPost(ISchema):
     id: Annotated[
+        int,
+        Field(...),
+    ]
+    post_url: Annotated[
         str,
         Field(...),
     ]
-    view_count: Annotated[
-        int,
-        Field(..., alias="views"),
+    thumbnail_url: Annotated[
+        str | None,
+        Field(default=None),
     ]
-    like_count: Annotated[
+    likes_count: Annotated[
         int,
-        Field(..., alias="likes"),
+        Field(...),
     ]
-    comment_count: Annotated[
+    comments_count: Annotated[
         int,
-        Field(..., alias="comments"),
+        Field(...),
+    ]
+    views_count: Annotated[
+        int | None,
+        Field(default=0),
+    ]
+    avg_likes: Annotated[
+        float,
+        Field(default=0),
+    ]
+    avg_views: Annotated[
+        float,
+        Field(default=0),
+    ]
+
+
+class InstagramPost(ISchema):
+    user_id: Annotated[
+        int,
+        Field(...),
+    ]
+    likes_count: Annotated[
+        int,
+        Field(...),
+    ]
+    comments_count: Annotated[
+        int,
+        Field(...),
+    ]
+    views_count: Annotated[
+        int | None,
+        Field(default=0),
+    ]
+    avg_likes: Annotated[
+        float,
+        Field(default=0),
+    ]
+    avg_views: Annotated[
+        float,
+        Field(default=0),
+    ]
+    post_url: Annotated[
+        str,
+        Field(...),
     ]
     thumbnail_url: Annotated[
-        HttpUrl | None,
+        str | None,
         Field(default=None),
     ]
 
     @classmethod
-    def from_medias(
+    def from_instaloader_post(
         cls,
-        medias: list[Media],
-    ) -> list["InstagramPost"]:
-        return list(
-            map(
-                lambda m: cls(
-                    **m.model_dump(),
-                ),
-                medias,
-            )
+        post: Post,
+        user_id: int,
+    ) -> "InstagramPost":
+        return cls(
+            user_id=user_id,
+            likes_count=post.likes,
+            comments_count=post.comments,
+            views_count=getattr(post, "video_view_count", 0),
+            post_url=f"https://www.instagram.com/p/{post.shortcode}/",
+            thumbnail_url=post.url,
         )
 
 
@@ -526,7 +576,7 @@ class InstagramUser(ISchema):
         str | None,
         Field(default=None),
     ]
-    profile_pic_url: Annotated[
+    profile_picture: Annotated[
         HttpUrl,
         Field(...),
     ]
@@ -538,24 +588,15 @@ class InstagramUser(ISchema):
         bool,
         Field(...),
     ]
-
-    @classmethod
-    def from_user(
-        cls,
-        user: User,
-    ) -> "InstagramUser":
-        return cls(
-            **user.model_dump(),
-        )
-
-
-class InstagramUserResponse(ISchema):
-    user: Annotated[
-        InstagramUser,
+    is_business_account: Annotated[
+        bool,
         Field(...),
     ]
+
+
+class InstagramUserResponse(InstagramUser):
     statistics: Annotated[
-        InstagramUserStatistics,
+        list[InstagramUserStatistics],
         Field(...),
     ]
     posts: Annotated[
@@ -565,18 +606,54 @@ class InstagramUserResponse(ISchema):
 
 
 class InstagramFollower(ISchema):
-    username: Annotated[
-        str,
+    user_id: Annotated[
+        int,
         Field(...),
     ]
-    full_name: Annotated[
-        str,
-        Field(...),
+    relation_type: Literal[
+        "follower",
+        "following",
+        "not_following_back",
+        "not_followed_by",
+        "secret_fan",
+        "unfollower",
     ]
-    profile_pic_url: Annotated[
-        HttpUrl | None,
+    related_user_id: Annotated[
+        str | None,
         Field(default=None),
     ]
+    related_username: Annotated[
+        str,
+        Field(...),
+    ]
+    related_full_name: Annotated[
+        str | None,
+        Field(default=None),
+    ]
+    profile_picture: Annotated[
+        str,
+        Field(...),
+    ]
+    created_at: Annotated[
+        datetime,
+        Field(default_factory=lambda: now()),
+    ]
+
+    @classmethod
+    def from_instaloader_profile(
+        cls,
+        profile: Profile,
+        user_id: int,
+        relation_type: str,
+    ) -> "InstagramFollower":
+        return cls(
+            user_id=user_id,
+            relation_type=relation_type,
+            related_user_id=str(profile.userid),
+            related_username=profile.username,
+            related_full_name=profile.full_name or None,
+            profile_picture=profile.profile_pic_url,
+        )
 
 
 class ChatGPTCosmetic(ISchema):

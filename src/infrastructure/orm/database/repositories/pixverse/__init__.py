@@ -14,6 +14,8 @@ from .user_data import UserDataRepository
 
 from .token import PixverseAccountsTokensRepository
 
+from .category import PixverseCategoriesRepository
+
 __all__: list[str] = [
     "PixverseAccountRepository",
     "PixverseTemplateRepository",
@@ -22,4 +24,5 @@ __all__: list[str] = [
     "UserGenerationRepository",
     "UserDataRepository",
     "PixverseAccountsTokensRepository",
+    "PixverseCategoriesRepository",
 ]

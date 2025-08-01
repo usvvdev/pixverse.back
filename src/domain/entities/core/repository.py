@@ -76,13 +76,13 @@ class IRepository:
         self,
         related: list[str],
         models: list[object] | None = None,
-        model_filter: Callable | None = None,
+        filters_by_model: dict[object, Callable] | None = None,
     ):
         options = [selectinload(getattr(self._model, rel)) for rel in related]
-        if model_filter and models is not None:
-            options.extend(
-                with_loader_criteria(model, model_filter) for model in models
-            )
+        if filters_by_model and models is not None:
+            for model in models:
+                if model in filters_by_model:
+                    options.append(with_loader_criteria(model, filters_by_model[model]))
         return select(self._model).options(*options)
 
     async def fetch_one_to_many(

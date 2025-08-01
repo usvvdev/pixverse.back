@@ -1,68 +1,256 @@
 # coding utf-8
 
-from instagrapi import Client
+from typing import Iterable
 
-from instagrapi.exceptions import (
-    ClientError,
-    ChallengeRequired,
-    LoginRequired,
+from instaloader.instaloader import (
+    Instaloader,
+    Profile,
+    Post,
+    InstaloaderException,
 )
 
-from redis import Redis
-
-from json import loads, dumps
-
-from pendulum import duration
+from sqlalchemy.exc import DuplicateColumnError
 
 from ....domain.errors import InstagramError
 
-from ....domain.constants import INSTAGRAM_SESSION
+from ....domain.entities.instagram import ISession
+
+from ....interface.schemas.api import (
+    Session,
+    AddSession,
+    IUser,
+    User,
+)
+
+from ....interface.schemas.external import (
+    InstagramUserStatistics,
+    InstagramPost,
+    InstagramFollower,
+)
+
+from requests.cookies import cookiejar_from_dict
+
+from ...orm.database.models import InstagramSessions
+
+from ...orm.database.repositories import (
+    InstagramSessionRepository,
+    InstagramUserRepository,
+    InstagramUserStatsRepository,
+    InstagramUserPostsRepository,
+    InstagramUserRelationsRepository,
+)
+
+from ....domain.conf import app_conf
+
+from ....domain.entities.core import IConfEnv
+
+from ....domain.repositories.engines.database import IDatabase
+
+
+conf: IConfEnv = app_conf()
+
+
+session_repository = InstagramSessionRepository(
+    IDatabase(conf),
+)
+
+
+user_repository = InstagramUserRepository(
+    IDatabase(conf),
+)
+
+
+user_stats_repository = InstagramUserStatsRepository(
+    IDatabase(conf),
+)
+
+
+user_posts_repository = InstagramUserPostsRepository(
+    IDatabase(conf),
+)
+
+
+user_relations_repository = InstagramUserRelationsRepository(
+    IDatabase(conf),
+)
 
 
 class InstagramCore:
-    def __init__(
+    async def __set_loader(
         self,
-        redis: Redis,
-        client: Client | None = None,
+        session_data: ISession,
+    ) -> Instaloader:
+        loader = Instaloader()
+        try:
+            loader.context._session.cookies = cookiejar_from_dict(
+                session_data.dict,
+                overwrite=True,
+            )
+        except InstaloaderException as err:
+            raise err
+        return loader
+
+    async def __validate_profile(
+        self,
+        session_data: ISession,
+    ) -> Profile | None:
+        loader: Instaloader = await self.__set_loader(session_data)
+        try:
+            data: Profile | None = Profile.from_id(
+                loader.context,
+                int(
+                    session_data.ds_user_id,
+                ),
+            )
+            return data
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)
+
+    async def __iterate_posts(
+        self,
+        posts: Iterable[Post],
+        user_id: int,
+    ):
+        for post in posts:
+            yield InstagramPost.from_instaloader_post(post, user_id)
+
+    async def __add_user_relations(
+        self,
+        profile: Profile,
+        user_id: int,
     ) -> None:
-        self._redis = redis
-        self._client = client or Client()
+        print(profile._context.is_logged_in)
+        try:
+            followers = list(profile.get_followers())
+            followees = list(profile.get_followees())
 
-    def fetch_user_session(
+            follower_usernames = {f.username for f in followers}
+            followee_usernames = {f.username for f in followees}
+
+            # 1. follower
+            for follower in followers:
+                await user_relations_repository.add_record(
+                    InstagramFollower.from_instaloader_profile(
+                        follower,
+                        user_id,
+                        relation_type="follower",
+                    )
+                )
+
+            # 2. following
+            for followee in followees:
+                await user_relations_repository.add_record(
+                    InstagramFollower.from_instaloader_profile(
+                        followee,
+                        user_id,
+                        relation_type="following",
+                    )
+                )
+
+            # 3. not_following_back — ты не подписан в ответ
+            for follower in followers:
+                if follower.username not in followee_usernames:
+                    await user_relations_repository.add_record(
+                        InstagramFollower.from_instaloader_profile(
+                            follower,
+                            user_id,
+                            relation_type="not_following_back",
+                        )
+                    )
+
+            # 4. not_followed_by — они не подписаны на тебя
+            for followee in followees:
+                if followee.username not in follower_usernames:
+                    await user_relations_repository.add_record(
+                        InstagramFollower.from_instaloader_profile(
+                            followee,
+                            user_id,
+                            relation_type="not_followed_by",
+                        )
+                    )
+
+        except InstaloaderException as err:
+            raise InstagramError.from_exception(err)
+
+    async def __add_user(
         self,
-        username: str,
-    ) -> Client | None:
-        key = INSTAGRAM_SESSION.format(
-            username=username,
-        )
-        session = self._redis.get(key)
-
-        if session is not None:
-            self._client.set_settings(loads(session))
-            try:
-                self._client.get_timeline_feed()
-                return self._client
-            except InstagramError.exceptions as err:
-                if isinstance(err, LoginRequired):
-                    self._redis.delete(key)
-                raise InstagramError.from_exception(err)
-
-        return None
-
-    def save_user_session(
-        self,
-        username: str,
-        client: Client,
-    ) -> None:
-        key = INSTAGRAM_SESSION.format(
-            username=username,
-        )
-        if self._redis.get(key):
-            self._redis.delete(key)
-
-        session_data = dumps(client.get_settings())
-        self._redis.set(
-            key,
+        session_data: ISession,
+    ):
+        profile: Profile | None = await self.__validate_profile(
             session_data,
-            ex=int(duration(days=30).total_seconds()),
+        )
+        if profile is not None:
+            user_data = IUser.from_instaloader_profile(
+                profile,
+            )
+
+            if (
+                await user_repository.fetch_field("username", profile.username, False)
+                is None
+            ):
+                await user_repository.add_record(
+                    user_data,
+                )
+
+            user = await user_repository.fetch_field(
+                "username",
+                user_data.username,
+                False,
+            )
+
+            user_stats = InstagramUserStatistics.from_instaloader_profile(
+                profile,
+                user.id,
+            )
+
+            if (
+                await user_stats_repository.fetch_field("user_id", user.id, False)
+                is None
+            ):
+                await user_stats_repository.add_record(
+                    user_stats,
+                )
+
+            posts = profile.get_posts()
+
+            if (
+                await user_posts_repository.fetch_field("user_id", user.id, False)
+                is None
+            ):
+                async for post in self.__iterate_posts(posts, user.id):
+                    await user_posts_repository.add_record(post)
+
+            await self.__add_user_relations(profile, user.id)
+
+            return AddSession(
+                **session_data.dict,
+                user_id=user.id,
+            )
+
+    async def fetch_user_session(
+        self,
+        session_data: ISession,
+    ) -> InstagramSessions:
+        session: InstagramSessions | None = await session_repository.fetch_session(
+            session_data.sessionid,
+        )
+        if session is not None:
+            return session
+        return await self.save_user_session(
+            session_data,
+        )
+
+    async def save_user_session(
+        self,
+        session_data: ISession,
+    ) -> ISession:
+        try:
+            await session_repository.add_record(
+                await self.__add_user(session_data),
+            )
+        except DuplicateColumnError as err:
+            raise err
+
+        return await session_repository.fetch_session(
+            session_data.sessionid,
         )

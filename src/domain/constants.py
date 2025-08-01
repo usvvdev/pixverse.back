@@ -4,14 +4,12 @@ from fastapi import status
 
 from passlib.context import CryptContext
 
-from instagrapi.exceptions import (
-    TwoFactorRequired,
-    ChallengeRequired,
-    BadPassword,
-    UserNotFound,
-    PleaseWaitFewMinutes,
-    LoginRequired,
-    UnknownError,
+from instaloader.exceptions import (
+    TwoFactorAuthRequiredException,
+    ConnectionException,
+    BadCredentialsException,
+    ProfileNotExistsException,
+    TooManyRequestsException,
 )
 
 """
@@ -75,33 +73,25 @@ PIXVERSE_ERROR = {
 }
 
 INSTAGRAM_ERROR = {
-    TwoFactorRequired: (
+    TwoFactorAuthRequiredException: (
         status.HTTP_401_UNAUTHORIZED,
         "2FA required. Resend the code via the verification_code field.",
     ),
-    ChallengeRequired: (
-        status.HTTP_401_UNAUTHORIZED,
-        "Instagram requires challenge verification (via app or email).",
-    ),
-    BadPassword: (
+    BadCredentialsException: (
         status.HTTP_401_UNAUTHORIZED,
         "User password is incorrect. Retry your request.",
     ),
-    UserNotFound: (
+    ProfileNotExistsException: (
         status.HTTP_404_NOT_FOUND,
         "User not found. Retry your request with another username.",
     ),
-    PleaseWaitFewMinutes: (
+    TooManyRequestsException: (
         status.HTTP_429_TOO_MANY_REQUESTS,
         "Please wait a few minutes before you try again.",
     ),
-    LoginRequired: (
+    ConnectionException: (
         status.HTTP_401_UNAUTHORIZED,
-        "Session not found. Please retry your request again.",
-    ),
-    UnknownError: (
-        status.HTTP_400_BAD_REQUEST,
-        "Please check the security code and try again.",
+        "Provided session has been expire. Please provied new session and retry your request again.",
     ),
 }
 

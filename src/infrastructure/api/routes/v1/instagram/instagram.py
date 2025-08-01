@@ -12,6 +12,8 @@ from ....views.v1 import InstagramView
 
 from ......domain.tools import auto_docs
 
+from ......domain.entities.instagram import ISession
+
 from ......domain.typing.enums import InstagramRelationType
 
 from ......interface.schemas.external import (
@@ -22,6 +24,7 @@ from ......interface.schemas.external import (
     InstagramUserResponse,
     InstagramFollower,
     InstagramPost,
+    IInstagramPost,
 )
 
 from .....factroies.api.v1 import InstagramViewFactory
@@ -31,72 +34,90 @@ instagram_router = APIRouter(tags=["Instagram"])
 
 
 @instagram_router.post(
-    "/auth",
+    "/users/session",
 )
-async def user_auth(
-    body: InstagramAuthUser,
+async def auth_user_session(
+    body: ISession,
     view: InstagramView = Depends(InstagramViewFactory.create),
-) -> InstagramAuthResponse | InstagramSessionResponse:
-    return await view.user_auth(
+) -> InstagramAuthResponse:
+    return await view.auth_user_session(
         body,
     )
 
 
 @instagram_router.post(
-    "/statistics",
+    "/users/{uuid}/statistics",
 )
 async def fetch_statistics(
     body: IInstagramUser,
+    uuid: str,
     view: InstagramView = Depends(InstagramViewFactory.create),
-) -> InstagramUserResponse:
+):
     return await view.fetch_statistics(
         body,
+        uuid,
     )
 
 
 @instagram_router.post(
-    "/subscribers",
+    "/users/{uuid}/publications/{id}",
 )
-async def fetch_subsribers(
+async def fetch_publication(
     body: IInstagramUser,
+    uuid: str,
+    id: int,
     view: InstagramView = Depends(InstagramViewFactory.create),
-) -> Page[InstagramFollower]:
-    return await view.fetch_subsribers(
+) -> IInstagramPost:
+    return await view.fetch_publication(
         body,
+        uuid,
+        id,
     )
 
 
-@instagram_router.post(
-    "/subscribtions",
-)
-async def fetch_subsribtions(
-    body: IInstagramUser,
-    view: InstagramView = Depends(InstagramViewFactory.create),
-) -> Page[InstagramFollower]:
-    return await view.fetch_subsribtions(
-        body,
-    )
+# @instagram_router.post(
+#     "/subscribers",
+# )
+# async def fetch_subsribers(
+#     body: IInstagramUser,
+#     view: InstagramView = Depends(InstagramViewFactory.create),
+# ) -> Page[InstagramFollower]:
+#     return await view.fetch_subsribers(
+#         body,
+#     )
 
 
-@instagram_router.post(
-    "/non-reciprocal-subscribers",
-)
-async def fetch_non_reciprocal_subsribtions(
-    body: IInstagramUser,
-    view: InstagramView = Depends(InstagramViewFactory.create),
-) -> Page[InstagramFollower]:
-    return await view.fetch_non_reciprocal_subsribtions(
-        body,
-    )
+# @instagram_router.post(
+#     "/subscribtions",
+# )
+# async def fetch_subsribtions(
+#     body: IInstagramUser,
+#     view: InstagramView = Depends(InstagramViewFactory.create),
+# ) -> Page[InstagramFollower]:
+#     return await view.fetch_subsribtions(
+#         body,
+#     )
 
 
-@instagram_router.post(
-    "/publications",
-)
-async def fetch_publications(
-    body: IInstagramUser,
-    view: InstagramView = Depends(InstagramViewFactory.create),
-) -> Page[InstagramPost]:
-    return await view.fetch_publications(
-        body,
-    )
+# @instagram_router.post(
+#     "/non-reciprocal-subscribers",
+# )
+# async def fetch_non_reciprocal_subsribtions(
+#     body: IInstagramUser,
+#     view: InstagramView = Depends(InstagramViewFactory.create),
+# ) -> Page[InstagramFollower]:
+#     return await view.fetch_non_reciprocal_subsribtions(
+#         body,
+#     )
+
+
+# @instagram_router.post(
+#     "/publications",
+# )
+# async def fetch_publications(
+#     body: IInstagramUser,
+#     view: InstagramView = Depends(InstagramViewFactory.create),
+# ) -> Page[InstagramPost]:
+#     return await view.fetch_publications(
+#         body,
+#     )

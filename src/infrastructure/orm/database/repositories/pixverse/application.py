@@ -2,12 +2,11 @@
 
 from sqlalchemy import delete, insert
 
-from fastapi import status, HTTPException
-
 from ...models import (
     PixverseApplications,
     PixverseTemplates,
     PixverseStyles,
+    PixverseCategories,
 )
 
 from ......domain.repositories import (
@@ -45,8 +44,15 @@ class PixverseApplicationRepository(DatabaseRepository):
             value,
             many=False,
             related=related,
-            models=(PixverseTemplates, PixverseStyles),
-            model_filter=lambda v: v.is_active,
+            models=(
+                PixverseTemplates,
+                PixverseStyles,
+                PixverseCategories,
+            ),
+            filters_by_model={
+                PixverseTemplates: lambda v: v.is_active,
+                PixverseStyles: lambda v: v.is_active,
+            },
         )
 
     async def update_application(
