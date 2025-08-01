@@ -149,7 +149,7 @@ class InstagramClient:
             uuid,
         )
         return await user_relations_repository.fetch_with_filters(
-            relation_type="follower",
+            relation_type="FOLLOWER",
             user_id=user_session.user_id,
         )
 
