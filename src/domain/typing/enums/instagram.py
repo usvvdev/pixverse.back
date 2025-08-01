@@ -4,7 +4,7 @@ from enum import StrEnum
 
 
 class InstagramRelationType(StrEnum):
-    FOLLOWERS = "followers"
+    FOLLOWER = "follower"
     FOLLOWING = "following"
     SECRET_FANS = "secret_fans"
     NON_RECIPROCAL = "non_reciprocal"

@@ -76,7 +76,7 @@ async def fetch_publication(
 
 
 @instagram_router.post(
-    "/users/{uuid}/subscribers/",
+    "/users/{uuid}/subscribers",
 )
 async def fetch_subscribers(
     body: IInstagramUser,
