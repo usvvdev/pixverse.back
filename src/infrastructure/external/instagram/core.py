@@ -99,7 +99,7 @@ class InstagramCore:
     async def __set_client(
         self,
         session_data: ISession,
-    ) -> Instaloader:
+    ) -> Client:
         client = Client()
         try:
             client.login_by_sessionid(session_data.sessionid)
@@ -149,7 +149,7 @@ class InstagramCore:
             # 1. follower
             for follower in followers:
                 await user_relations_repository.add_record(
-                    InstagramFollower.from_instagrapi_user(
+                    InstagramFollower.from_instaloader_profile(
                         follower,
                         user_id,
                         relation_type="follower",
@@ -159,7 +159,7 @@ class InstagramCore:
             # 2. following
             for followee in followees:
                 await user_relations_repository.add_record(
-                    InstagramFollower.from_instagrapi_user(
+                    InstagramFollower.from_instaloader_profile(
                         followee,
                         user_id,
                         relation_type="following",
@@ -170,7 +170,7 @@ class InstagramCore:
             for follower in followers:
                 if follower.username not in followee_usernames:
                     await user_relations_repository.add_record(
-                        InstagramFollower.from_instagrapi_user(
+                        InstagramFollower.from_instaloader_profile(
                             follower,
                             user_id,
                             relation_type="not_following_back",
@@ -181,7 +181,7 @@ class InstagramCore:
             for followee in followees:
                 if followee.username not in follower_usernames:
                     await user_relations_repository.add_record(
-                        InstagramFollower.from_instagrapi_user(
+                        InstagramFollower.from_instaloader_profile(
                             followee,
                             user_id,
                             relation_type="not_followed_by",
