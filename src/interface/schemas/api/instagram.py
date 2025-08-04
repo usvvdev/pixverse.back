@@ -52,6 +52,10 @@ class SearchUser(ISchema):
         str,
         Field(...),
     ]
+    biography: Annotated[
+        str,
+        Field(...),
+    ]
     profile_pic_url: Annotated[
         str | None,
         Field(default=None, alias="profile_picture"),

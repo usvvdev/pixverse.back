@@ -62,3 +62,9 @@ class InstagramUsers(ITable):
         "InstagramUserPosts",
         back_populates="user",
     )
+
+    tracking_users = relationship(
+        "InstagramTracking",
+        foreign_keys="InstagramTracking.target_user_id",
+        back_populates="target_user_data",
+    )

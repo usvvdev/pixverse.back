@@ -41,3 +41,9 @@ class InstagramTracking(ITable):
         nullable=False,
         default=datetime,
     )
+
+    target_user_data = relationship(
+        "InstagramUsers",
+        foreign_keys=[target_user_id],
+        back_populates="tracking_users",
+    )

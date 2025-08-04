@@ -8,6 +8,7 @@ from ......domain.entities.instagram import ISession
 
 from ......interface.schemas.external import (
     IInstagramUser,
+    InstagramUser,
     InstagramAuthResponse,
     InstagramUserResponse,
     InstagramUpdateUserResponse,
@@ -62,6 +63,14 @@ class InstagramView:
         return await self._controller.add_user_tracking(
             uuid,
             user_id,
+        )
+
+    async def fetch_user_tracking(
+        self,
+        uuid: str,
+    ) -> Page[InstagramUser]:
+        return await self._controller.fetch_user_tracking(
+            uuid,
         )
 
     async def fetch_statistics(

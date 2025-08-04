@@ -45,6 +45,7 @@ from ...orm.database.repositories import (
     InstagramSessionRepository,
     InstagramUserPostsRepository,
     InstagramUserRelationsRepository,
+    InstagramTrackingRepository,
 )
 
 
@@ -67,6 +68,10 @@ user_posts_repository = InstagramUserPostsRepository(
 
 
 user_relations_repository = InstagramUserRelationsRepository(
+    IDatabase(conf),
+)
+
+user_tracking_repository = InstagramTrackingRepository(
     IDatabase(conf),
 )
 
@@ -123,6 +128,28 @@ class InstagramClient:
         return InstagramTrackingUserResponse(
             uuid=uuid,
         )
+
+    async def fetch_user_tracking(
+        self,
+        uuid: str,
+    ) -> Page[InstagramUser]:
+        user_session = await session_repository.fetch_uuid(
+            uuid,
+        )
+        tracking_users = await user_tracking_repository.fetch_one_to_many(
+            "owner_user_id",
+            user_session.user_id,
+            related=["target_user_data"],
+        )
+
+        items: list[InstagramUser] = list(
+            map(
+                lambda user: InstagramUser.model_validate(user.target_user_data),
+                tracking_users,
+            )
+        )
+
+        return paginate(items)
 
     async def fetch_statistics(
         self,
