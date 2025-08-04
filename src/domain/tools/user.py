@@ -19,7 +19,7 @@ from ..entities.core import (
 
 from ..errors import PixverseError
 
-from ...interface.schemas.external import UsrData
+from ...interface.schemas.external import UserUpdateData
 
 from ...interface.schemas.external.body import IPixverseBody
 
@@ -75,10 +75,11 @@ async def add_user_tokens(
 
     actual_user = user or data.user
 
-    user_data = UsrData(
+    user_data = UserUpdateData(
         user_id=actual_user.user_id,
         app_id=actual_user.app_id if user else data.app.bundle_id,
         balance=int((user.balance if user else 0) + matched_product.tokens_amount),
+        app_id_usage=user.app_id_usage,
     )
 
     return await user_repository.create_or_update_user_data(
@@ -125,6 +126,7 @@ def check_user_tokens(
                     user_id=data.user_id,
                     app_id=data.app_id,
                 )
+
                 if user.balance < method_cost:
                     raise PixverseError(
                         402,
@@ -132,6 +134,15 @@ def check_user_tokens(
                             "Информация о пользователе": f"{data.user_id}\n\n{data.app_id}"
                         },
                     )
+
+                user_data = UserUpdateData(
+                    user_id=data.user_id,
+                    app_id=data.app_id,
+                    balance=int(user.balance - method_cost),
+                    app_id_usage=user.app_id_usage,
+                )
+
+                await user_repository.create_or_update_user_data(user_data)
 
             return await func(*args, **kwargs)
 

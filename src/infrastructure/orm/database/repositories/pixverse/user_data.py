@@ -19,6 +19,7 @@ from ......interface.schemas.external import (
     UsrData,
     AccountInfo,
     UserStatistics,
+    UserUpdateData,
 )
 
 
@@ -34,16 +35,16 @@ class UserDataRepository(DatabaseRepository):
 
     async def create_or_update_user_data(
         self,
-        body: UsrData,
+        body: UserUpdateData,
     ):
-        user_data: UserData = await self.fetch_with_filters(
+        user_data: UserUpdateData = await self.fetch_with_filters(
             user_id=body.user_id,
             app_id=body.app_id,
         )
         if user_data is not None:
             return await self.update_record(
                 user_data.id,
-                data=UsrData(
+                data=UserUpdateData(
                     user_id=body.user_id,
                     app_id=body.app_id,
                     balance=body.balance,
