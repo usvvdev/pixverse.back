@@ -55,9 +55,9 @@ pixverse_router = APIRouter(tags=["Pixverse"])
         },
     },
 )
-# @check_user_tokens(method_cost=20)
+@check_user_tokens(method_cost=20)
 async def text_to_video(
-    # request: Request,
+    request: Request,
     body: T2VBody = Depends(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
 ) -> Resp:
@@ -105,9 +105,9 @@ async def text_to_video(
         },
     },
 )
-# @check_user_tokens(method_cost=20)
+@check_user_tokens(method_cost=20)
 async def image_to_video(
-    # request: Request,
+    request: Request,
     body: I2VBody = Depends(),
     image: UploadFile = File(...),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
@@ -146,9 +146,9 @@ async def image_to_video(
         },
     },
 )
-# @check_user_tokens(method_cost=60)
+@check_user_tokens(method_cost=60)
 async def restyle_video(
-    # request: Request,
+    request: Request,
     body: R2VBody = Depends(),
     video: UploadFile = File(...),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
@@ -187,9 +187,9 @@ async def restyle_video(
         },
     },
 )
-# @check_user_tokens(method_cost=20)
+@check_user_tokens(method_cost=20)
 async def template_video(
-    # request: Request,
+    request: Request,
     body: TE2VBody = Depends(),
     image: UploadFile = File(...),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
