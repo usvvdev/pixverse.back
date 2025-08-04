@@ -25,6 +25,7 @@ from .body import (
     IInstagramUser,
     UserFilters,
     UserRelationStats,
+    IPixverseBody,
 )
 
 from .response import (
@@ -104,4 +105,5 @@ __all__ = [
     "ChatGPTCosmeticResponse",
     "ChatGPTCosmetic",
     "UserRelationStats",
+    "IPixverseBody",
 ]

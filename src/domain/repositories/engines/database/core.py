@@ -33,6 +33,7 @@ class IDatabase(IEngine):
             self._conf.database_dsn_url,
             pool_timeout=60,
             pool_pre_ping=True,
+            
         )
 
     @cached_property

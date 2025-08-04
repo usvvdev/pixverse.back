@@ -133,6 +133,7 @@ ERROR_TRANSLATIONS = {
     "Unknown error": "Неизвестная ошибка",
     "Please try again later": "Пожалуста, попробуйте сделать запрос позже",
     "There aren't active accounts, try the request later": "В данный момент нет активных аккаунтов, попробуйте позже",
+    "All user's credits used. Upgrade your subscribtions or top up": "Все кредиты пользователя использованы. Продлите подписку или пополните баланс",
     # openai errors
     "Country, region, or territory not supported": "Страна, регион или территория не поддерживаются",
     "You exceeded your current quota, please check your plan and billing details.": "Вы превысили текущую квоту. Проверьте тарифный план и платёжные данные.",

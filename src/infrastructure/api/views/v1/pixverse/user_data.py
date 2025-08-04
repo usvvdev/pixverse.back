@@ -2,9 +2,12 @@
 
 from ......interface.controllers.api.v1 import UserDataController
 
+from ......domain.entities.core import IUserData
+
 from ......interface.schemas.external import (
     UserStatistics,
     UserFilters,
+    IPixverseBody,
 )
 
 
@@ -33,4 +36,14 @@ class UserDataView:
     ) -> UserFilters:
         return await self._controller.fetch_user_filters(
             app_name,
+        )
+
+    async def fetch_user_tokens(
+        self,
+        user_id: str,
+        app_id: str,
+    ) -> IUserData:
+        return await self._controller.fetch_user_tokens(
+            user_id,
+            app_id,
         )

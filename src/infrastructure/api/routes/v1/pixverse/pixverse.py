@@ -3,6 +3,7 @@
 from fastapi import (
     APIRouter,
     UploadFile,
+    Request,
     Depends,
     File,
 )
@@ -12,7 +13,7 @@ from ....views.v1 import PixVerseView
 
 from ......domain.tools import (
     auto_docs,
-    fetch_user_tokens,
+    check_user_tokens,
 )
 
 from ......interface.schemas.external import (
@@ -54,10 +55,11 @@ pixverse_router = APIRouter(tags=["Pixverse"])
         },
     },
 )
+# @check_user_tokens(method_cost=20)
 async def text_to_video(
+    # request: Request,
     body: T2VBody = Depends(),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
-    # _: None = Depends(fetch_user_tokens),
 ) -> Resp:
     """
     Генерирует видео на основе текстового запроса.
@@ -103,7 +105,9 @@ async def text_to_video(
         },
     },
 )
+# @check_user_tokens(method_cost=20)
 async def image_to_video(
+    # request: Request,
     body: I2VBody = Depends(),
     image: UploadFile = File(...),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
@@ -142,7 +146,9 @@ async def image_to_video(
         },
     },
 )
+# @check_user_tokens(method_cost=60)
 async def restyle_video(
+    # request: Request,
     body: R2VBody = Depends(),
     video: UploadFile = File(...),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
@@ -181,7 +187,9 @@ async def restyle_video(
         },
     },
 )
+# @check_user_tokens(method_cost=20)
 async def template_video(
+    # request: Request,
     body: TE2VBody = Depends(),
     image: UploadFile = File(...),
     view: PixVerseView = Depends(PixVerseViewFactory.create),
@@ -207,6 +215,7 @@ async def template_video(
     },
 )
 async def generation_status(
+    request: Request,
     id: int,
     view: PixVerseView = Depends(PixVerseViewFactory.create),
 ) -> GenerationStatus:

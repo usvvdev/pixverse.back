@@ -2,6 +2,7 @@
 
 from fastapi import (
     APIRouter,
+    Path,
     Depends,
     Query,
 )
@@ -12,9 +13,12 @@ from ......domain.tools import auto_docs, validate_token
 
 from .....factroies.api.v1 import UserDataViewFactory
 
+from ......domain.entities.core import IUserData
+
 from ......interface.schemas.external import (
     UserStatistics,
     UserFilters,
+    IPixverseBody,
 )
 
 
@@ -23,6 +27,7 @@ user_data_router = APIRouter(tags=["User Data"])
 
 @user_data_router.get(
     "/statistics",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/statistics",
@@ -45,6 +50,7 @@ async def fetch_user_data(
 
 @user_data_router.get(
     "/statistics/filters",
+    include_in_schema=False,
 )
 @auto_docs(
     "api/v1/statistics/filters",
@@ -58,4 +64,23 @@ async def fetch_user_filters(
 ) -> UserFilters:
     return await view.fetch_user_filters(
         app_name,
+    )
+
+
+@user_data_router.get(
+    "/users/{user_id}/tokens",
+)
+@auto_docs(
+    "api/v1/users/{user_id}/tokens",
+    "GET",
+    description="Роутер для получения токенов пользователя.",
+)
+async def fetch_user_tokens(
+    user_id: str = Path(...),
+    app_id: str = Query(..., alias="appId"),
+    view: UserDataView = Depends(UserDataViewFactory.create),
+) -> IUserData:
+    return await view.fetch_user_tokens(
+        user_id,
+        app_id,
     )

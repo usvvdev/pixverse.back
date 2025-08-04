@@ -22,7 +22,7 @@ from .error import format_error_with_request
 
 from .media import stream_media
 
-from .user import add_user_tokens, fetch_user_tokens
+from .user import add_user_tokens, check_user_tokens
 
 from .webhhok import fetch_webhook_id
 
@@ -40,6 +40,6 @@ __all__: list[str] = [
     "convert_heic_to_jpg",
     "stream_media",
     "add_user_tokens",
-    "fetch_user_tokens",
+    "check_user_tokens",
     "fetch_webhook_id",
 ]

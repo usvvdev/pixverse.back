@@ -52,6 +52,7 @@ class PixVerseRouter(AppRouting):
                 pixverse_application_router,
                 media_router,
                 webhook_router,
+                user_data_router,
             ],
         )
 

@@ -41,7 +41,7 @@ async def apphud_webhook(
 
     data = IWebhook(**payload)
 
-    if data.event.name == "subscription_started":
+    if data.event.name in ("subscription_started", "subscription_renewed"):
         await add_user_tokens(data)
 
     return data

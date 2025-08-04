@@ -4,7 +4,12 @@ from typing import Any
 
 from ..conf import app_conf
 
-from fastapi import Depends
+from functools import wraps
+
+from fastapi import Request
+
+from fastapi.responses import JSONResponse
+
 
 from ..entities.core import (
     IConfEnv,
@@ -81,25 +86,52 @@ async def add_user_tokens(
     )
 
 
-async def fetch_user_tokens(
-    data: IPixverseBody = Depends(),
+def check_user_tokens(
+    method_cost: int,
 ):
-    user = await user_repository.fetch_with_filters(
-        user_id=data.user_id,
-        app_id=data.app_id,
-    )
-    if user.balance == 0:
-        raise PixverseError(402)
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            # Извлекаем Request из args или kwargs
+            request: Request = kwargs.get("request")
+            if request is None:
+                for arg in args:
+                    if isinstance(arg, Request):
+                        request = arg
+                        break
 
-    body = UsrData(
-        user_id=user.id,
-        app_id=user.app_id,
-        balance=int(
-            user.balance + 10,
-        ),
-    )
+            if request is None:
+                return JSONResponse(
+                    status_code=400,
+                    content={"detail": "Request object not found"},
+                )
 
-    return await user_repository.update_record(
-        user.id,
-        body,
-    )
+            try:
+                body = dict(
+                    pair.split("=", 1) for pair in str(request.query_params).split("&")
+                )
+                data = IPixverseBody(**body)
+            except Exception as e:
+                return JSONResponse(
+                    status_code=422,
+                    content={"detail": f"Invalid request body: {e}"},
+                )
+
+            if data.app_id == "tea.ai.bundle":
+                user = await user_repository.fetch_with_filters(
+                    user_id=data.user_id,
+                    app_id=data.app_id,
+                )
+                if user.balance < method_cost:
+                    raise PixverseError(
+                        402,
+                        extra={
+                            "Информация о пользователе": f"{data.user_id}\n\n{data.app_id}"
+                        },
+                    )
+
+            return await func(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
