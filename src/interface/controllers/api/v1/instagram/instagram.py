@@ -4,17 +4,14 @@ from fastapi_pagination import Page
 
 from .....schemas.external import (
     IInstagramUser,
-    InstagramAuthUser,
     InstagramAuthResponse,
-    InstagramSessionResponse,
     InstagramUserResponse,
+    InstagramUpdateUserResponse,
     InstagramFollower,
     InstagramPost,
 )
 
 from ......domain.entities.instagram import ISession
-
-from ......domain.typing.enums import InstagramRelationType
 
 from ......infrastructure.external.instagram import InstagramClient
 
@@ -32,6 +29,16 @@ class InstagramController:
     ) -> InstagramAuthResponse:
         return await self._client.auth_user_session(
             body,
+        )
+
+    async def update_user_data(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> InstagramUpdateUserResponse:
+        return await self._client.update_user_data(
+            body,
+            uuid,
         )
 
     async def fetch_statistics(
@@ -77,35 +84,3 @@ class InstagramController:
             uuid,
             relation_type,
         )
-
-    # async def fetch_subsribers(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     return await self._client.fetch_subsribers(
-    #         body,
-    #     )
-
-    # async def fetch_subsribtions(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     return await self._client.fetch_subsribtions(
-    #         body,
-    #     )
-
-    # async def fetch_non_reciprocal_subsribtions(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     return await self._client.fetch_non_reciprocal_subsribtions(
-    #         body,
-    #     )
-
-    # async def fetch_publications(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramPost]:
-    #     return await self._client.fetch_publications(
-    #         body,
-    #     )

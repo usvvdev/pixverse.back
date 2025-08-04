@@ -4,16 +4,13 @@ from fastapi_pagination import Page
 
 from ......interface.controllers.api.v1 import InstagramController
 
-from ......domain.typing.enums import InstagramRelationType
-
 from ......domain.entities.instagram import ISession
 
 from ......interface.schemas.external import (
     IInstagramUser,
-    InstagramAuthUser,
     InstagramAuthResponse,
-    InstagramSessionResponse,
     InstagramUserResponse,
+    InstagramUpdateUserResponse,
     InstagramFollower,
     InstagramPost,
 )
@@ -32,6 +29,16 @@ class InstagramView:
     ) -> InstagramAuthResponse:
         return await self._controller.auth_user_session(
             body,
+        )
+
+    async def update_user_data(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> InstagramUpdateUserResponse:
+        return await self._controller.update_user_data(
+            body,
+            uuid,
         )
 
     async def fetch_statistics(

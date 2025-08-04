@@ -34,6 +34,7 @@ from ....interface.schemas.external import (
     InstagramAuthUser,
     InstagramSessionResponse,
     InstagramAuthResponse,
+    InstagramUpdateUserResponse,
     InstagramUserStatistics,
     InstagramFollower,
     IInstagramPost,
@@ -77,26 +78,27 @@ class InstagramClient:
     ) -> None:
         self._core = core
 
-    # async def __session_loader(
-    #     self,
-    #     session_data: ISession,
-    # ) -> Instaloader:
-    #     loader = Instaloader()
-
-    #     loader.context._session.cookies.update(
-    #         session_data.dict,
-    #     )
-    #     return loader
-
     async def auth_user_session(
         self,
         session_data: ISession,
-    ) -> ISession:
+    ) -> InstagramAuthResponse:
         session = await self._core.fetch_user_session(
             session_data,
         )
         return InstagramAuthResponse(
             uuid=session.uuid,
+        )
+
+    async def update_user_data(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> InstagramUpdateUserResponse:
+        user_data = await self._core.add_user_data(
+            uuid,
+        )
+        return InstagramUpdateUserResponse(
+            user_id=user_data.username,
         )
 
     # async def __fetch_profile(

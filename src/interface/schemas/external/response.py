@@ -395,8 +395,12 @@ class ChatGPTResp(ISchema):
 
 class IInstagramResponse(ISchema):
     uuid: Annotated[
-        str,
-        Field(...),
+        str | None,
+        Field(default=None),
+    ]
+    username: Annotated[
+        str | None,
+        Field(default=None),
     ]
     timestamp: Annotated[
         str,
@@ -422,7 +426,14 @@ class InstagramSessionResponse(IInstagramResponse):
 class InstagramAuthResponse(IInstagramResponse):
     detail: Annotated[
         str,
-        Field(default="Succesfull authorization and session has been saved"),
+        Field(default="Successfull authorization and session has been saved"),
+    ]
+
+
+class InstagramUpdateUserResponse(IInstagramResponse):
+    detail: Annotated[
+        str,
+        Field(default="Successfull user data updation"),
     ]
 
 

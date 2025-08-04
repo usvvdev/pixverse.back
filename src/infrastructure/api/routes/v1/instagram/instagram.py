@@ -3,10 +3,9 @@
 from fastapi import (
     APIRouter,
     Depends,
-    Query,
 )
 
-from typing import Any, Literal
+from typing import Literal
 
 from fastapi_pagination import Page
 
@@ -16,14 +15,13 @@ from ......domain.tools import auto_docs
 
 from ......domain.entities.instagram import ISession
 
-from ......domain.typing.enums import InstagramRelationType
-
 from ......interface.schemas.external import (
     IInstagramUser,
     InstagramAuthUser,
     InstagramAuthResponse,
     InstagramSessionResponse,
     InstagramUserResponse,
+    InstagramUpdateUserResponse,
     InstagramFollower,
     InstagramPost,
     IInstagramPost,
@@ -44,6 +42,20 @@ async def auth_user_session(
 ) -> InstagramAuthResponse:
     return await view.auth_user_session(
         body,
+    )
+
+
+@instagram_router.post(
+    "/users/{uuid}/update",
+)
+async def update_user_data(
+    body: IInstagramUser,
+    uuid: str,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> InstagramUpdateUserResponse:
+    return await view.update_user_data(
+        body,
+        uuid,
     )
 
 

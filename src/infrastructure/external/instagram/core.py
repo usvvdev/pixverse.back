@@ -1,6 +1,6 @@
 # coding utf-8
 
-from typing import Iterable
+from typing import Any, Generator, Iterable
 
 from instaloader.instaloader import (
     Instaloader,
@@ -128,7 +128,7 @@ class InstagramCore:
         self,
         posts: Iterable[Post],
         user_id: int,
-    ):
+    ) -> Generator[InstagramPost, Any, None]:
         for post in posts:
             yield InstagramPost.from_instaloader_post(post, user_id)
 
@@ -171,73 +171,109 @@ class InstagramCore:
 
             # 1. mutual
             for username in relation_stats.mutual_usernames:
-                user = followee_map[
-                    username
-                ]  # или follower_map[username], они одинаковые
-                await user_relations_repository.add_record(
-                    InstagramFollower.from_instaloader_profile(
-                        user,
-                        user_id,
+                user = followee_map[username]
+                if (
+                    user_relations_repository.fetch_one_with_filters(
+                        user_id=user_id,
+                        username=user.username,
                         relation_type="mutual",
                     )
-                )
+                    is None
+                ):
+                    await user_relations_repository.add_record(
+                        InstagramFollower.from_instaloader_profile(
+                            user,
+                            user_id,
+                            relation_type="mutual",
+                        )
+                    )
 
             for follower in followers:
-                await user_relations_repository.add_record(
-                    InstagramFollower.from_instaloader_profile(
-                        follower,
-                        user_id,
+                if (
+                    user_relations_repository.fetch_one_with_filters(
+                        user_id=user_id,
+                        username=follower.username,
                         relation_type="follower",
                     )
-                )
+                    is None
+                ):
+                    await user_relations_repository.add_record(
+                        InstagramFollower.from_instaloader_profile(
+                            follower,
+                            user_id,
+                            relation_type="follower",
+                        )
+                    )
 
             for followee in followees:
-                await user_relations_repository.add_record(
-                    InstagramFollower.from_instaloader_profile(
-                        followee,
-                        user_id,
+                if (
+                    user_relations_repository.fetch_one_with_filters(
+                        user_id=user_id,
+                        username=followee.username,
                         relation_type="following",
                     )
-                )
+                    is None
+                ):
+                    await user_relations_repository.add_record(
+                        InstagramFollower.from_instaloader_profile(
+                            followee,
+                            user_id,
+                            relation_type="following",
+                        )
+                    )
 
             # 2. not_following_back
             for username in relation_stats.not_following_back:
                 user = follower_map[username]
-                await user_relations_repository.add_record(
-                    InstagramFollower.from_instaloader_profile(
-                        user,
-                        user_id,
+                if (
+                    user_relations_repository.fetch_one_with_filters(
+                        user_id=user_id,
+                        username=user.username,
                         relation_type="not_following_back",
                     )
-                )
+                    is None
+                ):
+                    await user_relations_repository.add_record(
+                        InstagramFollower.from_instaloader_profile(
+                            user,
+                            user_id,
+                            relation_type="not_following_back",
+                        )
+                    )
 
             # 3. not_followed_by
             for username in relation_stats.not_followed_by:
                 user = followee_map[username]
-                await user_relations_repository.add_record(
-                    InstagramFollower.from_instaloader_profile(
-                        user,
-                        user_id,
-                        relation_type="not_followed_by",
+                if (
+                    user_relations_repository.fetch_one_with_filters(
+                        user_id=user_id,
+                        username=user.username,
+                        relation_type="not_following_back",
                     )
-                )
+                    is None
+                ):
+                    await user_relations_repository.add_record(
+                        InstagramFollower.from_instaloader_profile(
+                            user,
+                            user_id,
+                            relation_type="not_following_back",
+                        )
+                    )
 
         except ClientError as err:
             raise InstagramError.from_exception(err)
 
-    async def __add_user(
+    async def __fetch_user_data(
         self,
         session_data: ISession,
     ):
         profile: Profile | None = await self.__validate_profile(
             session_data,
         )
-        client = await self.__set_client(session_data)
         if profile is not None:
             user_data = IUser.from_instaloader_profile(
                 profile,
             )
-
             if (
                 await user_repository.fetch_field("username", profile.username, False)
                 is None
@@ -245,50 +281,83 @@ class InstagramCore:
                 await user_repository.add_record(
                     user_data,
                 )
+            return user_data
 
+    async def __add_user_session(
+        self,
+        session_data: ISession,
+    ) -> AddSession:
+        user_data = await self.__fetch_user_data(session_data)
+        if user_data is not None:
             user = await user_repository.fetch_field(
                 "username",
                 user_data.username,
                 False,
             )
+        return AddSession(
+            **session_data.dict,
+            user_id=user.id,
+        )
 
-            followers = client.user_followers(session_data.ds_user_id).values()
+    async def add_user_data(
+        self,
+        uuid: str,
+    ) -> IUser | None:
+        session = await session_repository.fetch_with_filters(
+            uuid=uuid,
+        )
 
-            followees = client.user_following(session_data.ds_user_id).values()
+        session_data = ISession.model_validate(session)
 
-            relation_stats = self.__fetch_relation_stats(followers, followees)
+        profile: Profile | None = await self.__validate_profile(
+            session_data,
+        )
 
-            user_stats = InstagramUserStatistics.from_instaloader_profile(
-                profile,
-                user.id,
-                mutual_count=relation_stats.mutual_count,
-                not_following_back_count=relation_stats.not_following_back_count,
-                not_followed_by_count=relation_stats.not_followed_by_count,
+        client = await self.__set_client(session_data)
+
+        user_data = await self.__fetch_user_data(session_data)
+
+        user = await user_repository.fetch_field(
+            "username",
+            user_data.username,
+            False,
+        )
+
+        followers = client.user_followers(session_data.ds_user_id).values()
+
+        followees = client.user_following(session_data.ds_user_id).values()
+
+        relation_stats = self.__fetch_relation_stats(followers, followees)
+
+        user_stats = InstagramUserStatistics.from_instaloader_profile(
+            profile,
+            user.id,
+            mutual_count=relation_stats.mutual_count,
+            not_following_back_count=relation_stats.not_following_back_count,
+            not_followed_by_count=relation_stats.not_followed_by_count,
+        )
+
+        if await user_stats_repository.fetch_field("user_id", user.id, False) is None:
+            await user_stats_repository.add_record(
+                user_stats,
             )
 
-            if (
-                await user_stats_repository.fetch_field("user_id", user.id, False)
-                is None
-            ):
-                await user_stats_repository.add_record(
-                    user_stats,
-                )
+        posts = profile.get_posts()
 
-            posts = profile.get_posts()
-
-            if (
-                await user_posts_repository.fetch_field("user_id", user.id, False)
-                is None
-            ):
-                async for post in self.__iterate_posts(posts, user.id):
+        if await user_posts_repository.fetch_field("user_id", user.id, False) is None:
+            async for post in self.__iterate_posts(posts, user.id):
+                if (
+                    await user_posts_repository.fetch_with_filters(
+                        user_id=user.id,
+                        post_url=post.post_url,
+                    )
+                    is None
+                ):
                     await user_posts_repository.add_record(post)
 
-            await self.__add_user_relations(client, user.id)
+        await self.__add_user_relations(client, user.id)
 
-            return AddSession(
-                **session_data.dict,
-                user_id=user.id,
-            )
+        return user_data
 
     async def fetch_user_session(
         self,
@@ -309,7 +378,7 @@ class InstagramCore:
     ) -> ISession:
         try:
             await session_repository.add_record(
-                await self.__add_user(session_data),
+                await self.__add_user_session(session_data),
             )
         except DuplicateColumnError as err:
             raise err
