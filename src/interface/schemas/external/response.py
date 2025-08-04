@@ -470,6 +470,10 @@ class IInstagramUserStatistics(ISchema):
         int,
         Field(...),
     ]
+    secret_fans: Annotated[
+        int,
+        Field(default=0),
+    ]
     created_at: Annotated[
         date,
         Field(default_factory=lambda: now().date()),
