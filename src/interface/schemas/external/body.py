@@ -183,7 +183,7 @@ class UsrData(ISchema):
     ]
     app_id_usage: Annotated[
         int,
-        Field(...),
+        Field(default=1),
     ]
 
 
