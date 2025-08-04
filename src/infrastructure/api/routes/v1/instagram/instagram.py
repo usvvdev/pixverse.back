@@ -80,7 +80,7 @@ async def fetch_statistics(
     body: IInstagramUser,
     uuid: str,
     view: InstagramView = Depends(InstagramViewFactory.create),
-):
+) -> InstagramUserResponse:
     return await view.fetch_statistics(
         body,
         uuid,

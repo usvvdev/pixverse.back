@@ -49,6 +49,7 @@ from .response import (
     InstagramAuthResponse,
     InstagramUser,
     InstagramUserStatistics,
+    IInstagramUserStatistics,
     InstagramUserResponse,
     InstagramPost,
     IInstagramPost,
@@ -108,4 +109,5 @@ __all__ = [
     "ChatGPTCosmetic",
     "UserRelationStats",
     "IPixverseBody",
+    "IInstagramUserStatistics",
 ]

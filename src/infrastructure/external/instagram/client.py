@@ -28,14 +28,11 @@ from ....domain.entities.instagram import ISession
 
 from ....interface.schemas.external import (
     IInstagramUser,
-    InstagramPost,
     InstagramUser,
     InstagramUserResponse,
-    InstagramAuthUser,
-    InstagramSessionResponse,
     InstagramAuthResponse,
     InstagramUpdateUserResponse,
-    InstagramUserStatistics,
+    IInstagramUserStatistics,
     InstagramFollower,
     IInstagramPost,
 )
@@ -116,15 +113,23 @@ class InstagramClient:
         self,
         body: IInstagramUser,
         uuid: str,
-    ) -> InstagramPost:
+    ):
         user_session = await session_repository.fetch_uuid(
             uuid,
         )
-        return await user_repository.fetch_one_to_many(
+        data = await user_repository.fetch_one_to_many(
             "id",
             user_session.user_id,
             many=False,
             related=["statistics", "publications"],
+        )
+        return InstagramUserResponse(
+            **InstagramUser.model_validate(data).dict,
+            posts=[IInstagramPost.model_validate(post) for post in data.publications],
+            statistics=[
+                IInstagramUserStatistics.model_validate(stat)
+                for stat in data.statistics
+            ],
         )
 
     async def fetch_publication(

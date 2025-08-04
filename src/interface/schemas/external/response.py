@@ -15,7 +15,7 @@ from pydantic import (
     HttpUrl,
 )
 
-from datetime import datetime
+from datetime import date, datetime
 
 from instaloader import Profile, Post
 
@@ -437,6 +437,45 @@ class InstagramUpdateUserResponse(IInstagramResponse):
     ]
 
 
+class IInstagramUserStatistics(ISchema):
+    id: Annotated[
+        int,
+        Field(...),
+    ]
+    likes_count: Annotated[
+        int,
+        Field(...),
+    ]
+    comments_count: Annotated[
+        int,
+        Field(...),
+    ]
+    followers_count: Annotated[
+        int,
+        Field(...),
+    ]
+    following_count: Annotated[
+        int,
+        Field(...),
+    ]
+    mutual_subscriptions_count: Annotated[
+        int,
+        Field(...),
+    ]
+    non_reciprocal_following_count: Annotated[
+        int,
+        Field(...),
+    ]
+    non_reciprocal_followers_count: Annotated[
+        int,
+        Field(...),
+    ]
+    created_at: Annotated[
+        date,
+        Field(default_factory=lambda: now().date()),
+    ]
+
+
 class InstagramUserStatistics(ISchema):
     user_id: Annotated[
         int,
@@ -471,8 +510,8 @@ class InstagramUserStatistics(ISchema):
         Field(...),
     ]
     created_at: Annotated[
-        datetime,
-        Field(default_factory=lambda: now()),
+        date,
+        Field(default_factory=lambda: now().date()),
     ]
 
     @classmethod
@@ -626,11 +665,11 @@ class InstagramUser(ISchema):
 
 class InstagramUserResponse(InstagramUser):
     statistics: Annotated[
-        list[InstagramUserStatistics],
+        list[IInstagramUserStatistics],
         Field(...),
     ]
     posts: Annotated[
-        list[InstagramPost],
+        list[IInstagramPost],
         Field(...),
     ]
 
