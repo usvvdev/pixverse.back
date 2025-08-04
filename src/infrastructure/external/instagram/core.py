@@ -7,7 +7,6 @@ from instaloader.instaloader import (
     Profile,
     Post,
     InstaloaderException,
-    ProfileNotExistsException,
 )
 
 from pendulum import now
@@ -16,7 +15,10 @@ from instagrapi import Client
 
 from instagrapi.types import UserShort
 
-from instagrapi.exceptions import ClientLoginRequired, ClientError
+from instagrapi.exceptions import (
+    ClientLoginRequired,
+    ClientError,
+)
 
 from sqlalchemy.exc import DuplicateColumnError
 
@@ -25,11 +27,10 @@ from ....domain.errors import InstagramError
 from ....domain.entities.instagram import ISession
 
 from ....interface.schemas.api import (
-    Session,
     AddSession,
     IUser,
-    User,
     SearchUser,
+    UserTracking,
 )
 
 from ....interface.schemas.external import (
@@ -49,6 +50,7 @@ from ...orm.database.repositories import (
     InstagramUserStatsRepository,
     InstagramUserPostsRepository,
     InstagramUserRelationsRepository,
+    InstagramTrackingRepository,
 )
 
 from ....domain.conf import app_conf
@@ -86,6 +88,11 @@ user_relations_repository = InstagramUserRelationsRepository(
 )
 
 
+user_tracking_repository = InstagramTrackingRepository(
+    IDatabase(conf),
+)
+
+
 class InstagramCore:
     async def __set_loader(
         self,
@@ -115,13 +122,14 @@ class InstagramCore:
     async def __validate_profile(
         self,
         session_data: ISession,
+        user_id: int | None = None,
     ) -> Profile | None:
         loader: Instaloader = await self.__set_loader(session_data)
         try:
             data: Profile | None = Profile.from_id(
                 loader.context,
                 int(
-                    session_data.ds_user_id,
+                    session_data.ds_user_id if user_id is None else user_id,
                 ),
             )
             return data
@@ -414,3 +422,48 @@ class InstagramCore:
             return SearchUser.model_validate(data)
         except InstagramError.exceptions as err:
             raise InstagramError.from_exception(err)
+
+    async def add_user_tracking(
+        self,
+        uuid: str,
+        user_id: int,
+    ) -> None:
+        session = await session_repository.fetch_with_filters(
+            uuid=uuid,
+        )
+
+        session_data = ISession.model_validate(session)
+
+        profile: Profile | None = await self.__validate_profile(
+            session_data,
+            user_id=user_id,
+        )
+        if profile is not None:
+            user_data = IUser.from_instaloader_profile(
+                profile,
+            )
+            if (
+                await user_repository.fetch_field("username", profile.username, False)
+                is None
+            ):
+                await user_repository.add_record(
+                    user_data,
+                )
+
+        target_user = await user_repository.fetch_with_filters(
+            username=profile.username
+        )
+
+        if (
+            await user_tracking_repository.fetch_with_filters(
+                target_user_id=target_user.id,
+                owner_user_id=session.user_id,
+            )
+            is None
+        ):
+            await user_tracking_repository.add_record(
+                UserTracking(
+                    target_user_id=target_user.id,
+                    owner_user_id=session.user_id,
+                )
+            )

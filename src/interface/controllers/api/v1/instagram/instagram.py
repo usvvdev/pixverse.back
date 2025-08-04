@@ -7,6 +7,7 @@ from .....schemas.external import (
     InstagramAuthResponse,
     InstagramUserResponse,
     InstagramUpdateUserResponse,
+    InstagramTrackingUserResponse,
     InstagramFollower,
     InstagramPost,
 )
@@ -51,6 +52,16 @@ class InstagramController:
         return await self._client.find_user(
             uuid,
             username,
+        )
+
+    async def add_user_tracking(
+        self,
+        uuid: str,
+        user_id: int,
+    ) -> InstagramTrackingUserResponse:
+        return await self._client.add_user_tracking(
+            uuid,
+            user_id,
         )
 
     async def fetch_statistics(

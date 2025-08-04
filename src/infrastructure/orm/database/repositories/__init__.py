@@ -29,6 +29,7 @@ from .instagram import (
     InstagramUserStatsRepository,
     InstagramUserPostsRepository,
     InstagramUserRelationsRepository,
+    InstagramTrackingRepository,
 )
 
 __all__: list[str] = [
@@ -50,4 +51,5 @@ __all__: list[str] = [
     "InstagramUserStatsRepository",
     "InstagramUserPostsRepository",
     "InstagramUserRelationsRepository",
+    "InstagramTrackingRepository",
 ]

@@ -111,3 +111,18 @@ class User(IUser):
         int,
         Field(...),
     ]
+
+
+class UserTracking(ISchema):
+    target_user_id: Annotated[
+        int,
+        Field(...),
+    ]
+    owner_user_id: Annotated[
+        int,
+        Field(...),
+    ]
+    created_at: Annotated[
+        datetime,
+        Field(default_factory=lambda: now()),
+    ]

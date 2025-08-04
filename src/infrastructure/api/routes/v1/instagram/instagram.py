@@ -20,6 +20,7 @@ from ......interface.schemas.external import (
     InstagramAuthResponse,
     InstagramUserResponse,
     InstagramUpdateUserResponse,
+    InstagramTrackingUserResponse,
     InstagramFollower,
     IInstagramPost,
 )
@@ -56,6 +57,21 @@ async def find_user(
     return await view.find_user(
         uuid,
         username,
+    )
+
+
+@instagram_router.post(
+    "/users/{uuid}/tracking/{user_id}",
+)
+async def add_user_tracking(
+    body: IInstagramUser,
+    uuid: str,
+    user_id: int,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> InstagramTrackingUserResponse:
+    return await view.add_user_tracking(
+        uuid,
+        user_id,
     )
 
 

@@ -52,6 +52,7 @@ from .instagram import (
     IUser,
     User,
     SearchUser,
+    UserTracking,
 )
 
 __all__: list[str] = [
@@ -85,4 +86,5 @@ __all__: list[str] = [
     "IUser",
     "User",
     "SearchUser",
+    "UserTracking",
 ]

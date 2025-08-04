@@ -32,10 +32,13 @@ from ....interface.schemas.external import (
     InstagramUserResponse,
     InstagramAuthResponse,
     InstagramUpdateUserResponse,
+    InstagramTrackingUserResponse,
     IInstagramUserStatistics,
     InstagramFollower,
     IInstagramPost,
 )
+
+from ....interface.schemas.api import SearchUser
 
 from ...orm.database.repositories import (
     InstagramUserRepository,
@@ -96,17 +99,29 @@ class InstagramClient:
         )
         return InstagramUpdateUserResponse(
             uuid=uuid,
-            username=user_data.username,
         )
 
     async def find_user(
         self,
         uuid: str,
         username: str,
-    ):
+    ) -> SearchUser:
         return await self._core.find_user(
             uuid,
             username,
+        )
+
+    async def add_user_tracking(
+        self,
+        uuid: str,
+        user_id: int,
+    ) -> InstagramTrackingUserResponse:
+        user_data = await self._core.add_user_tracking(
+            uuid,
+            user_id,
+        )
+        return InstagramTrackingUserResponse(
+            uuid=uuid,
         )
 
     async def fetch_statistics(

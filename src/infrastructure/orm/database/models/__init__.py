@@ -33,6 +33,7 @@ from .instagram import (
     InstagramUserRelations,
     InstagramUsers,
     InstagramUserStats,
+    InstagramTracking,
 )
 
 __all__: list[str] = [
@@ -58,4 +59,5 @@ __all__: list[str] = [
     "InstagramUserRelations",
     "InstagramUsers",
     "InstagramUserStats",
+    "InstagramTracking",
 ]

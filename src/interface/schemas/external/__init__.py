@@ -46,6 +46,7 @@ from .response import (
     ChatGPTCalories,
     InstagramSessionResponse,
     InstagramUpdateUserResponse,
+    InstagramTrackingUserResponse,
     InstagramAuthResponse,
     InstagramUser,
     InstagramUserStatistics,
@@ -110,4 +111,5 @@ __all__ = [
     "UserRelationStats",
     "IPixverseBody",
     "IInstagramUserStatistics",
+    "InstagramTrackingUserResponse",
 ]

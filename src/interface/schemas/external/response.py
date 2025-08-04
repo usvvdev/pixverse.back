@@ -398,10 +398,6 @@ class IInstagramResponse(ISchema):
         str | None,
         Field(default=None),
     ]
-    username: Annotated[
-        str | None,
-        Field(default=None),
-    ]
     timestamp: Annotated[
         str,
         Field(default_factory=lambda: str(now())),
@@ -434,6 +430,13 @@ class InstagramUpdateUserResponse(IInstagramResponse):
     detail: Annotated[
         str,
         Field(default="Successfull user data updation"),
+    ]
+
+
+class InstagramTrackingUserResponse(IInstagramResponse):
+    detail: Annotated[
+        str,
+        Field(default="Successfull added user to tracking"),
     ]
 
 
