@@ -11,6 +11,8 @@ from .....schemas.external import (
     InstagramPost,
 )
 
+from .....schemas.api import SearchUser
+
 from ......domain.entities.instagram import ISession
 
 from ......infrastructure.external.instagram import InstagramClient
@@ -39,6 +41,16 @@ class InstagramController:
         return await self._client.update_user_data(
             body,
             uuid,
+        )
+
+    async def find_user(
+        self,
+        uuid: str,
+        username: str,
+    ) -> SearchUser:
+        return await self._client.find_user(
+            uuid,
+            username,
         )
 
     async def fetch_statistics(

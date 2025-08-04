@@ -39,6 +39,25 @@ class Session(AddSession):
     ]
 
 
+class SearchUser(ISchema):
+    userid: Annotated[
+        int,
+        Field(..., alias="user_id"),
+    ]
+    username: Annotated[
+        str,
+        Field(...),
+    ]
+    full_name: Annotated[
+        str,
+        Field(...),
+    ]
+    profile_pic_url: Annotated[
+        str | None,
+        Field(default=None, alias="profile_picture"),
+    ]
+
+
 class IUser(ISchema):
     username: Annotated[
         str,

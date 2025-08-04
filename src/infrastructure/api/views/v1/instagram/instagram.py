@@ -15,6 +15,8 @@ from ......interface.schemas.external import (
     InstagramPost,
 )
 
+from ......interface.schemas.api import SearchUser
+
 
 class InstagramView:
     def __init__(
@@ -39,6 +41,16 @@ class InstagramView:
         return await self._controller.update_user_data(
             body,
             uuid,
+        )
+
+    async def find_user(
+        self,
+        uuid: str,
+        username: str,
+    ) -> SearchUser:
+        return await self._controller.find_user(
+            uuid,
+            username,
         )
 
     async def fetch_statistics(
@@ -84,19 +96,3 @@ class InstagramView:
             uuid,
             relation_type,
         )
-
-    # async def fetch_non_reciprocal_subsribtions(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     return await self._controller.fetch_non_reciprocal_subsribtions(
-    #         body,
-    #     )
-
-    # async def fetch_publications(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramPost]:
-    #     return await self._controller.fetch_publications(
-    #         body,
-    #     )

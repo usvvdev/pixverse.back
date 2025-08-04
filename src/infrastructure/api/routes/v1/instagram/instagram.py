@@ -17,15 +17,14 @@ from ......domain.entities.instagram import ISession
 
 from ......interface.schemas.external import (
     IInstagramUser,
-    InstagramAuthUser,
     InstagramAuthResponse,
-    InstagramSessionResponse,
     InstagramUserResponse,
     InstagramUpdateUserResponse,
     InstagramFollower,
-    InstagramPost,
     IInstagramPost,
 )
+
+from ......interface.schemas.api import SearchUser
 
 from .....factroies.api.v1 import InstagramViewFactory
 
@@ -42,6 +41,21 @@ async def auth_user_session(
 ) -> InstagramAuthResponse:
     return await view.auth_user_session(
         body,
+    )
+
+
+@instagram_router.post(
+    "/users/{uuid}/search/{username}",
+)
+async def find_user(
+    body: IInstagramUser,
+    uuid: str,
+    username: str,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> SearchUser:
+    return await view.find_user(
+        uuid,
+        username,
     )
 
 
@@ -117,51 +131,3 @@ async def fetch_subscribtions(
         uuid,
         relation_type,
     )
-
-
-# @instagram_router.post(
-#     "/subscribers",
-# )
-# async def fetch_subsribers(
-#     body: IInstagramUser,
-#     view: InstagramView = Depends(InstagramViewFactory.create),
-# ) -> Page[InstagramFollower]:
-#     return await view.fetch_subsribers(
-#         body,
-#     )
-
-
-# @instagram_router.post(
-#     "/subscribtions",
-# )
-# async def fetch_subsribtions(
-#     body: IInstagramUser,
-#     view: InstagramView = Depends(InstagramViewFactory.create),
-# ) -> Page[InstagramFollower]:
-#     return await view.fetch_subsribtions(
-#         body,
-#     )
-
-
-# @instagram_router.post(
-#     "/non-reciprocal-subscribers",
-# )
-# async def fetch_non_reciprocal_subsribtions(
-#     body: IInstagramUser,
-#     view: InstagramView = Depends(InstagramViewFactory.create),
-# ) -> Page[InstagramFollower]:
-#     return await view.fetch_non_reciprocal_subsribtions(
-#         body,
-#     )
-
-
-# @instagram_router.post(
-#     "/publications",
-# )
-# async def fetch_publications(
-#     body: IInstagramUser,
-#     view: InstagramView = Depends(InstagramViewFactory.create),
-# ) -> Page[InstagramPost]:
-#     return await view.fetch_publications(
-#         body,
-#     )

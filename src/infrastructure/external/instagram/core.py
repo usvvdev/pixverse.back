@@ -7,7 +7,10 @@ from instaloader.instaloader import (
     Profile,
     Post,
     InstaloaderException,
+    ProfileNotExistsException,
 )
+
+from pendulum import now
 
 from instagrapi import Client
 
@@ -26,6 +29,7 @@ from ....interface.schemas.api import (
     AddSession,
     IUser,
     User,
+    SearchUser,
 )
 
 from ....interface.schemas.external import (
@@ -173,9 +177,9 @@ class InstagramCore:
             for username in relation_stats.mutual_usernames:
                 user = followee_map[username]
                 if (
-                    user_relations_repository.fetch_one_with_filters(
+                    await user_relations_repository.fetch_with_filters(
                         user_id=user_id,
-                        username=user.username,
+                        related_username=user.username,
                         relation_type="mutual",
                     )
                     is None
@@ -190,9 +194,9 @@ class InstagramCore:
 
             for follower in followers:
                 if (
-                    user_relations_repository.fetch_one_with_filters(
+                    await user_relations_repository.fetch_with_filters(
                         user_id=user_id,
-                        username=follower.username,
+                        related_username=follower.username,
                         relation_type="follower",
                     )
                     is None
@@ -207,9 +211,9 @@ class InstagramCore:
 
             for followee in followees:
                 if (
-                    user_relations_repository.fetch_one_with_filters(
+                    await user_relations_repository.fetch_with_filters(
                         user_id=user_id,
-                        username=followee.username,
+                        related_username=followee.username,
                         relation_type="following",
                     )
                     is None
@@ -226,9 +230,9 @@ class InstagramCore:
             for username in relation_stats.not_following_back:
                 user = follower_map[username]
                 if (
-                    user_relations_repository.fetch_one_with_filters(
+                    await user_relations_repository.fetch_with_filters(
                         user_id=user_id,
-                        username=user.username,
+                        related_username=user.username,
                         relation_type="not_following_back",
                     )
                     is None
@@ -245,9 +249,9 @@ class InstagramCore:
             for username in relation_stats.not_followed_by:
                 user = followee_map[username]
                 if (
-                    user_relations_repository.fetch_one_with_filters(
+                    await user_relations_repository.fetch_with_filters(
                         user_id=user_id,
-                        username=user.username,
+                        related_username=user.username,
                         relation_type="not_following_back",
                     )
                     is None
@@ -337,7 +341,10 @@ class InstagramCore:
             not_followed_by_count=relation_stats.not_followed_by_count,
         )
 
-        if await user_stats_repository.fetch_field("user_id", user.id, False) is None:
+        if (
+            await user_stats_repository.fetch_field("created_at", now().date(), False)
+            is None
+        ):
             await user_stats_repository.add_record(
                 user_stats,
             )
@@ -386,3 +393,24 @@ class InstagramCore:
         return await session_repository.fetch_session(
             session_data.sessionid,
         )
+
+    async def find_user(
+        self,
+        uuid: str,
+        username: str,
+    ):
+        session = await session_repository.fetch_with_filters(
+            uuid=uuid,
+        )
+
+        session_data = ISession.model_validate(session)
+
+        loader: Instaloader = await self.__set_loader(session_data)
+        try:
+            data: Profile | None = Profile.from_username(
+                loader.context,
+                username,
+            )
+            return SearchUser.model_validate(data)
+        except InstagramError.exceptions as err:
+            raise InstagramError.from_exception(err)

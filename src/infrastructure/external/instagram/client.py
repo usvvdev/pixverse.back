@@ -98,20 +98,19 @@ class InstagramClient:
             uuid,
         )
         return InstagramUpdateUserResponse(
-            user_id=user_data.username,
+            uuid=uuid,
+            username=user_data.username,
         )
 
-    # async def __fetch_profile(
-    #     self,
-    #     session_data: ISession,
-    #     username: str,
-    # ) -> Profile:
-    #     try:
-    #         loader: Instaloader = await self.__session_loader(session_data)
-    #         sleep(uniform(0.5, 1.5))
-    #         return Profile.from_username(loader.context, username)
-    #     except Exception as err:
-    #         raise InstagramError.from_exception(err)
+    async def find_user(
+        self,
+        uuid: str,
+        username: str,
+    ):
+        return await self._core.find_user(
+            uuid,
+            username,
+        )
 
     async def fetch_statistics(
         self,
@@ -192,125 +191,3 @@ class InstagramClient:
         )
 
         return paginate(items)
-
-    #     session = await self.__auth_user_session(body.session_id)
-
-    #     user: Profile = await self.__fetch_profile(session)
-
-    #     medias: list[Media] = client.user_medias(user.pk, amount=20)
-
-    #     return InstagramUserResponse(
-    #         user=InstagramUser.from_user(user),
-    #         statistics=InstagramUserStatistics.from_data(
-    #             user,
-    #             client,
-    #             medias,
-    #         ),
-    #         posts=InstagramPost.from_medias(medias),
-    #     )
-
-    # async def fetch_subsribers(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     client: Client | None = await self.__auth_user_session(body)
-
-    #     user: User = self.__fetch_user(
-    #         body,
-    #         client,
-    #     )
-
-    #     try:
-    #         subs: dict[str, UserShort] = client.user_followers(
-    #             user.pk,
-    #         )
-    #     except InstagramError.exceptions as err:
-    #         raise InstagramError.from_exception(err)
-
-    #     return await self.__fetch_users(subs)
-
-    # async def fetch_subsribtions(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     client: Client | None = await self.__auth_user_session(body)
-
-    #     user: User = self.__fetch_user(
-    #         body,
-    #         client,
-    #     )
-
-    #     try:
-    #         subs: dict[str, UserShort] = client.user_following(
-    #             user.pk,
-    #         )
-    #     except InstagramError.exceptions as err:
-    #         raise InstagramError.from_exception(err)
-
-    #     return await self.__fetch_users(subs)
-
-    # async def fetch_non_reciprocal_subsribtions(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramFollower]:
-    #     client: Client | None = await self.__auth_user_session(body)
-
-    #     user: User = self.__fetch_user(
-    #         body,
-    #         client,
-    #     )
-
-    #     try:
-
-    #         async def call(
-    #             client: Client,
-    #             user_id: str,
-    #         ) -> dict[str, ...]:
-    #             followers: dict[str, UserShort] = await run_in_threadpool(
-    #                 client.user_followers, user_id
-    #             )
-
-    #             following: dict[str, UserShort] = await run_in_threadpool(
-    #                 client.user_following, user_id
-    #             )
-
-    #             return {
-    #                 str(pk): user
-    #                 for pk, user in followers.items()
-    #                 if pk not in following
-    #             }
-
-    #         subs: dict[str, UserShort] = await call(
-    #             client,
-    #             user.pk,
-    #         )
-
-    #     except InstagramError.exceptions as err:
-    #         raise InstagramError.from_exception(err)
-
-    #     return await self.__fetch_users(subs)
-
-    # async def fetch_publications(
-    #     self,
-    #     body: IInstagramUser,
-    # ) -> Page[InstagramPost]:
-    #     client: Client | None = await self.__auth_user_session(body)
-
-    #     user: User = self.__fetch_user(
-    #         body,
-    #         client,
-    #     )
-
-    #     try:
-    #         medias: list[Media] = client.user_medias(user.pk)
-    #     except InstagramError.exceptions as err:
-    #         raise InstagramError.from_exception(err)
-
-    #     items: list[InstagramPost] = list(
-    #         map(
-    #             lambda media: InstagramPost(**media.model_dump()),
-    #             medias,
-    #         )
-    #     )
-
-    #     return paginate(items)
