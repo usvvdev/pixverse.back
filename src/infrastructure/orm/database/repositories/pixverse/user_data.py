@@ -48,7 +48,7 @@ class UserDataRepository(DatabaseRepository):
                     user_id=body.user_id,
                     app_id=body.app_id,
                     balance=body.balance
-                    if getattr(body, "balance")
+                    if body.balance is not None
                     else user_data.balance,
                     app_id_usage=int(1 + user_data.app_id_usage),
                 ),
