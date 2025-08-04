@@ -45,6 +45,7 @@ async def apphud_webhook(
         "subscription_started",
         "subscription_renewed",
         "non_renewing_purchase",
+        "paywall_checkout_initiated",
     ):
         await add_user_tokens(data)
 
