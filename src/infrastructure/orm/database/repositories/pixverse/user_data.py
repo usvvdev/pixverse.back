@@ -47,7 +47,7 @@ class UserDataRepository(DatabaseRepository):
                 data=UserUpdateData(
                     user_id=body.user_id,
                     app_id=body.app_id,
-                    balance=body.balance,
+                    balance=body.balance if body.balance else user_data.balance,
                     app_id_usage=int(1 + user_data.app_id_usage),
                 ),
             )
