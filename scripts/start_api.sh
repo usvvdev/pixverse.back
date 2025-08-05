@@ -22,4 +22,4 @@ start_fastapi_app() {
 load_config
 
 start_fastapi_app services.${APP_SERVICE}.main:main --reload --factory --host ${APP_HOST} --port ${APP_PORT}
-# start_fastapi_app services.qwen.main:main --reload --factory --host ${APP_HOST} --port ${APP_PORT}
+# start_fastapi_app services.pixverse.main:main --reload --factory --host ${APP_HOST} --port ${APP_PORT}

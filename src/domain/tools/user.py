@@ -118,10 +118,7 @@ def check_user_tokens(
                     content={"detail": f"Invalid request body: {e}"},
                 )
 
-            if (
-                data.app_id == "tea.ai.bundle"
-                and data.user_id == "07E241D5-94A4-4A51-AA62-949994D74D89"
-            ):
+            if data.app_id == "tea.ai.bundle":
                 user = await user_repository.fetch_with_filters(
                     user_id=data.user_id,
                     app_id=data.app_id,
