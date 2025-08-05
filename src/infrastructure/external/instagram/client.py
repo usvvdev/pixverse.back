@@ -84,10 +84,10 @@ class InstagramClient:
     def __init__(
         self,
         core: InstagramCore,
-        gpt: InstagramGPTCore,
+        # gpt: InstagramGPTCore,
     ) -> None:
         self._core = core
-        self._gpt = gpt
+        # self._gpt = gpt
 
     async def auth_user_session(
         self,
