@@ -1,6 +1,6 @@
 # coding utf-8
 
-from typing import Any
+from typing import Any, Literal
 import requests
 
 from fastapi import (
@@ -45,6 +45,7 @@ def make_photo(
     headers: dict[str, ...],
     chat_id: str,
     prompt: str,
+    media_format: str,
 ):
     child_id = str(uuid4())
     request = requests.post(
@@ -81,7 +82,7 @@ def make_photo(
                 }
             ],
             "timestamp": current_timestamp,
-            "size": "16:9",
+            "size": media_format,
         },
     )
     if request.status_code == 200:
@@ -108,6 +109,7 @@ def get_photo(
 @qwen_router.post("/text2photo")
 async def text_to_photo(
     promptText: str,
+    mediaFormat: Literal["16:9", "1:1", "9:16", "4:3", "3:4"] = "16:9",
 ) -> JSONResponse:
     new_chat = create_new_chat(headers)
 
@@ -117,6 +119,7 @@ async def text_to_photo(
         headers,
         chat_id,
         promptText,
+        mediaFormat,
     )
 
     if child_id:
