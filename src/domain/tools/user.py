@@ -79,7 +79,7 @@ async def add_user_tokens(
         user_id=actual_user.user_id,
         app_id=actual_user.app_id if user else data.app.bundle_id,
         balance=int((user.balance if user else 0) + matched_product.tokens_amount),
-        app_id_usage=user.app_id_usage if user is not None else 1,
+        app_id_usage=user.app_id_usage if user else 1,
     )
 
     return await user_repository.create_or_update_user_data(
