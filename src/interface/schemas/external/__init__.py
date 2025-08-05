@@ -58,6 +58,8 @@ from .response import (
     InstagramFollower,
     ChatGPTCosmeticResponse,
     ChatGPTCosmetic,
+    ChatGPTInstagram,
+    ChatGPTInstagramResponse,
 )
 
 __all__ = [
@@ -114,4 +116,6 @@ __all__ = [
     "IPixverseBody",
     "IInstagramUserStatistics",
     "InstagramTrackingUserResponse",
+    "ChatGPTInstagram",
+    "ChatGPTInstagramResponse",
 ]

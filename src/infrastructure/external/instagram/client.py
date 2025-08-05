@@ -1,20 +1,24 @@
 # coding utf-8
 
-from typing import Any
+import os
 
-from instaloader.instaloader import (
-    Instaloader,
-    Profile,
-)
+from fastapi import UploadFile
 
 from fastapi_pagination import (
     Page,
     paginate,
 )
 
-from fastapi.concurrency import run_in_threadpool
+from base64 import b64encode
 
-from .core import InstagramCore
+from .core import (
+    InstagramCore,
+    InstagramGPTCore,
+)
+
+from ....domain.constants import HEIF_EXTENSIONS
+
+from ....domain.tools import convert_heic_to_jpg
 
 from ....domain.errors import InstagramError
 
@@ -80,8 +84,10 @@ class InstagramClient:
     def __init__(
         self,
         core: InstagramCore,
+        gpt: InstagramGPTCore,
     ) -> None:
         self._core = core
+        self._gpt = gpt
 
     async def auth_user_session(
         self,
@@ -238,3 +244,28 @@ class InstagramClient:
         )
 
         return paginate(items)
+
+    async def image_to_post(
+        self,
+        image: UploadFile,
+    ):
+        max_attempts = 10
+
+        last_error = None
+
+        ext = str(os.path.splitext(image.filename)[-1]).lower()
+        image_bytes = await image.read()
+
+        if ext in HEIF_EXTENSIONS:
+            image_bytes, ext, _ = await convert_heic_to_jpg(
+                image_bytes,
+            )
+
+        image_base64 = b64encode(image_bytes).decode("utf-8")
+
+        for attempt in range(max_attempts):
+            token = conf.chatgpt_token
+            try:
+                pass
+            except:
+                pass

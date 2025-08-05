@@ -8,6 +8,7 @@ from .routers import (
     CaloriesRouter,
     InstagramRouter,
     CosmeticRouter,
+    QwenRouter,
 )
 
 __all__: list[str] = [
@@ -18,4 +19,5 @@ __all__: list[str] = [
     "CaloriesRouter",
     "InstagramRouter",
     "CosmeticRouter",
+    "QwenRouter",
 ]

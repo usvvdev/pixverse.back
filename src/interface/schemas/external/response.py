@@ -795,3 +795,52 @@ class ChatGPTCosmeticResponse(ISchema):
         self,
     ) -> list[ChatGPTCosmetic]:
         return self.choices[0].message.content
+
+
+class ChatGPTInstagram(ISchema):
+    description: Annotated[
+        str,
+        Field(...),
+    ]
+    hashtags: Annotated[
+        list[str],
+        Field(...),
+    ]
+
+
+class ChatGPTInstagramMessage(ISchema):
+    content: Annotated[
+        ChatGPTInstagram,
+        Field(...),
+    ]
+
+    @field_validator("content", mode="before")
+    @classmethod
+    def validate_content(
+        cls,
+        value,
+    ) -> Any:
+        return loads(value)
+
+
+class ChatGPTInstagramChoice(ISchema):
+    index: Annotated[
+        int,
+        Field(...),
+    ]
+    message: Annotated[
+        ChatGPTInstagramMessage,
+        Field(...),
+    ]
+
+
+class ChatGPTInstagramResponse(ISchema):
+    choices: Annotated[
+        list[ChatGPTInstagramChoice],
+        Field(...),
+    ]
+
+    def fetch_data(
+        self,
+    ) -> ChatGPTInstagram:
+        return self.choices[0].message.content

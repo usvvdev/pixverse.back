@@ -30,6 +30,8 @@ from .instagram import instagram_router
 
 from .cosmetic import cosmetic_router
 
+from .qwen import qwen_router
+
 __all__: list[str] = [
     "auth_user_router",
     "pixverse_router",
@@ -48,4 +50,5 @@ __all__: list[str] = [
     "webhook_router",
     "product_router",
     "cosmetic_router",
+    "qwen_router",
 ]

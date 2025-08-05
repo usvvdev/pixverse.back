@@ -68,6 +68,14 @@ services:
       - APP_SERVICE=cosmetic
     entrypoint: ["sh", "./scripts/start_api.sh"]
 
+  qwen:
+    <<: *service-template
+    ports:
+      - 8008:${APP_PORT}
+    environment:
+      - APP_SERVICE=qwen
+    entrypoint: ["sh", "./scripts/start_api.sh"]
+
   pixverse-account-worker:
     <<: *service-template
     environment:
