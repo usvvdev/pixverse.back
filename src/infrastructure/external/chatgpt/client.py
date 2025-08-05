@@ -124,6 +124,7 @@ class ChatGPTClient:
             detail=last_error.message,
             extra=extra,
         )
+
         raise error
 
     async def text_to_photo(

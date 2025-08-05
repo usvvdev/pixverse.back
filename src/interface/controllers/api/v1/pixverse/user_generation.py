@@ -52,8 +52,8 @@ class UserDataController:
         app_id: str,
     ) -> IUserData:
         user = await self._repository.fetch_with_filters(
-            user_id=user_id,
-            app_id=app_id,
+            user_id=str(user_id).strip(),
+            app_id=str(app_id).strip(),
         )
         if user is None:
             raise PixverseError(500008)

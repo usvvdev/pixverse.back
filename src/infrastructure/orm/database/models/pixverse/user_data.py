@@ -17,7 +17,7 @@ class UserData(ITable):
         autoincrement=1,
     )
     user_id: int = Column(
-        Integer,
+        String,
         nullable=False,
     )
     app_id: str = Column(
