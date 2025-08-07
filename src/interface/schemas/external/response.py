@@ -967,14 +967,18 @@ class TopmediaSongResponse(ISchema):
         Field(...),
     ]
 
-    # @model_validator(mode="after")
-    # def format_song_url(
-    #     self,
-    # ) -> "TopmediaSongResponse":
-    #     self.song_url = (
-    #         f"https://files.topmediai.com/aimusic/web/{self.song_url}/{self.title}.mp3"
-    #     )
-    #     return self
+    @model_validator(mode="after")
+    def format_song_url(
+        self,
+    ) -> "TopmediaSongResponse":
+        if self.song_url.endswith(".mp3"):
+            return self
+
+        if not self.song_url.startswith("http"):
+            self.song_url = f"https://files.topmediai.com/aimusic/web/{self.song_url}/{self.title}.mp3"
+        else:
+            self.song_url = f"{self.song_url}/{self.title}.mp3"
+        return self
 
 
 class TopmediaSongData(ISchema):

@@ -462,7 +462,7 @@ class TopmediaClient:
                                 resp=self.__create_song_response(music_data),
                             )
 
-                        await sleep(15)
+                        await sleep(10)
 
                 data: TopmediaAPIResponse = await call(token)
 
