@@ -25,6 +25,7 @@ from ....infrastructure.api.routes.v1 import (
     product_router,
     cosmetic_router,
     qwen_router,
+    topmedia_router,
 )
 
 
@@ -181,6 +182,22 @@ class QwenRouter(AppRouting):
             config,
             routers=[
                 qwen_router,
+                media_router,
+            ],
+        )
+
+
+class TopmediaRouter(AppRouting):
+    def __init__(
+        self,
+        app: FastAPI,
+        config: IConfEnv,
+    ) -> None:
+        super().__init__(
+            app,
+            config,
+            routers=[
+                topmedia_router,
                 media_router,
             ],
         )

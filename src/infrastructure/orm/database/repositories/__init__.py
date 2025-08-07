@@ -32,6 +32,11 @@ from .instagram import (
     InstagramTrackingRepository,
 )
 
+from .topmedia import (
+    TopmediaAccountRepository,
+    TopmediaAccountTokenRepository,
+)
+
 __all__: list[str] = [
     "PixverseAccountRepository",
     "PixverseTemplateRepository",
@@ -52,4 +57,6 @@ __all__: list[str] = [
     "InstagramUserPostsRepository",
     "InstagramUserRelationsRepository",
     "InstagramTrackingRepository",
+    "TopmediaAccountRepository",
+    "TopmediaAccountTokenRepository",
 ]

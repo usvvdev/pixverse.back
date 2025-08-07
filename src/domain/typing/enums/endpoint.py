@@ -73,3 +73,19 @@ class ChatGPTEndpoint(StrEnum):
     """
     Генерация контента по заданой фотографии.
     """
+
+
+class TopmediaEndpoint(StrEnum):
+    AUTH = "/account/login"
+
+    SLANG = "/v2/voice/text_slang"
+
+    USER = "/v2/user/info"
+
+    SPEECH = "/v5/voice/tts"
+
+    DOWNLOAD = "/v2/user/audition/download/{id}"
+
+    SONG = "/v2/async/text-to-song"
+
+    RESULT = "/v2/task/results"

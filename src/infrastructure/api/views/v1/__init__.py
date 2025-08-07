@@ -28,6 +28,8 @@ from .instagram import InstagramView
 
 from .cosmetic import CosmeticView
 
+from .topmedia import TopmediaView
+
 __all__: list[str] = [
     "PixVerseView",
     "PixverseAccountView",
@@ -45,4 +47,5 @@ __all__: list[str] = [
     "InstagramView",
     "ProductView",
     "CosmeticView",
+    "TopmediaView",
 ]

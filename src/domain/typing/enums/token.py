@@ -16,3 +16,9 @@ class TokenTitle(StrEnum):
 class TokenExpiry(IntEnum):
     access: int = 3600
     refresh: int = 86400
+
+
+class AccountProjectToken(StrEnum):
+    PIXVERSE = "pixverse"
+
+    TOPMEDIA = "topmedia"

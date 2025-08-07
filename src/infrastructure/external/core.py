@@ -28,7 +28,7 @@ class HttpClient:
 
     def __init__(
         self,
-        url: str,
+        url: str | dict[str, str],
     ) -> None:
         """Инициализация Web3 клиента.
 
@@ -55,6 +55,7 @@ class HttpClient:
     async def __make_request(
         self,
         method: str,
+        url_method: str | None,
         endpoint: str,
         headers: dict[str, Any],
         timeout: int,
@@ -72,10 +73,13 @@ class HttpClient:
 
         """
         async for client in self.get_client(headers, timeout):
+            api_url: str = (
+                self._url.get(url_method) if url_method is not None else self._url
+            )
             try:
                 yield await client.request(
                     method,
-                    url="".join((self._url, endpoint)),
+                    url="".join((api_url, endpoint)),
                     **kwargs,
                 )
             finally:
@@ -86,9 +90,12 @@ class HttpClient:
         method: str,
         headers: ISchema,
         endpoint: str,
+        url_method: str | None = None,
         timeout: int = 60,
-        body: ISchema = None,
+        body: ISchema | None = None,
         files=None,
+        params: ISchema | None = None,
+        data: ISchema | None = None,
     ) -> dict[str, Any]:
         """Основной метод отправки запроса к API.
 
@@ -103,10 +110,13 @@ class HttpClient:
         """
         async for response in self.__make_request(
             method,
+            url_method,
             endpoint,
             headers.dict if headers else None,
             timeout,
             json=body.dict if body else None,
             files=files if files else None,
+            params=params.dict if params else None,
+            data=data.dict if data else None,
         ):
             return response.json()

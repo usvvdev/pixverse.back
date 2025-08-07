@@ -32,6 +32,8 @@ from .cosmetic import cosmetic_router
 
 from .qwen import qwen_router
 
+from .topmedia import topmedia_router
+
 __all__: list[str] = [
     "auth_user_router",
     "pixverse_router",
@@ -51,4 +53,5 @@ __all__: list[str] = [
     "product_router",
     "cosmetic_router",
     "qwen_router",
+    "topmedia_router",
 ]

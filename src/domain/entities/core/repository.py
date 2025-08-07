@@ -134,7 +134,7 @@ class IRepository:
     async def update_record(
         self,
         id: int,
-        data: ISchema,
+        data: ISchema | dict[str, ...],
     ) -> ISchema:
         await self.__commit_changes(
             update(self._model)

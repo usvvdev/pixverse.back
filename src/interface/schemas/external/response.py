@@ -12,6 +12,7 @@ from pydantic import (
     Field,
     field_validator,
     computed_field,
+    model_validator,
     HttpUrl,
 )
 
@@ -844,3 +845,223 @@ class ChatGPTInstagramResponse(ISchema):
         self,
     ) -> ChatGPTInstagram:
         return self.choices[0].message.content
+
+
+class TopmediaAuthData(ISchema):
+    member_id: Annotated[
+        str,
+        Field(...),
+    ]
+    member_code: Annotated[
+        str,
+        Field(...),
+    ]
+    access_token: Annotated[
+        str,
+        Field(..., alias="token"),
+    ]
+    email: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class TopmediaTokenData(ISchema):
+    can_use_pro: Annotated[
+        int,
+        Field(...),
+    ]
+    gen_pro_times: Annotated[
+        int,
+        Field(...),
+    ]
+    pro_times: Annotated[
+        int,
+        Field(...),
+    ]
+
+
+class TopmediaSlangData(ISchema):
+    accent: Annotated[
+        str,
+        Field(...),
+    ]
+    accent_flag: Annotated[
+        str,
+        Field(...),
+    ]
+    accent_flag_png: Annotated[
+        str,
+        Field(...),
+    ]
+    recognized: Annotated[
+        list[str | Any],
+        Field(...),
+    ]
+    show_accent: Annotated[
+        list[str | Any],
+        Field(...),
+    ]
+
+
+class TopmediaSpeechData(ISchema):
+    id: Annotated[
+        int,
+        Field(...),
+    ]
+    audition_status: Annotated[
+        int,
+        Field(...),
+    ]
+    oss_url: Annotated[
+        str,
+        Field(...),
+    ]
+    oss_path: Annotated[
+        str,
+        Field(...),
+    ]
+    name: Annotated[
+        str,
+        Field(..., alias="display_name"),
+    ]
+
+
+class TopmediaOssData(ISchema):
+    url: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class TopmediaSpeechResponse(ISchema):
+    type: Annotated[
+        int,
+        Field(default=0),
+    ]
+    name: Annotated[
+        str,
+        Field(...),
+    ]
+    speaker: Annotated[
+        str,
+        Field(...),
+    ]
+    oss_url: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class TopmediaSongResponse(ISchema):
+    type: Annotated[
+        int,
+        Field(default=0),
+    ]
+    title: Annotated[
+        str,
+        Field(...),
+    ]
+    song_url: Annotated[
+        str,
+        Field(...),
+    ]
+
+    @model_validator(mode="after")
+    def format_song_url(
+        self,
+    ) -> "TopmediaSongResponse":
+        self.song_url = (
+            f"https://files.topmediai.com/aimusic/web/{self.song_url}/{self.title}.mp3"
+        )
+        return self
+
+
+class TopmediaSongData(ISchema):
+    song_ids: Annotated[
+        list[str],
+        Field(...),
+    ]
+
+
+class TopmediaMusicData(ISchema):
+    id: Annotated[
+        int,
+        Field(...),
+    ]
+    song_id: Annotated[
+        str | None,
+        Field(default=None),
+    ]
+    title: Annotated[
+        str | None,
+        Field(default=None),
+    ]
+    is_upload: Annotated[
+        int,
+        Field(...),
+    ]
+    create_time: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class TopmediaMusicResponse(ISchema):
+    result: Annotated[
+        list[TopmediaMusicData],
+        Field(...),
+    ]
+
+
+class TopmediaResponse(ISchema):
+    code: Annotated[
+        int | None,
+        Field(default=None),
+    ]
+    status: Annotated[
+        int | None,
+        Field(default=None),
+    ]
+    resp: Annotated[
+        TopmediaAuthData
+        | TopmediaTokenData
+        | TopmediaSlangData
+        | TopmediaSpeechData
+        | TopmediaOssData
+        | TopmediaSpeechResponse
+        | TopmediaSongData
+        | TopmediaSongResponse
+        | TopmediaMusicResponse,
+        Field(..., alias="data"),
+    ]
+    msg: Annotated[
+        str,
+        Field(default="Success", alias="message"),
+    ]
+
+
+class TopmediaAPIResponseData(ISchema):
+    status: Annotated[
+        int,
+        Field(...),
+    ]
+    message: Annotated[
+        str,
+        Field(default="Success"),
+    ]
+    data: Annotated[
+        TopmediaSpeechResponse | list[TopmediaSongResponse],
+        Field(...),
+    ]
+
+
+class TopmediaAPIResponse(ISchema):
+    message: Annotated[
+        str,
+        Field(default="Speech"),
+    ]
+    resp: Annotated[
+        TopmediaAPIResponseData,
+        Field(..., alias="data"),
+    ]

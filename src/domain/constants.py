@@ -26,6 +26,13 @@ BUCKET_URL = "https://oss-accelerate.aliyuncs.com"
 
 BUCKET_NAME = "pixverse-fe-upload"
 
+TOPMEDIA_API_URLS = {
+    "auth": "https://account-api.topmediai.com",
+    "voice": "https://tts-api.imyfone.com",
+    "profile": "https://tp-gateway-api.topmediai.com",
+    "music": "https://aimusic-api.topmediai.com",
+}
+
 PIXVERSE_ERROR = {
     400: (status.HTTP_400_BAD_REQUEST, "Invalid req"),
     985: (
@@ -92,6 +99,29 @@ INSTAGRAM_ERROR = {
     ConnectionException: (
         status.HTTP_401_UNAUTHORIZED,
         "Provided session has been expire. Please provied new session and retry your request again.",
+    ),
+}
+
+TOPMEDIA_ERROR = {
+    409: (
+        status.HTTP_401_UNAUTHORIZED,
+        "Invalid user's password provided. Please enter the correct password",
+    ),
+    500: (
+        status.HTTP_500_INTERNAL_SERVER_ERROR,
+        "Unknown server error",
+    ),
+    503: (
+        status.HTTP_503_SERVICE_UNAVAILABLE,
+        "There aren't active accounts, try to retry the request later",
+    ),
+    400: (
+        status.HTTP_402_PAYMENT_REQUIRED,
+        "All account credits were used. Upgrade subscribtions or top up",
+    ),
+    505: (
+        status.HTTP_409_CONFLICT,
+        "Retry your request later. Server couldn't provide data.",
     ),
 }
 

@@ -9,6 +9,7 @@ from .routers import (
     InstagramRouter,
     CosmeticRouter,
     QwenRouter,
+    TopmediaRouter,
 )
 
 __all__: list[str] = [
@@ -20,4 +21,5 @@ __all__: list[str] = [
     "InstagramRouter",
     "CosmeticRouter",
     "QwenRouter",
+    "TopmediaRouter",
 ]

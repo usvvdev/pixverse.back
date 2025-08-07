@@ -14,6 +14,8 @@ from .account import AccountError
 
 from .instagram import InstagramError
 
+from .topmedia import TopmediaError
+
 __all__: list[str] = [
     "PixverseError",
     "EngineError",
@@ -22,4 +24,5 @@ __all__: list[str] = [
     "PhotoGeneratorError",
     "AccountError",
     "InstagramError",
+    "TopmediaError",
 ]
