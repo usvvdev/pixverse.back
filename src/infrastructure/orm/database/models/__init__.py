@@ -39,6 +39,7 @@ from .instagram import (
 from .topmedia import (
     TopmediaAccounts,
     TopmediaAccountsTokens,
+    TopmediaVoices,
 )
 
 __all__: list[str] = [
@@ -67,4 +68,5 @@ __all__: list[str] = [
     "InstagramTracking",
     "TopmediaAccounts",
     "TopmediaAccountsTokens",
+    "TopmediaVoices",
 ]

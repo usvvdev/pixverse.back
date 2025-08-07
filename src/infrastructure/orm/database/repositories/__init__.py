@@ -35,6 +35,7 @@ from .instagram import (
 from .topmedia import (
     TopmediaAccountRepository,
     TopmediaAccountTokenRepository,
+    TopmediaVoiceRepository,
 )
 
 __all__: list[str] = [
@@ -59,4 +60,5 @@ __all__: list[str] = [
     "InstagramTrackingRepository",
     "TopmediaAccountRepository",
     "TopmediaAccountTokenRepository",
+    "TopmediaVoiceRepository",
 ]

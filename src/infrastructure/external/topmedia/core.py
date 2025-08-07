@@ -110,7 +110,6 @@ class TopmediaCore(HttpClient):
                 *args,
                 **kwargs,
             )
-            print(TopmediaResponse(**response))
             return TopmediaResponse(**response)
         except HTTPError as err:
             if err.response is not None:

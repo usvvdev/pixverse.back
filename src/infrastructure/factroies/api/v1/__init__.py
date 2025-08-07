@@ -28,7 +28,7 @@ from .instagram import InstagramViewFactory
 
 from .cosmetic import CosmeticViewFactory
 
-from .topmedia import TopmediaViewFactory
+from .topmedia import TopmediaViewFactory, TopmediaVoiceViewFactory
 
 __all__: list[str] = [
     "PixVerseViewFactory",
@@ -47,4 +47,5 @@ __all__: list[str] = [
     "ProductViewFactory",
     "CosmeticViewFactory",
     "TopmediaViewFactory",
+    "TopmediaVoiceViewFactory",
 ]

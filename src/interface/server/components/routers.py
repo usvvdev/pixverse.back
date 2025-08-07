@@ -26,6 +26,7 @@ from ....infrastructure.api.routes.v1 import (
     cosmetic_router,
     qwen_router,
     topmedia_router,
+    topmedia_voice_router,
 )
 
 
@@ -198,6 +199,7 @@ class TopmediaRouter(AppRouting):
             config,
             routers=[
                 topmedia_router,
+                topmedia_voice_router,
                 media_router,
             ],
         )

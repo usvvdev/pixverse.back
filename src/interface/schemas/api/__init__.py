@@ -55,6 +55,8 @@ from .instagram import (
     UserTracking,
 )
 
+from .voice import Voice
+
 __all__: list[str] = [
     "Account",
     "ChangeAccount",
@@ -87,4 +89,5 @@ __all__: list[str] = [
     "User",
     "SearchUser",
     "UserTracking",
+    "Voice",
 ]
