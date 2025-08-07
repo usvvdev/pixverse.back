@@ -76,6 +76,14 @@ services:
       - APP_SERVICE=qwen
     entrypoint: ["sh", "./scripts/start_api.sh"]
 
+  topmedia:
+    <<: *service-template
+    ports:
+      - 8009:${APP_PORT}
+    environment:
+      - APP_SERVICE=topmedia
+    entrypoint: ["sh", "./scripts/start_api.sh"]
+
   pixverse-account-worker:
     <<: *service-template
     environment:
