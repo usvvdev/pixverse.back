@@ -167,7 +167,7 @@ async def fetch_subscribtions(
 
 
 @instagram_router.post(
-    "/users/{uuid}/image2post",
+    "/users/{uuid}/text2post",
 )
 async def text_to_post(
     uuid: str,
