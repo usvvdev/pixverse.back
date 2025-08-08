@@ -158,3 +158,23 @@ class InstagramView:
             uuid,
             body,
         )
+
+    async def fetch_public_statistics(
+        self,
+        body: IInstagramUser,
+        username: str,
+    ) -> Page[ChartData]:
+        return await self._controller.fetch_public_statistics(
+            body,
+            username,
+        )
+
+    async def tracking_user_subscribers_chart(
+        self,
+        body: IInstagramUser,
+        username: str,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.tracking_user_subscribers_chart(
+            body,
+            username,
+        )

@@ -389,3 +389,55 @@ class InstagramClient:
         ]
 
         return paginate(items)
+
+    async def fetch_public_statistics(
+        self,
+        body: IInstagramUser,
+        username: str,
+    ) -> InstagramUserResponse:
+        data = await user_repository.fetch_one_to_many(
+            "username",
+            username,
+            many=False,
+            related=["statistics", "publications"],
+        )
+
+        return InstagramUserResponse(
+            **InstagramUser.model_validate(data).dict,
+            posts=[IInstagramPost.model_validate(post) for post in data.publications],
+            statistics=[
+                IInstagramUserStatistics.model_validate(stat)
+                for stat in data.statistics
+            ],
+        )
+
+    async def tracking_user_subscribers_chart(
+        self,
+        body: IInstagramUser,
+        username: str,
+    ) -> Page[ChartData]:
+        tracking_user = await user_repository.fetch_with_filters(
+            username=username,
+        )
+
+        subscribers = await user_relations_repository.fetch_with_filters(
+            relation_type="follower",
+            user_id=tracking_user.id,
+            many=True,
+        )
+
+        date_count = defaultdict(int)
+
+        for s in subscribers:
+            created_month = s.created_at.strftime("%Y-%m")
+            date_count[created_month] += 1
+
+        items = [
+            ChartData(
+                month=month,
+                count=count,
+            )
+            for month, count in sorted(date_count.items())
+        ]
+
+        return paginate(items)

@@ -111,6 +111,36 @@ async def remove_user_tracking(
 
 
 @instagram_router.post(
+    "/tracking/{username}/statistics",
+    response_model=InstagramUserResponse,
+)
+async def fetch_public_statistics(
+    username: str,
+    body: IInstagramUser,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> InstagramUserResponse:
+    return await view.fetch_public_statistics(
+        body,
+        username,
+    )
+
+
+@instagram_router.post(
+    "/tracking/{username}/chart",
+    response_model=Page[ChartData],
+)
+async def tracking_user_subscribers_chart(
+    username: str,
+    body: IInstagramUser,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> Page[ChartData]:
+    return await view.tracking_user_subscribers_chart(
+        body,
+        username,
+    )
+
+
+@instagram_router.post(
     "/users/{uuid}/update",
 )
 async def update_user_data(

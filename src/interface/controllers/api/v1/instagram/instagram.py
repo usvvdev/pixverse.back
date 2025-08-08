@@ -157,3 +157,23 @@ class InstagramController:
         return await self._client.user_subscribers_chart(
             uuid,
         )
+
+    async def fetch_public_statistics(
+        self,
+        body: IInstagramUser,
+        username: str,
+    ) -> InstagramUserResponse:
+        return await self._client.fetch_public_statistics(
+            body,
+            username,
+        )
+
+    async def tracking_user_subscribers_chart(
+        self,
+        body: IInstagramUser,
+        username: str,
+    ) -> Page[ChartData]:
+        return await self._client.tracking_user_subscribers_chart(
+            body,
+            username,
+        )
