@@ -117,16 +117,18 @@ user_tracking_repository = InstagramTrackingRepository(
 class InstagramCore:
     async def __set_loader(
         self,
-        session_data: ISession,
+        session_data: ISession | None,
     ) -> Instaloader:
         loader = Instaloader()
-        try:
-            loader.context._session.cookies = cookiejar_from_dict(
-                session_data.dict,
-                overwrite=True,
-            )
-        except InstaloaderException as err:
-            raise err
+
+        if session_data is not None:
+            try:
+                loader.context._session.cookies = cookiejar_from_dict(
+                    session_data.dict,
+                    overwrite=True,
+                )
+            except InstaloaderException as err:
+                raise err
         return loader
 
     async def __set_client(
@@ -462,20 +464,21 @@ class InstagramCore:
         self,
         uuid: str,
         username: str,
-    ):
-        session = await session_repository.fetch_with_filters(
-            uuid=uuid,
-        )
+    ) -> SearchUser:
+        # session = await session_repository.fetch_with_filters(
+        #     uuid=uuid,
+        # )
 
-        session_data = ISession.model_validate(session)
+        # session_data = ISession.model_validate(session)
 
-        loader: Instaloader = await self.__set_loader(session_data)
+        loader: Instaloader = await self.__set_loader(None)
         try:
             data: Profile | None = Profile.from_username(
                 loader.context,
                 username,
             )
-            return SearchUser.model_validate(data)
+
+            return SearchUser.from_profile(data)
         except InstagramError.exceptions as err:
             raise InstagramError.from_exception(err)
 
@@ -578,7 +581,6 @@ class InstagramGPTCore(HttpClient):
                 *args,
                 **kwargs,
             )
-            print(response)
             if not response.get("error"):
                 return ChatGPTInstagramResponse(**response)
             return ChatGPTErrorResponse(**response)

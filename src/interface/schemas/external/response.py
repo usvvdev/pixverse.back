@@ -443,14 +443,18 @@ class InstagramTrackingUserResponse(IInstagramResponse):
 
 class IInstagramUserStatistics(ISchema):
     id: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     likes_count: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     comments_count: Annotated[
+        int | None,
+        Field(default=None),
+    ]
+    publications_count: Annotated[
         int,
         Field(...),
     ]
@@ -463,23 +467,23 @@ class IInstagramUserStatistics(ISchema):
         Field(...),
     ]
     mutual_subscriptions_count: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     non_reciprocal_following_count: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     non_reciprocal_followers_count: Annotated[
-        int,
-        Field(...),
+        int | None,
+        Field(default=None),
     ]
     secret_fans: Annotated[
-        int,
-        Field(default=0),
+        int | None,
+        Field(default=None),
     ]
     created_at: Annotated[
-        date,
+        date | None,
         Field(default_factory=lambda: now().date()),
     ]
 

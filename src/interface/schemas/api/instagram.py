@@ -4,7 +4,7 @@ from typing import Annotated
 
 from instaloader import Profile
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from uuid import uuid4
 
@@ -15,6 +15,8 @@ from pendulum import now
 from ....domain.entities.core import ISchema
 
 from ....domain.entities.instagram import ISession
+
+from ...schemas.external import IInstagramUserStatistics
 
 
 class AddSession(ISession):
@@ -60,6 +62,45 @@ class SearchUser(ISchema):
         str | None,
         Field(default=None, alias="profile_picture"),
     ]
+    is_private: Annotated[
+        bool,
+        Field(...),
+    ]
+    is_verified: Annotated[
+        bool,
+        Field(...),
+    ]
+    is_business_account: Annotated[
+        bool,
+        Field(...),
+    ]
+
+    statistics: Annotated[
+        IInstagramUserStatistics,
+        Field(...),
+    ]
+
+    @classmethod
+    def from_profile(
+        cls,
+        profile: Profile,
+    ) -> "SearchUser":
+        return cls(
+            userid=profile.userid,
+            username=profile.username,
+            full_name=profile.full_name,
+            biography=profile.biography,
+            profile_pic_url=profile.profile_pic_url,
+            is_private=profile.is_private,
+            is_verified=profile.is_verified,
+            is_business_account=profile.is_business_account,
+            statistics=IInstagramUserStatistics(
+                publications_count=profile.mediacount,
+                followers_count=profile.followers,
+                following_count=profile.followers,
+                created_at=None,
+            ),
+        )
 
 
 class IUser(ISchema):

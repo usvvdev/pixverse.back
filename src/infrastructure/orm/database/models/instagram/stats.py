@@ -40,6 +40,11 @@ class InstagramUserStats(ITable):
         default=0,
         nullable=True,
     )
+    publications_count: int = Column(
+        Integer,
+        default=0,
+        nullable=True,
+    )
     followers_count: int = Column(
         Integer,
         default=0,

@@ -52,6 +52,8 @@ async def auth_user_session(
 
 @instagram_router.post(
     "/users/{uuid}/search/{username}",
+    response_model=SearchUser,
+    response_model_exclude_none=True,
 )
 async def find_user(
     body: IInstagramUser,

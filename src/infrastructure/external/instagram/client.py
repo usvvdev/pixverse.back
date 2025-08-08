@@ -197,6 +197,7 @@ class InstagramClient:
             many=False,
             related=["statistics", "publications"],
         )
+
         return InstagramUserResponse(
             **InstagramUser.model_validate(data).dict,
             posts=[IInstagramPost.model_validate(post) for post in data.publications],
