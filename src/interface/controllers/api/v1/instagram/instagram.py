@@ -11,6 +11,7 @@ from .....schemas.external import (
     InstagramTrackingUserResponse,
     InstagramFollower,
     InstagramPost,
+    ChatGPTInstagram,
 )
 
 from .....schemas.api import SearchUser
@@ -115,4 +116,16 @@ class InstagramController:
             body,
             uuid,
             relation_type,
+        )
+
+    async def image_to_post(
+        self,
+        uuid: str,
+        image,
+        body: IInstagramUser,
+    ) -> ChatGPTInstagram:
+        return await self._client.image_to_post(
+            uuid,
+            image,
+            body,
         )

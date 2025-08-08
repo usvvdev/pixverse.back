@@ -1,6 +1,6 @@
 # coding utf-8
 
-import os
+from os import path
 
 from fastapi import UploadFile
 
@@ -11,24 +11,31 @@ from fastapi_pagination import (
 
 from base64 import b64encode
 
+from asyncio import sleep
+
 from .core import (
     InstagramCore,
     InstagramGPTCore,
 )
 
-from ....domain.constants import HEIF_EXTENSIONS
-
-from ....domain.tools import convert_heic_to_jpg
-
 from ....domain.errors import InstagramError
 
 from ....domain.conf import app_conf
 
+from ....domain.constants import HEIF_EXTENSIONS
+
+from ....domain.tools import convert_heic_to_jpg
+
 from ....domain.entities.core import IConfEnv
+
+from ....domain.typing.enums import ChatGPTEndpoint
 
 from ....domain.repositories import IDatabase
 
-from ....domain.entities.instagram import ISession
+from ....domain.entities.instagram import (
+    ISession,
+    InstagramChatGPTBody,
+)
 
 from ....interface.schemas.external import (
     IInstagramUser,
@@ -40,6 +47,10 @@ from ....interface.schemas.external import (
     IInstagramUserStatistics,
     InstagramFollower,
     IInstagramPost,
+    T2PBody,
+    ChatGPTInstagramResponse,
+    ChatGPTErrorResponse,
+    ChatGPTInstagram,
 )
 
 from ....interface.schemas.api import SearchUser
@@ -84,10 +95,10 @@ class InstagramClient:
     def __init__(
         self,
         core: InstagramCore,
-        # gpt: InstagramGPTCore,
+        gpt: InstagramGPTCore,
     ) -> None:
         self._core = core
-        # self._gpt = gpt
+        self._gpt = gpt
 
     async def auth_user_session(
         self,
@@ -247,13 +258,16 @@ class InstagramClient:
 
     async def image_to_post(
         self,
+        uuid: str,
         image: UploadFile,
-    ):
+        body: T2PBody,
+    ) -> ChatGPTInstagram:
         max_attempts = 10
 
         last_error = None
 
-        ext = str(os.path.splitext(image.filename)[-1]).lower()
+        ext = str(path.splitext(image.filename)[-1]).lower()
+
         image_bytes = await image.read()
 
         if ext in HEIF_EXTENSIONS:
@@ -263,9 +277,53 @@ class InstagramClient:
 
         image_base64 = b64encode(image_bytes).decode("utf-8")
 
+        user = await session_repository.fetch_with_filters(uuid=uuid)
+
+        if user is None:
+            raise InstagramError(status_code=404, detail="User is not found")
+
         for attempt in range(max_attempts):
             token = conf.chatgpt_token
             try:
-                pass
-            except:
-                pass
+
+                async def call(
+                    token: str,
+                ) -> ChatGPTInstagramResponse | ChatGPTErrorResponse:
+                    return await self._gpt.post(
+                        token=token,
+                        endpoint=ChatGPTEndpoint.CHAT,
+                        body=InstagramChatGPTBody.generate_post(
+                            f"data:image/jpeg;base64,{image_base64}",
+                            body.prompt,
+                        ),
+                    )
+
+                data: ChatGPTInstagramResponse | ChatGPTErrorResponse = await call(
+                    token
+                )
+
+                if not isinstance(data, ChatGPTErrorResponse):
+                    return data.fetch_data()
+
+                last_error = data.error
+
+            except Exception:
+                if attempt == max_attempts - 1:
+                    try:
+                        data = await call(token)
+
+                        if not data.error:
+                            # return await self.__handle_success(
+                            #     body,
+                            #     data,
+                            # )
+                            return data.fetch_data()
+
+                    except Exception as final_err:
+                        raise final_err
+                    # return await self.__handle_failure(last_error)
+                await sleep(1)
+        # return await self.__handle_failure(
+        #     last_error,
+        #     extra={"Токен авторизации": token},
+        # )

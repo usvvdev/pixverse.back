@@ -27,6 +27,7 @@ from .body import (
     UserFilters,
     UserRelationStats,
     IPixverseBody,
+    T2PBody,
 )
 
 from .response import (
@@ -142,4 +143,5 @@ __all__ = [
     "TopmediaSongData",
     "TopmediaMusicResponse",
     "TopmediaSongResponse",
+    "T2PBody",
 ]

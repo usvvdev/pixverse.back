@@ -3,6 +3,7 @@
 from fastapi import (
     APIRouter,
     Depends,
+    UploadFile,
 )
 
 from typing import Literal
@@ -24,6 +25,8 @@ from ......interface.schemas.external import (
     InstagramTrackingUserResponse,
     InstagramFollower,
     IInstagramPost,
+    T2PBody,
+    ChatGPTInstagram,
 )
 
 from ......interface.schemas.api import SearchUser
@@ -160,4 +163,20 @@ async def fetch_subscribtions(
         body,
         uuid,
         relation_type,
+    )
+
+
+@instagram_router.post(
+    "/users/{uuid}/image2post",
+)
+async def text_to_post(
+    uuid: str,
+    image: UploadFile,
+    body: T2PBody = Depends(),
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> ChatGPTInstagram:
+    return await view.image_to_post(
+        uuid,
+        image,
+        body,
     )

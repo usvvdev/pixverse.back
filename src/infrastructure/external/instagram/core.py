@@ -543,6 +543,7 @@ class InstagramGPTCore(HttpClient):
                 *args,
                 **kwargs,
             )
+            print(response)
             if not response.get("error"):
                 return ChatGPTInstagramResponse(**response)
             return ChatGPTErrorResponse(**response)

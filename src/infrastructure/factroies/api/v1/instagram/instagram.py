@@ -6,6 +6,7 @@ from redis import Redis
 
 from .....external.instagram import (
     InstagramCore,
+    InstagramGPTCore,
     InstagramClient,
 )
 
@@ -30,6 +31,7 @@ class InstagramClientFactory:
                 #     decode_responses=True,
                 # ),
             ),
+            InstagramGPTCore(),
         )
 
 

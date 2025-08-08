@@ -269,6 +269,13 @@ class IInstagramUser(ISchema):
     ]
 
 
+class T2PBody(IInstagramUser):
+    prompt: Annotated[
+        str,
+        Field(..., alias="promptText"),
+    ]
+
+
 class InstagramAuthUser(IInstagramUser):
     password: Annotated[
         str,
