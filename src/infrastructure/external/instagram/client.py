@@ -1,15 +1,11 @@
 # coding utf-8
 
-from os import path
-
-from fastapi import UploadFile
-
 from fastapi_pagination import (
     Page,
     paginate,
 )
 
-from base64 import b64encode
+from collections import defaultdict
 
 from asyncio import sleep
 
@@ -21,10 +17,6 @@ from .core import (
 from ....domain.errors import InstagramError
 
 from ....domain.conf import app_conf
-
-from ....domain.constants import HEIF_EXTENSIONS
-
-from ....domain.tools import convert_heic_to_jpg
 
 from ....domain.entities.core import IConfEnv
 
@@ -51,6 +43,7 @@ from ....interface.schemas.external import (
     ChatGPTInstagramResponse,
     ChatGPTErrorResponse,
     ChatGPTInstagram,
+    ChartData,
 )
 
 from ....interface.schemas.api import SearchUser
@@ -317,3 +310,33 @@ class InstagramClient:
         #     last_error,
         #     extra={"Токен авторизации": token},
         # )
+
+    async def user_subscribers_chart(
+        self,
+        uuid: str,
+    ) -> Page[ChartData]:
+        user_session = await session_repository.fetch_uuid(
+            uuid,
+        )
+
+        subscribers = await user_relations_repository.fetch_with_filters(
+            relation_type="follower",
+            user_id=user_session.user_id,
+            many=True,
+        )
+
+        date_count = defaultdict(int)
+
+        for s in subscribers:
+            created_month = s.created_at.strftime("%Y-%m")
+            date_count[created_month] += 1
+
+        items = [
+            ChartData(
+                month=month,
+                count=count,
+            )
+            for month, count in sorted(date_count.items())
+        ]
+
+        return paginate(items)

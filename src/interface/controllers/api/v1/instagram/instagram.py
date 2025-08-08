@@ -12,6 +12,7 @@ from .....schemas.external import (
     InstagramFollower,
     InstagramPost,
     ChatGPTInstagram,
+    ChartData,
 )
 
 from .....schemas.api import SearchUser
@@ -126,4 +127,13 @@ class InstagramController:
         return await self._client.image_to_post(
             uuid,
             body,
+        )
+
+    async def user_subscribers_chart(
+        self,
+        uuid: str,
+        body: IInstagramUser,
+    ) -> Page[ChartData]:
+        return await self._client.user_subscribers_chart(
+            uuid,
         )

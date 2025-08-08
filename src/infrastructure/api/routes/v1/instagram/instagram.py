@@ -27,6 +27,7 @@ from ......interface.schemas.external import (
     IInstagramPost,
     T2PBody,
     ChatGPTInstagram,
+    ChartData,
 )
 
 from ......interface.schemas.api import SearchUser
@@ -147,6 +148,20 @@ async def fetch_subscribers(
     return await view.fetch_subscribers(
         body,
         uuid,
+    )
+
+
+@instagram_router.post(
+    "/users/{uuid}/subscribers/chart",
+)
+async def user_subscribers_chart(
+    uuid: str,
+    body: IInstagramUser,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> Page[ChartData]:
+    return await view.user_subscribers_chart(
+        uuid,
+        body,
     )
 
 

@@ -1069,3 +1069,14 @@ class TopmediaAPIResponse(ISchema):
         TopmediaAPIResponseData,
         Field(..., alias="data"),
     ]
+
+
+class ChartData(ISchema):
+    month: Annotated[
+        str,
+        Field(...),
+    ]
+    count: Annotated[
+        int,
+        Field(...),
+    ]
