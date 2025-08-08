@@ -67,6 +67,16 @@ class InstagramView:
             user_id,
         )
 
+    async def remove_user_tracking(
+        self,
+        uuid: str,
+        user_id: int,
+    ) -> bool:
+        return await self._controller.remove_user_tracking(
+            uuid,
+            user_id,
+        )
+
     async def fetch_user_tracking(
         self,
         uuid: str,

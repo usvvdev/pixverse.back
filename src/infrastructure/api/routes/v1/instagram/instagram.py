@@ -93,6 +93,21 @@ async def fetch_user_tracking(
     )
 
 
+@instagram_router.delete(
+    "/users/{uuid}/tracking/{user_id}",
+)
+async def remove_user_tracking(
+    body: IInstagramUser,
+    uuid: str,
+    user_id: int,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> bool:
+    return await view.remove_user_tracking(
+        uuid,
+        user_id,
+    )
+
+
 @instagram_router.post(
     "/users/{uuid}/update",
 )

@@ -139,6 +139,28 @@ class InstagramClient:
             uuid=uuid,
         )
 
+    async def remove_user_tracking(
+        self,
+        uuid: str,
+        user_id: int,
+    ) -> bool:
+        user_session = await session_repository.fetch_with_filters(
+            uuid=uuid,
+        )
+
+        if user_session is None:
+            raise InstagramError(
+                status_code=404,
+                detail="User with requested `uuid` is not Found",
+            )
+
+        tracking_record = await user_tracking_repository.fetch_with_filters(
+            owner_user_id=user_session.user_id,
+            target_user_id=user_id,
+        )
+
+        return await user_tracking_repository.delete_record(tracking_record.id)
+
     async def fetch_user_tracking(
         self,
         uuid: str,
@@ -289,7 +311,7 @@ class InstagramClient:
         if user is None:
             raise InstagramError(
                 status_code=404,
-                detail="User is not found",
+                detail="User with requested `uuid` is not Found",
             )
 
         for attempt in range(max_attempts):
