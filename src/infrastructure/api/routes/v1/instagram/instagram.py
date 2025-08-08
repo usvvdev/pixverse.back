@@ -171,12 +171,10 @@ async def fetch_subscribtions(
 )
 async def text_to_post(
     uuid: str,
-    image: UploadFile,
-    body: T2PBody = Depends(),
+    body: T2PBody,
     view: InstagramView = Depends(InstagramViewFactory.create),
 ) -> ChatGPTInstagram:
     return await view.image_to_post(
         uuid,
-        image,
         body,
     )

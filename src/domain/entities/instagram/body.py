@@ -93,7 +93,6 @@ class InstagramChatGPTBody(ISchema):
                     role="user",
                     content=[
                         ITextContent(text=prompt),
-                        IImageContent(image_url=IImageUrl(url=image_url)),
                     ],
                 ),
             ],

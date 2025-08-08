@@ -259,28 +259,19 @@ class InstagramClient:
     async def image_to_post(
         self,
         uuid: str,
-        image: UploadFile,
         body: T2PBody,
     ) -> ChatGPTInstagram:
         max_attempts = 10
 
         last_error = None
 
-        ext = str(path.splitext(image.filename)[-1]).lower()
-
-        image_bytes = await image.read()
-
-        if ext in HEIF_EXTENSIONS:
-            image_bytes, ext, _ = await convert_heic_to_jpg(
-                image_bytes,
-            )
-
-        image_base64 = b64encode(image_bytes).decode("utf-8")
-
         user = await session_repository.fetch_with_filters(uuid=uuid)
 
         if user is None:
-            raise InstagramError(status_code=404, detail="User is not found")
+            raise InstagramError(
+                status_code=404,
+                detail="User is not found",
+            )
 
         for attempt in range(max_attempts):
             token = conf.chatgpt_token
@@ -293,7 +284,6 @@ class InstagramClient:
                         token=token,
                         endpoint=ChatGPTEndpoint.CHAT,
                         body=InstagramChatGPTBody.generate_post(
-                            f"data:image/jpeg;base64,{image_base64}",
                             body.prompt,
                         ),
                     )

@@ -121,11 +121,9 @@ class InstagramView:
     async def image_to_post(
         self,
         uuid: str,
-        image,
         body: IInstagramUser,
     ) -> ChatGPTInstagram:
         return await self._controller.image_to_post(
             uuid,
-            image,
             body,
         )
