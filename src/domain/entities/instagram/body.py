@@ -75,7 +75,6 @@ class InstagramChatGPTBody(ISchema):
     @classmethod
     def generate_post(
         cls,
-        image_url: str,
         prompt: str,
     ) -> "InstagramChatGPTBody":
         return cls(
