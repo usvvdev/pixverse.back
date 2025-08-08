@@ -293,6 +293,41 @@ class InstagramCore:
                         )
                     )
 
+            try:
+                user_feed = client.user_medias(user_pk, amount=10)
+                liker_usernames = set()
+
+                for media in user_feed:
+                    likers = client.media_likers(media.id)
+                    liker_usernames.update(user.username for user in likers)
+
+                follower_usernames = {f.username for f in followers}
+                secret_fan_usernames = liker_usernames - follower_usernames
+
+                for username in secret_fan_usernames:
+                    if (
+                        await user_relations_repository.fetch_with_filters(
+                            user_id=user_id,
+                            related_username=username,
+                            relation_type="secret_fan",
+                        )
+                        is None
+                    ):
+                        try:
+                            fan_user_info = client.user_info_by_username(username)
+                        except Exception:
+                            continue  # Если профиль не получить — пропускаем
+
+                        await user_relations_repository.add_record(
+                            InstagramFollower.from_instaloader_profile(
+                                fan_user_info,
+                                user_id,
+                                relation_type="secret_fan",
+                            )
+                        )
+            except Exception:
+                pass
+
         except ClientError as err:
             raise InstagramError.from_exception(err)
 

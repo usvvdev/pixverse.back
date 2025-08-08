@@ -152,6 +152,20 @@ async def fetch_subscribers(
 
 
 @instagram_router.post(
+    "/users/{uuid}/secret-fans",
+)
+async def fetch_secret_fans(
+    body: IInstagramUser,
+    uuid: str,
+    view: InstagramView = Depends(InstagramViewFactory.create),
+) -> Page[InstagramFollower]:
+    return await view.fetch_secret_fans(
+        body,
+        uuid,
+    )
+
+
+@instagram_router.post(
     "/users/{uuid}/subscribers/chart",
 )
 async def user_subscribers_chart(

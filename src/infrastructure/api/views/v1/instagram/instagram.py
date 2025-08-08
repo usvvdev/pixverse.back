@@ -107,6 +107,16 @@ class InstagramView:
             uuid,
         )
 
+    async def fetch_secret_fans(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+    ) -> Page[InstagramFollower]:
+        return await self._controller.fetch_secret_fans(
+            body,
+            uuid,
+        )
+
     async def fetch_subscribtions(
         self,
         body: IInstagramUser,

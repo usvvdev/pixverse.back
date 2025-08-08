@@ -249,6 +249,32 @@ class InstagramClient:
 
         return paginate(items)
 
+    async def fetch_secret_fans(
+        self,
+        body: IInstagramUser,
+        uuid: str,
+        relation_type: str = "secret_fan",
+    ) -> Page[InstagramFollower]:
+        user_session = await session_repository.fetch_uuid(
+            uuid,
+        )
+        subcribtions = await user_relations_repository.fetch_with_filters(
+            relation_type=relation_type,
+            user_id=user_session.user_id,
+            many=True,
+        )
+
+        items: list[InstagramFollower] = list(
+            map(
+                lambda subscribtion: InstagramFollower.model_validate(
+                    subscribtion,
+                ),
+                subcribtions,
+            )
+        )
+
+        return paginate(items)
+
     async def image_to_post(
         self,
         uuid: str,
