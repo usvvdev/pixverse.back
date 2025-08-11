@@ -982,18 +982,13 @@ class TopmediaSongResponse(ISchema):
         Field(...),
     ]
 
-    @model_validator(mode="after")
-    def format_song_url(
-        self,
-    ) -> "TopmediaSongResponse":
-        if self.song_url.endswith(".mp3"):
-            return self
-
-        if not self.song_url.startswith("http"):
-            self.song_url = f"https://files.topmediai.com/aimusic/web/{self.song_url}/{self.title}.mp3"
-        else:
-            self.song_url = f"{self.song_url}/{self.title}.mp3"
-        return self
+    @field_validator("song_url", mode="after")
+    @classmethod
+    def validate_song_url(
+        cls,
+        value: str,
+    ) -> str:
+        return f"https://audiopipe.suno.ai/?item_id={value}"
 
 
 class TopmediaSongData(ISchema):
@@ -1070,7 +1065,7 @@ class TopmediaAPIResponseData(ISchema):
         Field(default="Success"),
     ]
     data: Annotated[
-        TopmediaSpeechResponse | list[TopmediaSongResponse],
+        TopmediaSpeechResponse | list[TopmediaSongResponse] | Any,
         Field(...),
     ]
 
