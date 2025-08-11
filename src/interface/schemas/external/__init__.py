@@ -74,6 +74,7 @@ from .response import (
     TopmediaMusicResponse,
     TopmediaSongResponse,
     ChartData,
+    ITrackingUser,
 )
 
 __all__ = [
@@ -146,4 +147,5 @@ __all__ = [
     "TopmediaSongResponse",
     "T2PBody",
     "ChartData",
+    "ITrackingUser",
 ]

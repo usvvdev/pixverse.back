@@ -4,7 +4,7 @@ from fastapi_pagination import Page
 
 from .....schemas.external import (
     IInstagramUser,
-    InstagramUser,
+    ITrackingUser,
     InstagramAuthResponse,
     InstagramUserResponse,
     InstagramUpdateUserResponse,
@@ -80,7 +80,7 @@ class InstagramController:
     async def fetch_user_tracking(
         self,
         uuid: str,
-    ) -> Page[InstagramUser]:
+    ) -> Page[ITrackingUser]:
         return await self._client.fetch_user_tracking(
             uuid,
         )

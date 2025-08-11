@@ -18,7 +18,7 @@ from ......domain.entities.instagram import ISession
 
 from ......interface.schemas.external import (
     IInstagramUser,
-    InstagramUser,
+    ITrackingUser,
     InstagramAuthResponse,
     InstagramUserResponse,
     InstagramUpdateUserResponse,
@@ -89,7 +89,7 @@ async def fetch_user_tracking(
     body: IInstagramUser,
     uuid: str,
     view: InstagramView = Depends(InstagramViewFactory.create),
-) -> Page[InstagramUser]:
+) -> Page[ITrackingUser]:
     return await view.fetch_user_tracking(
         uuid,
     )

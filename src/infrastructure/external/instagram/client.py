@@ -44,6 +44,7 @@ from ....interface.schemas.external import (
     ChatGPTErrorResponse,
     ChatGPTInstagram,
     ChartData,
+    ITrackingUser,
 )
 
 from ....interface.schemas.api import SearchUser
@@ -164,19 +165,21 @@ class InstagramClient:
     async def fetch_user_tracking(
         self,
         uuid: str,
-    ) -> Page[InstagramUser]:
+    ) -> Page[ITrackingUser]:
         user_session = await session_repository.fetch_uuid(
             uuid,
         )
         tracking_users = await user_tracking_repository.fetch_one_to_many(
             "owner_user_id",
             user_session.user_id,
-            related=["target_user_data"],
+            related=["target_user_data", "statistics"],
         )
 
-        items: list[InstagramUser] = list(
+        items: list[ITrackingUser] = list(
             map(
-                lambda user: InstagramUser.model_validate(user.target_user_data),
+                lambda user: ITrackingUser.model_validate(
+                    user.target_user_data.__dict__ | user.statistics[-1].__dict__
+                ),
                 tracking_users,
             )
         )

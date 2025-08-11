@@ -675,6 +675,17 @@ class InstagramUser(ISchema):
     ]
 
 
+class ITrackingUser(InstagramUser):
+    likes_count: Annotated[
+        int,
+        Field(...),
+    ]
+    followers_count: Annotated[
+        int,
+        Field(...),
+    ]
+
+
 class InstagramUserResponse(InstagramUser):
     statistics: Annotated[
         list[IInstagramUserStatistics],

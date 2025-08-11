@@ -47,3 +47,8 @@ class InstagramTracking(ITable):
         foreign_keys=[target_user_id],
         back_populates="tracking_users",
     )
+
+    statistics = relationship(
+        "InstagramUserStats",
+        back_populates="tracking",
+    )

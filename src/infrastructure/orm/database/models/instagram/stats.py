@@ -30,6 +30,15 @@ class InstagramUserStats(ITable):
         nullable=False,
         index=True,
     )
+    tracking_id: int = Column(
+        Integer,
+        ForeignKey(
+            "instagram_tracking.id",
+            ondelete="CASCADE",
+        ),
+        nullable=True,
+        index=True,
+    )
     likes_count: int = Column(
         Integer,
         default=0,
@@ -78,5 +87,10 @@ class InstagramUserStats(ITable):
 
     user = relationship(
         "InstagramUsers",
+        back_populates="statistics",
+    )
+
+    tracking = relationship(
+        "InstagramTracking",
         back_populates="statistics",
     )
