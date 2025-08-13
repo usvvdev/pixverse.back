@@ -1,5 +1,7 @@
 # coding utf-8
 
+from typing import Literal
+
 from fastapi import status
 
 from passlib.context import CryptContext
@@ -32,6 +34,8 @@ TOPMEDIA_API_URLS = {
     "profile": "https://tp-gateway-api.topmediai.com",
     "music": "https://aimusic-api.topmediai.com",
 }
+
+QWEN_API_URL = "https://chat.qwen.ai"
 
 PIXVERSE_ERROR = {
     400: (status.HTTP_400_BAD_REQUEST, "Invalid req"),
@@ -333,3 +337,5 @@ Return only the **raw JSON object** and nothing else.
 """
 
 CHUNK_SIZE = 1024 * 1024
+
+MEDIA_SIZES = Literal["16:9", "1:1", "9:16", "4:3", "3:4"]

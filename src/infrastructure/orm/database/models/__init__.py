@@ -42,6 +42,11 @@ from .topmedia import (
     TopmediaVoices,
 )
 
+from .qwen import (
+    QwenAccounts,
+    QwenAccountsTokens,
+)
+
 __all__: list[str] = [
     "AuthUsers",
     "PixverseAccounts",
@@ -69,4 +74,6 @@ __all__: list[str] = [
     "TopmediaAccounts",
     "TopmediaAccountsTokens",
     "TopmediaVoices",
+    "QwenAccounts",
+    "QwenAccountsTokens",
 ]

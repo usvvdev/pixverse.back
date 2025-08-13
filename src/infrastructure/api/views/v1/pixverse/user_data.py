@@ -7,7 +7,6 @@ from ......domain.entities.core import IUserData
 from ......interface.schemas.external import (
     UserStatistics,
     UserFilters,
-    IPixverseBody,
 )
 
 

@@ -38,6 +38,11 @@ from .topmedia import (
     TopmediaVoiceRepository,
 )
 
+from .qwen import (
+    QwenAccountRepository,
+    QwenAccountTokenRepository,
+)
+
 __all__: list[str] = [
     "PixverseAccountRepository",
     "PixverseTemplateRepository",
@@ -61,4 +66,6 @@ __all__: list[str] = [
     "TopmediaAccountRepository",
     "TopmediaAccountTokenRepository",
     "TopmediaVoiceRepository",
+    "QwenAccountRepository",
+    "QwenAccountTokenRepository",
 ]

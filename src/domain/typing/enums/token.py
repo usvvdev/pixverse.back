@@ -22,3 +22,5 @@ class AccountProjectToken(StrEnum):
     PIXVERSE = "pixverse"
 
     TOPMEDIA = "topmedia"
+
+    QWEN = "qwen"

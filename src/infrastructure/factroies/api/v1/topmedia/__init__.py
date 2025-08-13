@@ -1,6 +1,6 @@
 # coding utf-8
 
-from .pixverse import TopmediaViewFactory
+from .topmedia import TopmediaViewFactory
 
 from .voice import TopmediaVoiceViewFactory
 

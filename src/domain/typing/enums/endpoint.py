@@ -89,3 +89,13 @@ class TopmediaEndpoint(StrEnum):
     SONG = "/v2/async/text-to-song"
 
     RESULT = "/v2/task/results"
+
+
+class QwenEndpoint(StrEnum):
+    AUTH = "/api/v1/auths/signin"
+
+    CHAT = "/api/v2/chats/new"
+
+    GENERATE = "/api/v2/chat/completions?chat_id={chat_id}"
+
+    RESULT = "/api/v2/chats/{chat_id}"

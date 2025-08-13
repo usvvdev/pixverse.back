@@ -96,6 +96,7 @@ class HttpClient:
         files=None,
         params: ISchema | None = None,
         data: ISchema | None = None,
+        is_serialized: bool = True,
     ) -> dict[str, Any]:
         """Основной метод отправки запроса к API.
 
@@ -119,4 +120,6 @@ class HttpClient:
             params=params.dict if params else None,
             data=data.dict if data else None,
         ):
-            return response.json()
+            if is_serialized:
+                return response.json()
+            return response

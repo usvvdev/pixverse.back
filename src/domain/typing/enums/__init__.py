@@ -8,6 +8,7 @@ from .endpoint import (
     PixverseEndpoint,
     ChatGPTEndpoint,
     TopmediaEndpoint,
+    QwenEndpoint,
 )
 
 from .model import ModelVersion
@@ -44,4 +45,5 @@ __all__: list[str] = [
     "InstagramRelationType",
     "TopmediaMethod",
     "AccountProjectToken",
+    "QwenEndpoint",
 ]

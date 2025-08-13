@@ -75,6 +75,13 @@ from .response import (
     TopmediaSongResponse,
     ChartData,
     ITrackingUser,
+    QwenAuthResponse,
+    QwenResponse,
+    QwenErrorResponse,
+    QwenGenerationData,
+    QwenChatMessage,
+    QwenMessageContent,
+    QwenPhotoAPIResponse,
 )
 
 __all__ = [
@@ -148,4 +155,11 @@ __all__ = [
     "T2PBody",
     "ChartData",
     "ITrackingUser",
+    "QwenAuthResponse",
+    "QwenResponse",
+    "QwenErrorResponse",
+    "QwenGenerationData",
+    "QwenChatMessage",
+    "QwenMessageContent",
+    "QwenPhotoAPIResponse",
 ]

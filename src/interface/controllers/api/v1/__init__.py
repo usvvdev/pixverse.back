@@ -28,7 +28,12 @@ from .instagram import InstagramController
 
 from .cosmetic import CosmeticController
 
-from .topmedia import TopmediaController, TopmediaVoiceController
+from .topmedia import (
+    TopmediaController,
+    TopmediaVoiceController,
+)
+
+from .qwen import QwenController
 
 __all__: list[str] = [
     "AuthUserController",
@@ -48,4 +53,5 @@ __all__: list[str] = [
     "CosmeticController",
     "TopmediaController",
     "TopmediaVoiceController",
+    "QwenController",
 ]

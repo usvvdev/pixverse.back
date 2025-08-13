@@ -1090,3 +1090,117 @@ class ChartData(ISchema):
         int,
         Field(...),
     ]
+
+
+class QwenChatData(ISchema):
+    id: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class QwenMessageContent(ISchema):
+    content: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class QwenChatMessage(ISchema):
+    content_list: Annotated[
+        list[QwenMessageContent] | None,
+        Field(default_factory=list),
+    ]
+
+
+class QwenChatHistory(ISchema):
+    messages: Annotated[
+        dict[str, QwenChatMessage],
+        Field(...),
+    ]
+
+
+class QwenChat(ISchema):
+    history: Annotated[
+        QwenChatHistory,
+        Field(...),
+    ]
+
+
+class QwenGenerationData(ISchema):
+    id: Annotated[
+        str,
+        Field(...),
+    ]
+    user_id: Annotated[
+        str,
+        Field(...),
+    ]
+    title: Annotated[
+        str,
+        Field(...),
+    ]
+    chat: Annotated[
+        QwenChat,
+        Field(...),
+    ]
+    current_id: Annotated[
+        str,
+        Field(..., alias="currentId"),
+    ]
+
+
+class QwenResponse(ISchema):
+    success: Annotated[
+        bool,
+        Field(...),
+    ]
+    request_id: Annotated[
+        str,
+        Field(...),
+    ]
+    resp: Annotated[
+        QwenGenerationData | QwenChatData,
+        Field(..., alias="data"),
+    ]
+
+
+class QwenAuthResponse(ISchema):
+    id: Annotated[
+        str,
+        Field(...),
+    ]
+    email: Annotated[
+        str,
+        Field(...),
+    ]
+    name: Annotated[
+        str,
+        Field(...),
+    ]
+    token: Annotated[
+        str,
+        Field(...),
+    ]
+
+
+class QwenErrorResponse(ISchema):
+    detail: Annotated[
+        str | None,
+        Field(default=None),
+    ]
+
+
+class QwenPhotoAPIResponse(ISchema):
+    message: Annotated[
+        str,
+        Field(default="Success"),
+    ]
+    status: Annotated[
+        int,
+        Field(default=200),
+    ]
+    media_url: Annotated[
+        str,
+        Field(...),
+    ]

@@ -9,11 +9,13 @@ from ..repositories import IDatabase
 from ...infrastructure.orm.database.repositories import (
     PixverseAccountsTokensRepository,
     TopmediaAccountTokenRepository,
+    QwenAccountTokenRepository,
 )
 
 from ...infrastructure.orm.database.models import (
     PixverseAccountsTokens,
     TopmediaAccountsTokens,
+    QwenAccountsTokens,
 )
 
 from ...interface.schemas.external import (
@@ -33,16 +35,22 @@ topmedia_token_repository = TopmediaAccountTokenRepository(
 )
 
 
+qwen_token_repository = QwenAccountTokenRepository(
+    IDatabase(conf),
+)
+
+
 tokens_repository: dict[
     str, TopmediaAccountTokenRepository | PixverseAccountsTokensRepository
 ] = {
     "pixverse": pixverse_token_repository,
     "topmedia": topmedia_token_repository,
+    "qwen": qwen_token_repository,
 }
 
 
 async def update_account_token(
-    account: PixverseAccountsTokens | TopmediaAccountsTokens,
+    account: PixverseAccountsTokens | TopmediaAccountsTokens | QwenAccountsTokens,
     token: str,
     project: str = "pixverse",
 ):
