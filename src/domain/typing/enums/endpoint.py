@@ -99,3 +99,5 @@ class QwenEndpoint(StrEnum):
     GENERATE = "/api/v2/chat/completions?chat_id={chat_id}"
 
     RESULT = "/api/v2/chats/{chat_id}"
+
+    MEDIA_TOKEN = "/api/v2/files/getstsToken"

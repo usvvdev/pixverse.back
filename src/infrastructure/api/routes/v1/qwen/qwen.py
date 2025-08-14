@@ -2,6 +2,7 @@
 
 from fastapi import (
     APIRouter,
+    UploadFile,
     Depends,
 )
 
@@ -30,4 +31,21 @@ async def text_to_photo(
 ) -> QwenPhotoAPIResponse:
     return await view.text_to_photo(
         body,
+    )
+
+
+@qwen_router.post(
+    "/test",
+    # response_model=QwenPhotoAPIResponse,
+    # response_model_exclude_none=True,
+)
+async def photo_to_photo(
+    # body: IT2IBody,
+    token: str,
+    image: UploadFile,
+    view: QwenView = Depends(QwenViewFactory.create),
+):
+    return await view.fetch_upload_token(
+        token,
+        image,
     )

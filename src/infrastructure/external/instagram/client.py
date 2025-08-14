@@ -178,7 +178,8 @@ class InstagramClient:
         items: list[ITrackingUser] = list(
             map(
                 lambda user: ITrackingUser.model_validate(
-                    user.target_user_data.__dict__ | user.statistics[-1].__dict__
+                    user.target_user_data.__dict__
+                    | (user.statistics[-1].__dict__ if user.statistics else {})
                 ),
                 tracking_users,
             )

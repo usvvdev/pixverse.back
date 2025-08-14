@@ -6,6 +6,7 @@ from .upload_image import (
     upload_chatgpt_file,
     b64_json_to_image,
     convert_heic_to_jpg,
+    upload_qwen_file,
 )
 
 from .auto_docs import auto_docs
@@ -42,4 +43,5 @@ __all__: list[str] = [
     "add_user_tokens",
     "check_user_tokens",
     "fetch_webhook_id",
+    "upload_qwen_file",
 ]

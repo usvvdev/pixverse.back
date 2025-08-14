@@ -1150,6 +1150,37 @@ class QwenGenerationData(ISchema):
     ]
 
 
+class QwenUploadData(ISchema):
+    access_key_id: Annotated[
+        str,
+        Field(...),
+    ]
+    access_key_secret: Annotated[
+        str,
+        Field(...),
+    ]
+    security_token: Annotated[
+        str,
+        Field(...),
+    ]
+    bucketname: Annotated[
+        str,
+        Field(...),
+    ]
+    endpoint: Annotated[
+        str,
+        Field(...),
+    ]
+    file_path: Annotated[
+        str,
+        Field(...),
+    ]
+    file_id: Annotated[
+        str,
+        Field(...),
+    ]
+
+
 class QwenResponse(ISchema):
     success: Annotated[
         bool,
@@ -1160,7 +1191,7 @@ class QwenResponse(ISchema):
         Field(...),
     ]
     resp: Annotated[
-        QwenGenerationData | QwenChatData,
+        QwenGenerationData | QwenChatData | QwenUploadData,
         Field(..., alias="data"),
     ]
 
@@ -1194,7 +1225,7 @@ class QwenErrorResponse(ISchema):
 class QwenPhotoAPIResponse(ISchema):
     message: Annotated[
         str,
-        Field(default="Success"),
+        Field(default="success"),
     ]
     status: Annotated[
         int,

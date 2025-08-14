@@ -7,6 +7,7 @@ from .body import (
     IQwenChatMessage,
     IQwenPhotoBody,
     IT2IBody,
+    IPhotoBody,
 )
 
 from .headers import ITokenHeaders
@@ -19,4 +20,5 @@ __all__: list[str] = [
     "IQwenPhotoBody",
     "IT2IBody",
     "ITokenHeaders",
+    "IPhotoBody",
 ]

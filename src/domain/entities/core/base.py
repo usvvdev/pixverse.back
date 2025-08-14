@@ -26,7 +26,7 @@ class ISchema(BaseModel):
         use_enum_values=True,
         loc_by_alias=True,
         from_attributes=True,
-        extra="allow",
+        # extra="allow",
     )
 
     @property

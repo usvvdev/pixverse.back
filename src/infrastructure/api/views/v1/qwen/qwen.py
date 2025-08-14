@@ -1,5 +1,7 @@
 # coding utf-8
 
+from fastapi import UploadFile
+
 from ......domain.entities.qwen import (
     IT2IBody,
 )
@@ -22,4 +24,14 @@ class QwenView:
     ) -> QwenPhotoAPIResponse:
         return await self._controller.text_to_photo(
             body,
+        )
+
+    async def fetch_upload_token(
+        self,
+        token: str,
+        image: UploadFile,
+    ):
+        return await self._controller.fetch_upload_token(
+            token,
+            image,
         )

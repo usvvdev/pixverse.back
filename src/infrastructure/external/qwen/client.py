@@ -2,7 +2,10 @@
 
 from .core import QwenCore
 
-from fastapi import HTTPException
+from fastapi import (
+    HTTPException,
+    UploadFile,
+)
 
 from uuid import uuid4
 
@@ -27,6 +30,7 @@ from ....domain.entities.qwen import (
     IQwenChat,
     IQwenPhotoBody,
     IQwenChatMessage,
+    IPhotoBody,
 )
 
 from ...orm.database.models import (
@@ -41,7 +45,10 @@ from ...orm.database.repositories import (
 
 from ....domain.repositories import IDatabase
 
-from ....domain.tools import update_account_token
+from ....domain.tools import (
+    update_account_token,
+    upload_qwen_file,
+)
 
 from ....interface.schemas.external import (
     QwenResponse,
@@ -49,6 +56,7 @@ from ....interface.schemas.external import (
     QwenErrorResponse,
     QwenMessageContent,
     QwenPhotoAPIResponse,
+    QwenUploadData,
 )
 
 
@@ -128,6 +136,22 @@ class QwenClient:
         )
 
         raise error
+
+    async def __fetch_upload_token(
+        self,
+        token: str,
+        image: UploadFile,
+    ) -> QwenUploadData:
+        data: QwenResponse = await self._core.post(
+            token=token,
+            # **kwargs
+            endpoint=QwenEndpoint.MEDIA_TOKEN,
+            body=IPhotoBody(
+                filesize=image.size,
+            ),
+        )
+
+        return data.resp
 
     async def __get_account_token(
         self,
@@ -302,7 +326,7 @@ class QwenClient:
                     try:
                         data = await call(token)
 
-                        # # if not data.detail:
+                        # if not data.detail:
                         # # return await self.__handle_success(
                         # #     data,
                         # #     account_id,
@@ -323,3 +347,94 @@ class QwenClient:
                 }
             },
         )
+
+    # async def photo_to_photo(
+    #     self,
+    #     image: UploadFile,
+    #     body: IT2IBody,
+    # ) -> QwenPhotoAPIResponse:
+    #     account = await account_database.fetch_next_account()
+
+    #     # account_id = account.id
+
+    #     max_attempts = 1
+
+    #     last_err_code = None
+
+    #     for attempt in range(max_attempts):
+    #         token = await self.__get_account_token(
+    #             account,
+    #         )
+    #         file_bytes: bytes = await image.read()
+
+    #         try:
+
+    #             async def call(
+    #                 token: str,
+    #             ) -> QwenPhotoAPIResponse:
+    #                 bucket_data: QwenUploadData = await self.__fetch_upload_token(
+    #                     token,
+    #                     image,
+    #                 )
+
+    #                 await upload_qwen_file(
+    #                     bucket_data,
+    #                     file_bytes,
+    #                 )
+
+    #                 return await self.__fetch_photo_url(
+    #                     token=token,
+    #                     chat_id=chat_id,
+    #                 )
+
+    #             data: QwenPhotoAPIResponse = await call(token)
+
+    #             # if not data.detail:
+    #             #     return await self.__handle_success(
+    #             #         data,
+    #             #         account_id,
+    #             #         body,
+    #             #     )
+    #             return data
+
+    #             # raise HTTPException(
+    #             #     status_code=400,
+    #             #     detail=data.detail,
+    #             # )
+
+    #             # last_err_code = data.resp.status
+
+    #         except Exception:
+    #             if attempt == max_attempts - 1:
+    #                 token = await self.__reauthenticate(account)
+
+    #                 await update_account_token(
+    #                     account,
+    #                     token,
+    #                     project=AccountProjectToken.TOPMEDIA,
+    #                 )
+
+    #                 try:
+    #                     data = await call(token)
+
+    #                     # if not data.detail:
+    #                     # # return await self.__handle_success(
+    #                     # #     data,
+    #                     # #     account_id,
+    #                     # #     body,
+    #                     # # )
+    #                     return data
+    #                 except Exception as final_err:
+    #                     raise final_err
+    #                 # return await self.__handle_failure()
+    #             await sleep(1)
+
+    #     return await self.__handle_failure(
+    #         400,
+    #         extra={
+    #             "Данные аккаунта": {
+    #                 "логин": account.username,
+    #                 "пароль": account.password,
+    #             }
+    #         },
+    #     )

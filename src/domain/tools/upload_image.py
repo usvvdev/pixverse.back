@@ -20,6 +20,8 @@ from fastapi import UploadFile, HTTPException
 
 from ..entities.chatgpt import IFile
 
+from ...interface.schemas.external import QwenUploadData
+
 from ..constants import (
     BUCKET_URL,
     BUCKET_NAME,
@@ -43,6 +45,25 @@ async def upload_file(
     )
     return bucket.put_object(
         f"upload/{filename}",
+        image_bytes,
+    )
+
+
+async def upload_qwen_file(
+    data: QwenUploadData,
+    image_bytes: bytes,
+) -> bool:
+    bucket = Bucket(
+        StsAuth(
+            data.access_key_id,
+            data.access_key_secret,
+            data.security_token,
+        ),
+        data.endpoint,
+        bucket_name=data.bucketname,
+    )
+    return bucket.put_object(
+        data.file_path,
         image_bytes,
     )
 

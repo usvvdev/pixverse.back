@@ -1,5 +1,7 @@
 # coding utf-8
 
+from fastapi import UploadFile
+
 from typing import Annotated, Any
 
 from pendulum import now
@@ -192,4 +194,19 @@ class IT2IBody(ISchema):
     media_size: Annotated[
         MEDIA_SIZES,
         Field(default="16:9", alias="mediaSize"),
+    ]
+
+
+class IPhotoBody(ISchema):
+    filename: Annotated[
+        str,
+        Field(default_factory=lambda: f"{str(uuid4())}.jpg"),
+    ]
+    filesize: Annotated[
+        int,
+        Field(...),
+    ]
+    filetype: Annotated[
+        str,
+        Field(default="image"),
     ]

@@ -82,6 +82,7 @@ from .response import (
     QwenChatMessage,
     QwenMessageContent,
     QwenPhotoAPIResponse,
+    QwenUploadData,
 )
 
 __all__ = [
@@ -162,4 +163,5 @@ __all__ = [
     "QwenChatMessage",
     "QwenMessageContent",
     "QwenPhotoAPIResponse",
+    "QwenUploadData",
 ]
