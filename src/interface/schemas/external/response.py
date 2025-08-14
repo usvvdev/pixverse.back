@@ -678,11 +678,11 @@ class InstagramUser(ISchema):
 class ITrackingUser(InstagramUser):
     likes_count: Annotated[
         int,
-        Field(...),
+        Field(default=0),
     ]
     followers_count: Annotated[
         int,
-        Field(...),
+        Field(default=0),
     ]
 
 
