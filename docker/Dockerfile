@@ -8,9 +8,7 @@ ENV PROJECT_DIR="/code" \
     PIP_DEFAULT_TIMEOUT=100 \
     POETRY_VERSION=2.1.1 \
     POETRY_VIRTUALENVS_CREATE=false \
-    PATH="${PATH}:/root/.poetry/bin" \
-    CHROME_VERSION="136.0.7103.113" \
-    CHROMEDRIVER_VERSION="136.0.7103.113"
+    PATH="${PATH}:/root/.poetry/bin" 
 
 # Установка зависимостей
 RUN apt-get update && apt-get install -y \
