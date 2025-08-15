@@ -40,3 +40,7 @@ class PixverseAccounts(ITable):
         default=0,
         nullable=False,
     )
+    auth_user_id: int = Column(
+        Integer,
+        nullable=False,
+    )

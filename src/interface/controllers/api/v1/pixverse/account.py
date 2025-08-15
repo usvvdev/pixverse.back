@@ -18,8 +18,12 @@ class PixverseAccountController:
 
     async def fetch_accounts(
         self,
+        token_data: dict[str, str | int],
     ) -> list[Account]:
-        return await self._repository.fetch_all()
+        return await self._repository.fetch_with_filters(
+            many=True,
+            auth_user_id=token_data.get("aid"),
+        )
 
     async def fetch_account(
         self,

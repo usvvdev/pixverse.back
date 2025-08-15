@@ -18,8 +18,11 @@ class PixverseAccountView:
 
     async def fetch_accounts(
         self,
+        token_data: dict[str, str | int],
     ) -> list[Account]:
-        return await self._controller.fetch_accounts()
+        return await self._controller.fetch_accounts(
+            token_data,
+        )
 
     async def fetch_account(
         self,

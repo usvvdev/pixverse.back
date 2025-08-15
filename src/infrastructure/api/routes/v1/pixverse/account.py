@@ -25,10 +25,12 @@ pixverse_account_router = APIRouter(tags=["Accounts"])
     "/accounts",
 )
 async def fetch_accounts(
-    _: str = Depends(validate_token),
+    token_data: dict[str, str | int] = Depends(validate_token),
     view: PixverseAccountView = Depends(PixverseAccountViewFactory.create),
 ) -> list[Account]:
-    return await view.fetch_accounts()
+    return await view.fetch_accounts(
+        token_data,
+    )
 
 
 @pixverse_account_router.get(
