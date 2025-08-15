@@ -27,7 +27,7 @@ from ...typing.enums import (
 class IToken(ISchema):
     id: Annotated[
         int,
-        Field(...),
+        Field(..., alias="aid"),
     ]
     typ: Annotated[
         TToken,
