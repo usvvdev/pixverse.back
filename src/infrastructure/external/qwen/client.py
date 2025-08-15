@@ -348,7 +348,7 @@ class QwenClient:
             },
         )
 
-    # async def photo_to_photo(
+    # async def photo_to_video(
     #     self,
     #     image: UploadFile,
     #     body: IT2IBody,
