@@ -27,17 +27,21 @@ class PixverseAccountView:
     async def fetch_account(
         self,
         id: int,
+        token_data: dict[str, str | int],
     ) -> Account:
         return await self._controller.fetch_account(
             id,
+            token_data,
         )
 
     async def add_account(
         self,
         data: IAccount,
+        token_data: dict[str, str | int],
     ) -> ChangeAccount:
         return await self._controller.add_account(
             data,
+            token_data,
         )
 
     async def update_account(

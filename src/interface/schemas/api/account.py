@@ -18,6 +18,13 @@ class IAccount(ISchema):
     ]
 
 
+class AddAccount(IAccount):
+    user_id: Annotated[
+        int,
+        Field(..., alias="auth_user_id"),
+    ]
+
+
 class ChangeAccount(IAccount):
     is_active: Annotated[
         bool,

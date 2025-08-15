@@ -7,7 +7,10 @@ from fastapi import (
 
 from ....views.v1 import PixverseAccountView
 
-from ......domain.tools import auto_docs, validate_token
+from ......domain.tools import (
+    auto_docs,
+    validate_token,
+)
 
 from .....factroies.api.v1 import PixverseAccountViewFactory
 
@@ -38,11 +41,12 @@ async def fetch_accounts(
 )
 async def fetch_account(
     id: int,
-    _: str = Depends(validate_token),
+    token_data: dict[str, str | int] = Depends(validate_token),
     view: PixverseAccountView = Depends(PixverseAccountViewFactory.create),
 ) -> Account:
     return await view.fetch_account(
         id,
+        token_data,
     )
 
 
@@ -51,11 +55,12 @@ async def fetch_account(
 )
 async def add_account(
     data: IAccount,
-    _: str = Depends(validate_token),
+    token_data: dict[str, str | int] = Depends(validate_token),
     view: PixverseAccountView = Depends(PixverseAccountViewFactory.create),
 ) -> ChangeAccount:
     return await view.add_account(
         data,
+        token_data,
     )
 
 

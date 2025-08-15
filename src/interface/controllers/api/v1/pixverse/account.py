@@ -5,6 +5,7 @@ from ......infrastructure.orm.database.repositories import PixverseAccountReposi
 from .....schemas.api import (
     Account,
     IAccount,
+    AddAccount,
     ChangeAccount,
 )
 
@@ -28,18 +29,24 @@ class PixverseAccountController:
     async def fetch_account(
         self,
         id: int,
+        token_data: dict[str, str | int],
     ) -> Account | None:
-        return await self._repository.fetch_account(
-            "id",
-            id,
+        return await self._repository.fetch_one_with_filters(
+            id=id,
+            auth_user_id=token_data.get("aid"),
         )
 
     async def add_account(
         self,
         data: IAccount,
+        token_data: dict[str, str | int],
     ) -> ChangeAccount:
+        account_data = AddAccount(
+            **data.dict,
+            user_id=token_data.get("aid"),
+        )
         return await self._repository.add_record(
-            data,
+            account_data,
         )
 
     async def update_account(
