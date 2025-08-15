@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from sqlalchemy import (
     Column,
+    Integer,
     String,
 )
 
@@ -13,6 +14,11 @@ from ......domain.entities.core import ITable
 
 
 class AuthUsers(ITable):
+    id: int = Column(
+        Integer,
+        nullable=False,
+        unique=True,
+    )
     uuid: str = Column(
         String,
         default=uuid4(),
