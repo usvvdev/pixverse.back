@@ -25,7 +25,7 @@ conf: IConfEnv = app_conf()
 
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl="/api/auth/token",
+    tokenUrl="/auth/api/v1/token",
 )
 
 
