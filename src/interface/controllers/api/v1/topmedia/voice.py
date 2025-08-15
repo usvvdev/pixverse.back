@@ -17,4 +17,7 @@ class TopmediaVoiceController:
     async def fetch_voices(
         self,
     ) -> list[Voice]:
-        return await self._repository.fetch_all()
+        return await self._repository.fetch_with_filters(
+            many=True,
+            is_active=True,
+        )

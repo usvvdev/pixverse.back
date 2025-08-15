@@ -4,6 +4,7 @@ from sqlalchemy import (
     Column,
     String,
     Integer,
+    Boolean,
 )
 
 from ......domain.entities.core import ITable
@@ -35,5 +36,9 @@ class TopmediaVoices(ITable):
     )
     audition_url: str = Column(
         String,
+        nullable=False,
+    )
+    is_active: bool = Column(
+        Boolean,
         nullable=False,
     )
